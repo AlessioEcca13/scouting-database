@@ -666,16 +666,33 @@ function AddPlayerForm({ addPlayer, showNotification, setCurrentPage }) {
       birth_year: new Date().getFullYear() - 20,
       team: '',
       nationality: '',
+      height: '',
+      weight: '',
       general_role: 'Centrocampo',
+      specific_position: '',
       preferred_foot: 'Destro',
+      athletic_skills: '',
+      technical_skills: '',
+      tactical_skills: '',
       current_value: 3,
       potential_value: 3,
+      data_potential_value: 3,
+      market_value: '',
+      contract_expiry: '',
       priority: 'Media',
+      recommended_action: 'Monitorare',
       director_feedback: 'Da valutare',
+      check_type: 'Live',
+      scout_name: '',
+      scouting_date: new Date().toISOString().split('T')[0],
+      injuries: '',
+      strong_points: '',
+      weak_points: '',
+      comparison: '',
       notes: ''
     });
 
-    const totalSteps = 4;
+    const totalSteps = 3;
     const currentYear = new Date().getFullYear();
     const age = currentYear - formData.birth_year;
 
@@ -724,175 +741,446 @@ function AddPlayerForm({ addPlayer, showNotification, setCurrentPage }) {
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
-            {[1, 2, 3, 4].map(step => (
+            {[1, 2, 3].map(step => (
               <div key={step} className="flex items-center flex-1">
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${
+                <div className={`w-16 h-16 rounded-full flex items-center justify-center font-bold text-lg ${
                   step <= currentStep 
                     ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg' 
                     : 'bg-gray-200 text-gray-500'
                 }`}>
                   {step}
                 </div>
-                {step < 4 && (
-                  <div className={`flex-1 h-1 mx-2 ${
+                {step < 3 && (
+                  <div className={`flex-1 h-2 mx-4 rounded-full ${
                     step < currentStep ? 'bg-blue-500' : 'bg-gray-200'
                   }`}></div>
                 )}
               </div>
             ))}
           </div>
-          <div className="flex justify-between text-xs text-gray-600 font-medium">
-            <span className={currentStep === 1 ? 'text-blue-600' : ''}>📋 Informazioni Base</span>
-            <span className={currentStep === 2 ? 'text-blue-600' : ''}>⚽ Caratteristiche</span>
-            <span className={currentStep === 3 ? 'text-blue-600' : ''}>⭐ Valutazioni</span>
-            <span className={currentStep === 4 ? 'text-blue-600' : ''}>📝 Note</span>
+          <div className="grid grid-cols-3 gap-4 text-sm text-gray-600 font-medium text-center">
+            <span className={currentStep === 1 ? 'text-blue-600 font-bold' : ''}>📋 Informazioni Generali</span>
+            <span className={currentStep === 2 ? 'text-blue-600 font-bold' : ''}>⚽ Caratteristiche & Valutazioni</span>
+            <span className={currentStep === 3 ? 'text-blue-600 font-bold' : ''}>📝 Analisi & Report</span>
           </div>
         </div>
 
         <form onSubmit={handleSubmit}>
-          {/* Step 1: Informazioni Base */}
+          {/* Step 1: Informazioni Generali */}
           {currentStep === 1 && (
-            <div className="space-y-4 fade-in">
-              <h3 className="text-xl font-bold text-gray-800 mb-4">📋 Informazioni Base</h3>
+            <div className="space-y-6 fade-in">
+              <h3 className="text-xl font-bold text-gray-800 mb-6">📋 Informazioni Generali</h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Nome Completo *</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) => handleChange('name', e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                    placeholder="Mario Rossi"
-                  />
+              {/* Informazioni Base */}
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-gray-700 mb-3">Dati Anagrafici</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Nome Completo *</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.name}
+                      onChange={(e) => handleChange('name', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                      placeholder="Mario Rossi"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Anno Nascita</label>
+                    <input
+                      type="number"
+                      min="1990"
+                      max={currentYear - 15}
+                      value={formData.birth_year}
+                      onChange={(e) => handleChange('birth_year', parseInt(e.target.value))}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Età: {age} anni</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Nazionalità</label>
+                    <select
+                      value={formData.nationality}
+                      onChange={(e) => handleChange('nationality', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                    >
+                      <option value="">Seleziona...</option>
+                      <option value="🇮🇹 Italia">🇮🇹 Italia</option>
+                      <option value="🇫🇷 Francia">🇫🇷 Francia</option>
+                      <option value="🇪🇸 Spagna">🇪🇸 Spagna</option>
+                      <option value="🇩🇪 Germania">🇩🇪 Germania</option>
+                      <option value="🇬🇧 Inghilterra">🇬🇧 Inghilterra</option>
+                      <option value="🇧🇷 Brasile">🇧🇷 Brasile</option>
+                      <option value="🇦🇷 Argentina">🇦🇷 Argentina</option>
+                      <option value="🇳🇱 Olanda">🇳🇱 Olanda</option>
+                      <option value="🇵🇹 Portogallo">🇵🇹 Portogallo</option>
+                      <option value="🇸🇳 Senegal">🇸🇳 Senegal</option>
+                    </select>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Anno di Nascita</label>
-                  <input
-                    type="number"
-                    min="1990"
-                    max={currentYear - 15}
-                    value={formData.birth_year}
-                    onChange={(e) => handleChange('birth_year', parseInt(e.target.value))}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Età: {age} anni</p>
+              </div>
+
+              {/* Squadra e Posizione */}
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-gray-700 mb-3">Squadra e Ruolo</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Squadra Attuale</label>
+                    <input
+                      type="text"
+                      value={formData.team}
+                      onChange={(e) => handleChange('team', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                      placeholder="AC Milan, Juventus, etc."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Ruolo Principale</label>
+                    <select
+                      value={formData.general_role}
+                      onChange={(e) => handleChange('general_role', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                    >
+                      <option value="Portiere">🥅 Portiere</option>
+                      <option value="Difensore">🛡️ Difensore</option>
+                      <option value="Centrocampo">⚽ Centrocampo</option>
+                      <option value="Attaccante">🎯 Attaccante</option>
+                    </select>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Squadra</label>
-                  <input
-                    type="text"
-                    value={formData.team}
-                    onChange={(e) => handleChange('team', e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                    placeholder="AC Milan"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Nazionalità</label>
-                  <input
-                    type="text"
-                    value={formData.nationality}
-                    onChange={(e) => handleChange('nationality', e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                    placeholder="🇮🇹 Italia"
-                  />
+              </div>
+
+              {/* Caratteristiche Fisiche */}
+              <div className="bg-green-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-gray-700 mb-3">Caratteristiche Fisiche</h4>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Altezza (cm)</label>
+                    <input
+                      type="number"
+                      min="150"
+                      max="220"
+                      value={formData.height}
+                      onChange={(e) => handleChange('height', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                      placeholder="180"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Peso (kg)</label>
+                    <input
+                      type="number"
+                      min="50"
+                      max="120"
+                      value={formData.weight}
+                      onChange={(e) => handleChange('weight', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                      placeholder="75"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Piede</label>
+                    <select
+                      value={formData.preferred_foot}
+                      onChange={(e) => handleChange('preferred_foot', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                    >
+                      <option value="Destro">👉 Destro</option>
+                      <option value="Sinistro">👈 Sinistro</option>
+                      <option value="Ambidestro">👐 Ambidestro</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Posizione Specifica</label>
+                    <input
+                      type="text"
+                      value={formData.specific_position}
+                      onChange={(e) => handleChange('specific_position', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                      placeholder="Mediano, Ala destra..."
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Step 2: Caratteristiche */}
+          {/* Step 2: Caratteristiche & Valutazioni */}
           {currentStep === 2 && (
-            <div className="space-y-4 fade-in">
-              <h3 className="text-xl font-bold text-gray-800 mb-4">⚽ Caratteristiche</h3>
+            <div className="space-y-6 fade-in">
+              <h3 className="text-xl font-bold text-gray-800 mb-6">⚽ Caratteristiche & Valutazioni</h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Ruolo Generale</label>
-                  <select
-                    value={formData.general_role}
-                    onChange={(e) => handleChange('general_role', e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="Portiere">Portiere</option>
-                    <option value="Difensore">Difensore</option>
-                    <option value="Centrocampo">Centrocampo</option>
-                    <option value="Attaccante">Attaccante</option>
-                  </select>
+              {/* Valutazioni con Slider */}
+              <div className="bg-yellow-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-gray-700 mb-4">⭐ Valutazioni (1-5)</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Valore Attuale</label>
+                    <input
+                      type="range"
+                      min="1"
+                      max="5"
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                      value={formData.current_value}
+                      onChange={(e) => handleChange('current_value', parseInt(e.target.value))}
+                    />
+                    <div className="flex justify-between text-xs text-gray-500 mt-1">
+                      <span>Scarso</span>
+                      <span className="font-bold text-lg text-blue-600">{formData.current_value}⭐</span>
+                      <span>Eccellente</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Potenziale</label>
+                    <input
+                      type="range"
+                      min="1"
+                      max="5"
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                      value={formData.potential_value}
+                      onChange={(e) => handleChange('potential_value', parseInt(e.target.value))}
+                    />
+                    <div className="flex justify-between text-xs text-gray-500 mt-1">
+                      <span>Scarso</span>
+                      <span className="font-bold text-lg text-green-600">{formData.potential_value}⭐</span>
+                      <span>Eccellente</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Potenziale Dati</label>
+                    <input
+                      type="range"
+                      min="1"
+                      max="5"
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                      value={formData.data_potential_value}
+                      onChange={(e) => handleChange('data_potential_value', parseInt(e.target.value))}
+                    />
+                    <div className="flex justify-between text-xs text-gray-500 mt-1">
+                      <span>Scarso</span>
+                      <span className="font-bold text-lg text-purple-600">{formData.data_potential_value}⭐</span>
+                      <span>Eccellente</span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Piede Preferito</label>
-                  <select
-                    value={formData.preferred_foot}
-                    onChange={(e) => handleChange('preferred_foot', e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="Destro">Destro</option>
-                    <option value="Sinistro">Sinistro</option>
-                    <option value="Ambidestro">Ambidestro</option>
-                  </select>
+              </div>
+
+              {/* Skills Compatte */}
+              <div className="bg-purple-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-gray-700 mb-3">🎯 Competenze (separare con virgole)</h4>
+                <div className="grid grid-cols-1 gap-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">💪 Abilità Atletiche</label>
+                    <input
+                      type="text"
+                      value={formData.athletic_skills}
+                      onChange={(e) => handleChange('athletic_skills', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                      placeholder="Velocità, Accelerazione, Resistenza, Agilità, Forza..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">⚽ Abilità Tecniche</label>
+                    <input
+                      type="text"
+                      value={formData.technical_skills}
+                      onChange={(e) => handleChange('technical_skills', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                      placeholder="Controllo palla, Passaggi, Tiro, Dribbling, Cross..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">🧠 Abilità Tattiche</label>
+                    <input
+                      type="text"
+                      value={formData.tactical_skills}
+                      onChange={(e) => handleChange('tactical_skills', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                      placeholder="Posizionamento, Lettura del gioco, Pressing, Coperture..."
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Informazioni Economiche e Priorità */}
+              <div className="bg-orange-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-gray-700 mb-3">💰 Valutazioni Economiche</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Valore di Mercato</label>
+                    <input
+                      type="text"
+                      value={formData.market_value}
+                      onChange={(e) => handleChange('market_value', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                      placeholder="2.5M €, 500K €..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Contratto fino al</label>
+                    <input
+                      type="text"
+                      value={formData.contract_expiry}
+                      onChange={(e) => handleChange('contract_expiry', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                      placeholder="2026, 2025..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Priorità</label>
+                    <select
+                      value={formData.priority}
+                      onChange={(e) => handleChange('priority', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                    >
+                      <option value="Alta">🔴 Alta</option>
+                      <option value="Media">🟡 Media</option>
+                      <option value="Bassa">🟢 Bassa</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Step 3: Valutazioni */}
+          {/* Step 3: Analisi & Report */}
           {currentStep === 3 && (
-            <div className="space-y-4 fade-in">
-              <h3 className="text-xl font-bold text-gray-800 mb-4">⭐ Valutazioni</h3>
+            <div className="space-y-6 fade-in">
+              <h3 className="text-xl font-bold text-gray-800 mb-6">📝 Analisi & Report</h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Valore Attuale (1-5) ⭐</label>
-                  <input
-                    type="range"
-                    min="1"
-                    max="5"
-                    className="w-full"
-                    value={formData.current_value}
-                    onChange={(e) => handleChange('current_value', parseInt(e.target.value))}
-                  />
-                  <div className="flex justify-between text-xs text-gray-500 mt-1">
-                    <span>Scarso</span>
-                    <span className="font-bold text-lg">{formData.current_value}</span>
-                    <span>Eccellente</span>
+              {/* Punti di Forza e Debolezza */}
+              <div className="bg-green-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-gray-700 mb-3">💪 Analisi Punti di Forza e Debolezza</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">✅ Punti di Forza</label>
+                    <textarea
+                      rows="3"
+                      value={formData.strong_points}
+                      onChange={(e) => handleChange('strong_points', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                      placeholder="Visione di gioco, Tiro da fuori, Inserimenti..."
+                    />
                   </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Potenziale (1-5) ⭐</label>
-                  <input
-                    type="range"
-                    min="1"
-                    max="5"
-                    className="w-full"
-                    value={formData.potential_value}
-                    onChange={(e) => handleChange('potential_value', parseInt(e.target.value))}
-                  />
-                  <div className="flex justify-between text-xs text-gray-500 mt-1">
-                    <span>Scarso</span>
-                    <span className="font-bold text-lg">{formData.potential_value}</span>
-                    <span>Eccellente</span>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">❌ Punti Deboli</label>
+                    <textarea
+                      rows="3"
+                      value={formData.weak_points}
+                      onChange={(e) => handleChange('weak_points', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                      placeholder="Velocità, Contrasti aerei, Marcatura..."
+                    />
                   </div>
                 </div>
               </div>
-            </div>
-          )}
 
-          {/* Step 4: Note */}
-          {currentStep === 4 && (
-            <div className="space-y-4 fade-in">
-              <h3 className="text-xl font-bold text-gray-800 mb-4">📝 Note e Osservazioni</h3>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Note Scout</label>
+              {/* Confronti e Azioni */}
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-gray-700 mb-3">🔍 Confronti e Raccomandazioni</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Confronto con Altri Giocatori</label>
+                    <input
+                      type="text"
+                      value={formData.comparison}
+                      onChange={(e) => handleChange('comparison', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                      placeholder="Stile simile a Pogba giovane..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Azione Consigliata</label>
+                    <select
+                      value={formData.recommended_action}
+                      onChange={(e) => handleChange('recommended_action', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                    >
+                      <option value="Monitorare">👀 Monitorare</option>
+                      <option value="Approfondire">🔍 Approfondire</option>
+                      <option value="Contattare">📞 Contattare</option>
+                      <option value="Scartare">❌ Scartare</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Informazioni Scout */}
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-gray-700 mb-3">👤 Informazioni Scout</h4>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Nome Scout</label>
+                    <input
+                      type="text"
+                      value={formData.scout_name}
+                      onChange={(e) => handleChange('scout_name', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                      placeholder="Marco Rossi"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Data Scouting</label>
+                    <input
+                      type="date"
+                      value={formData.scouting_date}
+                      onChange={(e) => handleChange('scouting_date', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Tipo di Check</label>
+                    <select
+                      value={formData.check_type}
+                      onChange={(e) => handleChange('check_type', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                    >
+                      <option value="Live">🔴 Live</option>
+                      <option value="Video">📹 Video</option>
+                      <option value="Live/Video">🔴📹 Live/Video</option>
+                      <option value="Dati">📊 Dati</option>
+                      <option value="Live/Video + Dati">🔴📹📊 Live/Video + Dati</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Feedback Direttore</label>
+                    <select
+                      value={formData.director_feedback}
+                      onChange={(e) => handleChange('director_feedback', e.target.value)}
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                    >
+                      <option value="Mi piace">👍 Mi piace</option>
+                      <option value="Da valutare">🤔 Da valutare</option>
+                      <option value="Non mi convince">👎 Non mi convince</option>
+                      <option value="Interessante">⭐ Interessante</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Report Finale */}
+              <div className="bg-yellow-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-gray-700 mb-3">📝 Report Descrittivo Completo</h4>
                 <textarea
-                  rows="4"
+                  rows="5"
                   value={formData.notes}
                   onChange={(e) => handleChange('notes', e.target.value)}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="Inserisci le tue osservazioni sul giocatore..."
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                  placeholder="Inserisci un report dettagliato: stile di gioco, caratteristiche principali, adattabilità al sistema, potenziale di crescita, raccomandazioni..."
+                />
+                <p className="text-xs text-gray-500 mt-2">💡 Includi analisi tecnica, tattica, fisica e mentale del giocatore</p>
+              </div>
+
+              {/* Infortuni */}
+              <div className="bg-red-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-gray-700 mb-3">🏥 Situazione Infortuni</h4>
+                <input
+                  type="text"
+                  value={formData.injuries}
+                  onChange={(e) => handleChange('injuries', e.target.value)}
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                  placeholder="Nessuno, Caviglia (recuperato), Ginocchio (in riabilitazione)..."
                 />
               </div>
             </div>
