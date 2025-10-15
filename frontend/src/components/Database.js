@@ -164,50 +164,41 @@ function Database({ players, onSelectPlayer, onDeletePlayer, loading, onRefresh 
       {/* Header e Controlli */}
       <div className="bg-white rounded-xl p-6 shadow-lg">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold text-gradient">Database Giocatori</h2>
+          <h2 className="text-2xl font-bold text-blue-600">Database Giocatori</h2>
           <div className="flex items-center space-x-3">
             {/* Toggle Filtri */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                showFilters ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'
+              className={`px-4 py-2 rounded-lg transition-colors flex items-center ${
+                showFilters ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
               } hover:opacity-80`}
             >
               <i className="fas fa-filter mr-2"></i>
               Filtri {activeFiltersCount > 0 && `(${activeFiltersCount})`}
             </button>
 
-            {/* Bottone Refresh */}
-            <button
-              onClick={onRefresh}
-              className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
-            >
-              <i className="fas fa-sync mr-2"></i>
-              Aggiorna
-            </button>
-
             {/* Switch Vista */}
             <div className="flex bg-gray-100 rounded-lg p-1">
               <button
                 onClick={() => setViewMode('cards')}
-                className={`px-3 py-1 rounded transition-colors ${
-                  viewMode === 'cards' ? 'bg-white shadow text-purple-600' : 'text-gray-600'
+                className={`px-3 py-2 rounded transition-colors ${
+                  viewMode === 'cards' ? 'bg-white shadow text-blue-600' : 'text-gray-600'
                 }`}
               >
                 <i className="fas fa-th-large"></i>
               </button>
               <button
                 onClick={() => setViewMode('table')}
-                className={`px-3 py-1 rounded transition-colors ${
-                  viewMode === 'table' ? 'bg-white shadow text-purple-600' : 'text-gray-600'
+                className={`px-3 py-2 rounded transition-colors ${
+                  viewMode === 'table' ? 'bg-white shadow text-blue-600' : 'text-gray-600'
                 }`}
               >
                 <i className="fas fa-table"></i>
               </button>
               <button
                 onClick={() => setViewMode('compact')}
-                className={`px-3 py-1 rounded transition-colors ${
-                  viewMode === 'compact' ? 'bg-white shadow text-purple-600' : 'text-gray-600'
+                className={`px-3 py-2 rounded transition-colors ${
+                  viewMode === 'compact' ? 'bg-white shadow text-blue-600' : 'text-gray-600'
                 }`}
               >
                 <i className="fas fa-list"></i>
@@ -309,7 +300,7 @@ function Database({ players, onSelectPlayer, onDeletePlayer, loading, onRefresh 
               {/* Reset */}
               <button
                 onClick={resetFilters}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center"
               >
                 <i className="fas fa-times mr-2"></i>
                 Reset Filtri
@@ -343,12 +334,12 @@ function Database({ players, onSelectPlayer, onDeletePlayer, loading, onRefresh 
         {/* Risultati e Ordinamento */}
         <div className="mt-4 flex justify-between items-center">
           <span className="text-gray-600">
-            Trovati <strong>{filteredPlayers.length}</strong> giocatori su {players.length}
+            Trovati <strong className="text-blue-600">{filteredPlayers.length}</strong> giocatori su {players.length}
           </span>
           <div className="flex items-center space-x-2">
             <span className="text-sm text-gray-600">Ordina per:</span>
             <select
-              className="px-3 py-1 border rounded-lg text-sm"
+              className="px-3 py-1 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
             >
@@ -360,7 +351,7 @@ function Database({ players, onSelectPlayer, onDeletePlayer, loading, onRefresh 
             </select>
             <button
               onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-              className="px-2 py-1 border rounded-lg hover:bg-gray-50"
+              className="px-2 py-1 border rounded-lg hover:bg-gray-50 text-blue-600"
             >
               <i className={`fas fa-arrow-${sortOrder === 'asc' ? 'up' : 'down'}`}></i>
             </button>

@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚽ Scouting System - Database Professionale</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Animazioni personalizzate */
+        @keyframes slideInFromLeft {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .slide-in { animation: slideInFromLeft 0.3s ease-out; }
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        .pulse { animation: pulse 2s infinite; }
+        
+        /* Glassmorphism effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6b4b9e 100%);
+        }
+        
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Card hover effects */
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        /* Navigation active state */
+        .nav-active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white !important;
+        }
+        
+        /* Field focus effects */
+        .field-focus {
+            transition: all 0.3s ease;
+        }
+        
+        .field-focus:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+        }
+        
+        /* Rating stars animation */
+        .star {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .star:hover {
+            transform: scale(1.2);
+        }
+        
+        /* Success animation */
+        @keyframes checkmark {
+            0% { transform: scale(0) rotate(45deg); }
+            50% { transform: scale(1.2) rotate(45deg); }
+            100% { transform: scale(1) rotate(45deg); }
+        }
+        
+        .checkmark {
+            animation: checkmark 0.5s ease;
+        }
+        
+        /* Filter tag style */
+        .filter-tag {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-tag:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Table styles */
+        .custom-table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .custom-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .custom-table tbody tr {
+            transition: all 0.2s ease;
+        }
+        
+        .custom-table tbody tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+            transform: scale(1.01);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useCallback } = React;
+
+        // Database simulato con più giocatori di esempio
+        const initialPlayers = [
+            {
+                id: 1,
+                name: "Pape Demba Diop",
+                birthYear: 2003,
+                age: 21,
+                team: "Zulte Waregem",
+                nationality: "🇸🇳 Senegal",
+                generalRole: "Centrocampo",
+                specificPosition: "Mediano",
+                functions: "Box-to-Box, Mediano Moderno",
+                preferredFoot: "Destro",
+                height: 185,
+                weight: 78,
+                athleticism: "Buona presenza fisica, Intensità",
+                technicalSkills: "Controllo palla, Passaggi lunghi",
+                tacticalSkills: "Posizionamento, Lettura del gioco",
+                potentialValue: 4,
+                currentValue: 2,
+                dataPotentialValue: 3,
+                marketValue: "2.5M",
+                contractUntil: "2025",
+                notes: "Mezzala box to box con buona presenza fisica e ottima proprietà tecnica. Necessita miglioramenti nella fase difensiva.",
+                directorFeedback: "Mi piace",
+                checkType: "Live/Video",
+                scoutName: "Marco Rossi",
+                scoutingDate: "2024-03-15",
+                injuries: "Nessuna",
+                strongPoints: ["Visione di gioco", "Tiro da fuori", "Inserimenti"],
+                weakPoints: ["Velocità", "Contrasti aerei"],
+                comparison: "Stile simile a Pogba giovane",
+                recommendedAction: "Monitorare",
+                priority: "Media"
+            },
+            {
+                id: 2,
+                name: "Dean James",
+                birthYear: 2000,
+                age: 24,
+                team: "Go Ahead Eagles",
+                nationality: "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inghilterra",
+                generalRole: "Difensore",
+                specificPosition: "Terzino Sinistro",
+                functions: "Terzino Offensivo",
+                preferredFoot: "Sinistro",
+                height: 178,
+                weight: 72,
+                athleticism: "Velocità, Accelerazione, Resistenza",
+                technicalSkills: "Cross, Dribbling",
+                tacticalSkills: "Sovrapposizioni, Pressing alto",
+                potentialValue: 4,
+                currentValue: 3,
+                dataPotentialValue: 4,
+                marketValue: "5M",
+                contractUntil: "2026",
+                notes: "Terzino molto propositivo, eccellente in fase offensiva ma con lacune difensive.",
+                directorFeedback: "Da valutare",
+                checkType: "Live/Video + Dati",
+                scoutName: "Paolo Bianchi",
+                scoutingDate: "2024-02-28",
+                injuries: "Caviglia (recuperato)",
+                strongPoints: ["Velocità", "Cross", "Uno contro uno"],
+                weakPoints: ["Marcatura", "Gioco aereo"],
+                comparison: "Caratteristiche simili a Robertson",
+                recommendedAction: "Approfondire",
+                priority: "Alta"
+            },
+            {
+                id: 3,
+                name: "Javi Rueda",
+                birthYear: 2002,
+                age: 22,
+                team: "Albacete",
+                nationality: "🇪🇸 Spagna",
+                generalRole: "Difensore",
+                specificPosition: "Terzino Destro",
+                functions: "Terzino Equilibrato",
+                preferredFoot: "Destro",
+                height: 180,
+                weight: 75,
+                athleticism: "Accelerazione, Agilità",
+                technicalSkills: "Controllo, Passaggi corti",
+                tacticalSkills: "Diagonali difensive, Coperture",
+                potentialValue: 3,
+                currentValue: 3,
+                dataPotentialValue: 3,
+                marketValue: "3M",
+                contractUntil: "2025",
+                notes: "Terzino affidabile, buon equilibrio tra fase difensiva e offensiva.",
+                directorFeedback: "Mi piace",
+                checkType: "Dati",
+                scoutName: "Marco Rossi",
+                scoutingDate: "2024-03-01",
+                injuries: "Nessuna",
+                strongPoints: ["Consistenza", "Disciplina tattica"],
+                weakPoints: ["Creatività", "Tiro"],
+                comparison: "Stile Azpilicueta",
+                recommendedAction: "Acquistare",
+                priority: "Media"
+            },
+            {
+                id: 4,
+                name: "Lucas Bergström",
+                birthYear: 2002,
+                age: 22,
+                team: "Chelsea U23",
+                nationality: "🇫🇮 Finlandia",
+                generalRole: "Portiere",
+                specificPosition: "Portiere",
+                functions: "Portiere Moderno",
+                preferredFoot: "Destro",
+                height: 195,
+                weight: 88,
+                athleticism: "Riflessi, Agilità",
+                technicalSkills: "Gioco coi piedi, Uscite",
+                tacticalSkills: "Posizionamento, Lettura traiettorie",
+                potentialValue: 5,
+                currentValue: 3,
+                dataPotentialValue: 4,
+                marketValue: "8M",
+                contractUntil: "2027",
+                notes: "Portiere di grande prospettiva, ottimo con i piedi. Chelsea lo valuta molto.",
+                directorFeedback: "Mi piace",
+                checkType: "Live/Video",
+                scoutName: "Giuseppe Verdi",
+                scoutingDate: "2024-03-20",
+                injuries: "Nessuna",
+                strongPoints: ["Altezza", "Riflessi", "Costruzione dal basso"],
+                weakPoints: ["Esperienza", "Comunicazione"],
+                comparison: "Ricorda Courtois giovane",
+                recommendedAction: "Monitorare attentamente",
+                priority: "Alta"
+            },
+            {
+                id: 5,
+                name: "Karim Benzali",
+                birthYear: 2004,
+                age: 20,
+                team: "Lyon B",
+                nationality: "🇫🇷 Francia",
+                generalRole: "Attaccante",
+                specificPosition: "Punta Centrale",
+                functions: "Prima Punta, Finalizzatore",
+                preferredFoot: "Destro",
+                height: 182,
+                weight: 76,
+                athleticism: "Scatto, Elevazione",
+                technicalSkills: "Finalizzazione, Controllo in area",
+                tacticalSkills: "Movimenti in area, Timing",
+                potentialValue: 4,
+                currentValue: 2,
+                dataPotentialValue: 4,
+                marketValue: "4M",
+                contractUntil: "2024",
+                notes: "Attaccante prolifico nelle giovanili, sta facendo bene in seconda squadra.",
+                directorFeedback: "Da valutare",
+                checkType: "Live/Video",
+                scoutName: "Paolo Bianchi",
+                scoutingDate: "2024-03-18",
+                injuries: "Nessuna",
+                strongPoints: ["Fiuto del gol", "Velocità", "Dribbling"],
+                weakPoints: ["Forza fisica", "Gioco di squadra"],
+                comparison: "Movenze alla Mbappé",
+                recommendedAction: "Trattare",
+                priority: "Alta"
+            }
+        ];
+
+        // Componente principale con routing
+        function ScoutingApp() {
+            const [currentPage, setCurrentPage] = useState('dashboard');
+            const [players, setPlayers] = useState(() => {
+                const saved = localStorage.getItem('scoutingPlayers');
+                return saved ? JSON.parse(saved) : initialPlayers;
+            });
+            const [notification, setNotification] = useState(null);
+            const [selectedPlayer, setSelectedPlayer] = useState(null);
+            const [viewMode, setViewMode] = useState('cards'); // cards, table, compact
+
+            // Salva in localStorage quando cambiano i giocatori
+            useEffect(() => {
+                localStorage.setItem('scoutingPlayers', JSON.stringify(players));
+            }, [players]);
+
+            // Sistema di notifiche
+            const showNotification = (message, type = 'success') => {
+                setNotification({ message, type });
+                setTimeout(() => setNotification(null), 3000);
+            };
+
+            // Aggiungi giocatore
+            const addPlayer = (playerData) => {
+                const newPlayer = {
+                    ...playerData,
+                    id: Date.now(),
+                    scoutingDate: new Date().toISOString().split('T')[0]
+                };
+                setPlayers([...players, newPlayer]);
+                showNotification('✅ Giocatore aggiunto con successo!', 'success');
+                setCurrentPage('database');
+            };
+
+            // Modifica giocatore
+            const updatePlayer = (id, updatedData) => {
+                setPlayers(players.map(p => p.id === id ? { ...p, ...updatedData } : p));
+                showNotification('✅ Giocatore aggiornato!', 'success');
+            };
+
+            // Elimina giocatore
+            const deletePlayer = (id) => {
+                if (window.confirm('Sei sicuro di voler eliminare questo giocatore?')) {
+                    setPlayers(players.filter(p => p.id !== id));
+                    showNotification('🗑️ Giocatore eliminato', 'info');
+                    setSelectedPlayer(null);
+                }
+            };
+
+            // Componente Navigation
+            function Navigation() {
+                const navItems = [
+                    { id: 'dashboard', label: 'Dashboard', icon: 'fa-home' },
+                    { id: 'database', label: 'Database', icon: 'fa-database' },
+                    { id: 'add', label: 'Aggiungi Giocatore', icon: 'fa-plus-circle' },
+                    { id: 'reports', label: 'Report', icon: 'fa-chart-bar' }
+                ];
+
+                return (
+                    <nav className="bg-white shadow-lg sticky top-0 z-50">
+                        <div className="max-w-7xl mx-auto px-4">
+                            <div className="flex justify-between items-center h-16">
+                                <div className="flex items-center space-x-3">
+                                    <i className="fas fa-futbol text-3xl gradient-text"></i>
+                                    <div>
+                                        <h1 className="text-xl font-bold gradient-text">Scouting System</h1>
+                                        <p className="text-xs text-gray-500">Database Professionale</p>
+                                    </div>
+                                </div>
+                                
+                                <div className="flex space-x-2">
+                                    {navItems.map(item => (
+                                        <button
+                                            key={item.id}
+                                            onClick={() => setCurrentPage(item.id)}
+                                            className={`px-4 py-2 rounded-lg transition-all duration-300 flex items-center space-x-2 
+                                                ${currentPage === item.id ? 'nav-active' : 'text-gray-600 hover:bg-gray-100'}`}
+                                        >
+                                            <i className={`fas ${item.icon}`}></i>
+                                            <span className="hidden md:inline">{item.label}</span>
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <div className="flex items-center space-x-3">
+                                    <span className="text-sm text-gray-500">
+                                        {players.length} giocatori
+                                    </span>
+                                    <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200">
+                                        <i className="fas fa-user text-gray-600"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+                );
+            }
+
+            // Componente Dashboard
+            function Dashboard() {
+                const stats = {
+                    totalPlayers: players.length,
+                    avgPotential: (players.reduce((acc, p) => acc + p.potentialValue, 0) / players.length).toFixed(1),
+                    highPotential: players.filter(p => p.potentialValue >= 4).length,
+                    positions: {
+                        'Portiere': players.filter(p => p.generalRole === 'Portiere').length,
+                        'Difensore': players.filter(p => p.generalRole === 'Difensore').length,
+                        'Centrocampo': players.filter(p => p.generalRole === 'Centrocampo').length,
+                        'Attaccante': players.filter(p => p.generalRole === 'Attaccante').length
+                    }
+                };
+
+                const recentPlayers = [...players].sort((a, b) => 
+                    new Date(b.scoutingDate) - new Date(a.scoutingDate)
+                ).slice(0, 3);
+
+                return (
+                    <div className="fade-in space-y-6">
+                        <div className="bg-white rounded-xl p-6 shadow-lg">
+                            <h2 className="text-2xl font-bold mb-6 gradient-text">Dashboard Overview</h2>
+                            
+                            {/* Stats Grid */}
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                                <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white">
+                                    <i className="fas fa-users text-3xl mb-2 opacity-80"></i>
+                                    <div className="text-3xl font-bold">{stats.totalPlayers}</div>
+                                    <div className="text-sm opacity-90">Totale Giocatori</div>
+                                </div>
+                                
+                                <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 text-white">
+                                    <i className="fas fa-star text-3xl mb-2 opacity-80"></i>
+                                    <div className="text-3xl font-bold">{stats.avgPotential}</div>
+                                    <div className="text-sm opacity-90">Media Potenziale</div>
+                                </div>
+                                
+                                <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 text-white">
+                                    <i className="fas fa-gem text-3xl mb-2 opacity-80"></i>
+                                    <div className="text-3xl font-bold">{stats.highPotential}</div>
+                                    <div className="text-sm opacity-90">Alto Potenziale (4+)</div>
+                                </div>
+                                
+                                <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl p-4 text-white">
+                                    <i className="fas fa-chart-line text-3xl mb-2 opacity-80"></i>
+                                    <div className="text-3xl font-bold">{recentPlayers.length}</div>
+                                    <div className="text-sm opacity-90">Aggiunti Recente</div>
+                                </div>
+                            </div>
+
+                            {/* Distribuzione Ruoli */}
+                            <div className="mb-8">
+                                <h3 className="text-lg font-semibold mb-4">Distribuzione per Ruolo</h3>
+                                <div className="space-y-3">
+                                    {Object.entries(stats.positions).map(([role, count]) => (
+                                        <div key={role} className="flex items-center">
+                                            <div className="w-32 text-sm font-medium text-gray-600">{role}</div>
+                                            <div className="flex-1 bg-gray-200 rounded-full h-8 relative overflow-hidden">
+                                                <div 
+                                                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transition-all duration-1000 flex items-center justify-end pr-3"
+                                                    style={{width: `${(count / players.length) * 100}%`}}
+                                                >
+                                                    <span className="text-white text-xs font-bold">{count}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Recent Players */}
+                            <div>
+                                <h3 className="text-lg font-semibold mb-4">Ultimi Giocatori Aggiunti</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    {recentPlayers.map(player => (
+                                        <div key={player.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+                                             onClick={() => {
+                                                 setSelectedPlayer(player);
+                                                 setCurrentPage('database');
+                                             }}>
+                                            <div className="flex justify-between items-start mb-2">
+                                                <h4 className="font-semibold">{player.name}</h4>
+                                                <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                                                    {player.generalRole}
+                                                </span>
+                                            </div>
+                                            <p className="text-sm text-gray-600 mb-1">{player.team}</p>
+                                            <div className="flex justify-between items-center">
+                                                <div className="text-sm">
+                                                    {'⭐'.repeat(player.potentialValue)}
+                                                </div>
+                                                <span className="text-xs text-gray-500">{player.scoutingDate}</span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // Componente Database con Filtri Avanzati
+            function Database() {
+                const [filters, setFilters] = useState({
+                    search: '',
+                    role: '',
+                    minPotential: '',
+                    maxAge: '',
+                    nationality: '',
+                    foot: '',
+                    team: '',
+                    priority: ''
+                });
+                const [sortBy, setSortBy] = useState('name');
+                const [sortOrder, setSortOrder] = useState('asc');
+                const [showFilters, setShowFilters] = useState(true);
+
+                // Filtra giocatori
+                const filteredPlayers = useMemo(() => {
+                    let result = [...players];
+
+                    // Applica filtri
+                    if (filters.search) {
+                        result = result.filter(p => 
+                            p.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+                            p.team.toLowerCase().includes(filters.search.toLowerCase()) ||
+                            p.nationality.toLowerCase().includes(filters.search.toLowerCase())
+                        );
+                    }
+                    if (filters.role) {
+                        result = result.filter(p => p.generalRole === filters.role);
+                    }
+                    if (filters.minPotential) {
+                        result = result.filter(p => p.potentialValue >= parseInt(filters.minPotential));
+                    }
+                    if (filters.maxAge) {
+                        result = result.filter(p => p.age <= parseInt(filters.maxAge));
+                    }
+                    if (filters.nationality) {
+                        result = result.filter(p => p.nationality.includes(filters.nationality));
+                    }
+                    if (filters.foot) {
+                        result = result.filter(p => p.preferredFoot === filters.foot);
+                    }
+                    if (filters.team) {
+                        result = result.filter(p => p.team.toLowerCase().includes(filters.team.toLowerCase()));
+                    }
+                    if (filters.priority) {
+                        result = result.filter(p => p.priority === filters.priority);
+                    }
+
+                    // Ordina
+                    result.sort((a, b) => {
+                        let aVal = a[sortBy];
+                        let bVal = b[sortBy];
+                        
+                        if (typeof aVal === 'string') {
+                            aVal = aVal.toLowerCase();
+                            bVal = bVal.toLowerCase();
+                        }
+                        
+                        if (sortOrder === 'asc') {
+                            return aVal > bVal ? 1 : -1;
+                        } else {
+                            return aVal < bVal ? 1 : -1;
+                        }
+                    });
+
+                    return result;
+                }, [filters, sortBy, sortOrder]);
+
+                // Reset filtri
+                const resetFilters = () => {
+                    setFilters({
+                        search: '',
+                        role: '',
+                        minPotential: '',
+                        maxAge: '',
+                        nationality: '',
+                        foot: '',
+                        team: '',
+                        priority: ''
+                    });
+                };
+
+                // Conta filtri attivi
+                const activeFiltersCount = Object.values(filters).filter(v => v !== '').length;
+
+                return (
+                    <div className="fade-in">
+                        {/* Controlli e Filtri */}
+                        <div className="bg-white rounded-xl p-6 shadow-lg mb-6">
+                            <div className="flex justify-between items-center mb-4">
+                                <h2 className="text-2xl font-bold gradient-text">Database Giocatori</h2>
+                                <div className="flex items-center space-x-3">
+                                    <button
+                                        onClick={() => setShowFilters(!showFilters)}
+                                        className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                                    >
+                                        <i className="fas fa-filter mr-2"></i>
+                                        Filtri {activeFiltersCount > 0 && `(${activeFiltersCount})`}
+                                    </button>
+                                    <div className="flex bg-gray-100 rounded-lg p-1">
+                                        <button
+                                            onClick={() => setViewMode('cards')}
+                                            className={`px-3 py-1 rounded ${viewMode === 'cards' ? 'bg-white shadow' : ''}`}
+                                        >
+                                            <i className="fas fa-th-large"></i>
+                                        </button>
+                                        <button
+                                            onClick={() => setViewMode('table')}
+                                            className={`px-3 py-1 rounded ${viewMode === 'table' ? 'bg-white shadow' : ''}`}
+                                        >
+                                            <i className="fas fa-table"></i>
+                                        </button>
+                                        <button
+                                            onClick={() => setViewMode('compact')}
+                                            className={`px-3 py-1 rounded ${viewMode === 'compact' ? 'bg-white shadow' : ''}`}
+                                        >
+                                            <i className="fas fa-list"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Pannello Filtri */}
+                            {showFilters && (
+                                <div className="border-t pt-4 mt-4 slide-in">
+                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                        {/* Ricerca */}
+                                        <div className="relative">
+                                            <i className="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                            <input
+                                                type="text"
+                                                placeholder="Cerca nome, squadra..."
+                                                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent field-focus"
+                                                value={filters.search}
+                                                onChange={(e) => setFilters({...filters, search: e.target.value})}
+                                            />
+                                        </div>
+
+                                        {/* Ruolo */}
+                                        <select
+                                            className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                            value={filters.role}
+                                            onChange={(e) => setFilters({...filters, role: e.target.value})}
+                                        >
+                                            <option value="">Tutti i ruoli</option>
+                                            <option value="Portiere">Portiere</option>
+                                            <option value="Difensore">Difensore</option>
+                                            <option value="Centrocampo">Centrocampo</option>
+                                            <option value="Attaccante">Attaccante</option>
+                                        </select>
+
+                                        {/* Potenziale Minimo */}
+                                        <select
+                                            className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                            value={filters.minPotential}
+                                            onChange={(e) => setFilters({...filters, minPotential: e.target.value})}
+                                        >
+                                            <option value="">Potenziale...</option>
+                                            <option value="2">≥ 2 ⭐</option>
+                                            <option value="3">≥ 3 ⭐</option>
+                                            <option value="4">≥ 4 ⭐</option>
+                                            <option value="5">5 ⭐</option>
+                                        </select>
+
+                                        {/* Età Massima */}
+                                        <select
+                                            className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                            value={filters.maxAge}
+                                            onChange={(e) => setFilters({...filters, maxAge: e.target.value})}
+                                        >
+                                            <option value="">Età max...</option>
+                                            <option value="21">≤ 21 anni</option>
+                                            <option value="23">≤ 23 anni</option>
+                                            <option value="25">≤ 25 anni</option>
+                                            <option value="30">≤ 30 anni</option>
+                                        </select>
+
+                                        {/* Piede */}
+                                        <select
+                                            className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                            value={filters.foot}
+                                            onChange={(e) => setFilters({...filters, foot: e.target.value})}
+                                        >
+                                            <option value="">Piede...</option>
+                                            <option value="Destro">Destro</option>
+                                            <option value="Sinistro">Sinistro</option>
+                                            <option value="Ambidestro">Ambidestro</option>
+                                        </select>
+
+                                        {/* Priorità */}
+                                        <select
+                                            className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                            value={filters.priority}
+                                            onChange={(e) => setFilters({...filters, priority: e.target.value})}
+                                        >
+                                            <option value="">Priorità...</option>
+                                            <option value="Alta">🔴 Alta</option>
+                                            <option value="Media">🟡 Media</option>
+                                            <option value="Bassa">🟢 Bassa</option>
+                                        </select>
+
+                                        {/* Squadra */}
+                                        <input
+                                            type="text"
+                                            placeholder="Squadra..."
+                                            className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                            value={filters.team}
+                                            onChange={(e) => setFilters({...filters, team: e.target.value})}
+                                        />
+
+                                        {/* Reset */}
+                                        <button
+                                            onClick={resetFilters}
+                                            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                                        >
+                                            <i className="fas fa-times mr-2"></i>
+                                            Reset Filtri
+                                        </button>
+                                    </div>
+
+                                    {/* Filtri Attivi */}
+                                    {activeFiltersCount > 0 && (
+                                        <div className="mt-4 flex flex-wrap gap-2">
+                                            {Object.entries(filters).map(([key, value]) => 
+                                                value && (
+                                                    <span key={key} className="filter-tag">
+                                                        {key}: {value}
+                                                        <button
+                                                            onClick={() => setFilters({...filters, [key]: ''})}
+                                                            className="ml-1 hover:text-red-200"
+                                                        >
+                                                            ×
+                                                        </button>
+                                                    </span>
+                                                )
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Risultati */}
+                            <div className="mt-4 flex justify-between items-center">
+                                <span className="text-gray-600">
+                                    Trovati <strong>{filteredPlayers.length}</strong> giocatori su {players.length}
+                                </span>
+                                <div className="flex items-center space-x-2">
+                                    <span className="text-sm text-gray-600">Ordina per:</span>
+                                    <select
+                                        className="px-3 py-1 border rounded-lg text-sm"
+                                        value={sortBy}
+                                        onChange={(e) => setSortBy(e.target.value)}
+                                    >
+                                        <option value="name">Nome</option>
+                                        <option value="age">Età</option>
+                                        <option value="potentialValue">Potenziale</option>
+                                        <option value="team">Squadra</option>
+                                        <option value="scoutingDate">Data Scout</option>
+                                    </select>
+                                    <button
+                                        onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                                        className="px-2 py-1 border rounded-lg hover:bg-gray-50"
+                                    >
+                                        <i className={`fas fa-arrow-${sortOrder === 'asc' ? 'up' : 'down'}`}></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Vista Giocatori */}
+                        <div className="fade-in">
+                            {filteredPlayers.length === 0 ? (
+                                <div className="bg-white rounded-xl p-12 text-center">
+                                    <i className="fas fa-search text-6xl text-gray-300 mb-4"></i>
+                                    <p className="text-xl text-gray-600">Nessun giocatore trovato</p>
+                                    <p className="text-gray-500 mt-2">Prova a modificare i filtri</p>
+                                </div>
+                            ) : (
+                                <>
+                                    {viewMode === 'cards' && (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                            {filteredPlayers.map(player => (
+                                                <PlayerCard 
+                                                    key={player.id} 
+                                                    player={player} 
+                                                    onSelect={() => setSelectedPlayer(player)}
+                                                    onDelete={() => deletePlayer(player.id)}
+                                                />
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    {viewMode === 'table' && (
+                                        <PlayerTable 
+                                            players={filteredPlayers}
+                                            onSelect={setSelectedPlayer}
+                                            onDelete={deletePlayer}
+                                        />
+                                    )}
+
+                                    {viewMode === 'compact' && (
+                                        <CompactList
+                                            players={filteredPlayers}
+                                            onSelect={setSelectedPlayer}
+                                            onDelete={deletePlayer}
+                                        />
+                                    )}
+                                </>
+                            )}
+                        </div>
+                    </div>
+                );
+            }
+
+            // Componente Card Giocatore
+            function PlayerCard({ player, onSelect, onDelete }) {
+                const getPriorityColor = (priority) => {
+                    switch(priority) {
+                        case 'Alta': return 'bg-red-100 text-red-700 border-red-300';
+                        case 'Media': return 'bg-yellow-100 text-yellow-700 border-yellow-300';
+                        case 'Bassa': return 'bg-green-100 text-green-700 border-green-300';
+                        default: return 'bg-gray-100 text-gray-700';
+                    }
+                };
+
+                const getFeedbackColor = (feedback) => {
+                    switch(feedback) {
+                        case 'Mi piace': return 'bg-emerald-500';
+                        case 'Non mi piace': return 'bg-red-500';
+                        case 'Da valutare': return 'bg-yellow-500';
+                        default: return 'bg-gray-400';
+                    }
+                };
+
+                return (
+                    <div className="bg-white rounded-xl shadow-lg overflow-hidden card-hover cursor-pointer"
+                         onClick={() => onSelect(player)}>
+                        {/* Header con gradiente */}
+                        <div className="h-2 bg-gradient-to-r from-purple-500 to-blue-500"></div>
+                        
+                        <div className="p-6">
+                            {/* Top section */}
+                            <div className="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 className="text-lg font-bold text-gray-800">{player.name}</h3>
+                                    <p className="text-sm text-gray-600">{player.nationality}</p>
+                                </div>
+                                <span className={`px-2 py-1 rounded-full text-xs border ${getPriorityColor(player.priority)}`}>
+                                    {player.priority || 'N/A'}
+                                </span>
+                            </div>
+
+                            {/* Info principali */}
+                            <div className="space-y-2 mb-4">
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-600">Squadra:</span>
+                                    <span className="font-medium">{player.team}</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-600">Ruolo:</span>
+                                    <span className="font-medium">{player.generalRole}</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-600">Età:</span>
+                                    <span className="font-medium">{player.age} anni</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-600">Piede:</span>
+                                    <span className="font-medium">{player.preferredFoot}</span>
+                                </div>
+                            </div>
+
+                            {/* Valutazioni */}
+                            <div className="border-t pt-4">
+                                <div className="grid grid-cols-2 gap-3 mb-3">
+                                    <div className="text-center">
+                                        <p className="text-xs text-gray-500 mb-1">Attuale</p>
+                                        <div className="text-yellow-500">
+                                            {'★'.repeat(player.currentValue)}{'☆'.repeat(5-player.currentValue)}
+                                        </div>
+                                    </div>
+                                    <div className="text-center">
+                                        <p className="text-xs text-gray-500 mb-1">Potenziale</p>
+                                        <div className="text-emerald-500">
+                                            {'★'.repeat(player.potentialValue)}{'☆'.repeat(5-player.potentialValue)}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Footer */}
+                                <div className="flex justify-between items-center pt-3 border-t">
+                                    <div className="flex items-center space-x-2">
+                                        <div className={`w-2 h-2 rounded-full ${getFeedbackColor(player.directorFeedback)}`}></div>
+                                        <span className="text-xs text-gray-600">{player.directorFeedback}</span>
+                                    </div>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onDelete();
+                                        }}
+                                        className="text-red-500 hover:text-red-700 transition-colors"
+                                    >
+                                        <i className="fas fa-trash text-sm"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // Componente Tabella
+            function PlayerTable({ players, onSelect, onDelete }) {
+                return (
+                    <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+                        <div className="overflow-x-auto">
+                            <table className="custom-table w-full">
+                                <thead>
+                                    <tr>
+                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                                            Nome
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                                            Età
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                                            Squadra
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                                            Ruolo
+                                        </th>
+                                        <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">
+                                            Potenziale
+                                        </th>
+                                        <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">
+                                            Priorità
+                                        </th>
+                                        <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">
+                                            Azioni
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200">
+                                    {players.map(player => (
+                                        <tr key={player.id} className="hover:bg-gray-50 cursor-pointer"
+                                            onClick={() => onSelect(player)}>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="flex items-center">
+                                                    <div>
+                                                        <div className="text-sm font-medium text-gray-900">
+                                                            {player.name}
+                                                        </div>
+                                                        <div className="text-sm text-gray-500">
+                                                            {player.nationality}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className="text-sm text-gray-900">{player.age}</span>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className="text-sm text-gray-900">{player.team}</span>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className="text-sm text-gray-900">{player.generalRole}</span>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                                                <span className="text-yellow-500">
+                                                    {'★'.repeat(player.potentialValue)}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                                                <span className={`px-2 py-1 text-xs rounded-full
+                                                    ${player.priority === 'Alta' ? 'bg-red-100 text-red-700' :
+                                                      player.priority === 'Media' ? 'bg-yellow-100 text-yellow-700' :
+                                                      'bg-gray-100 text-gray-700'}`}>
+                                                    {player.priority || 'N/A'}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        onDelete(player.id);
+                                                    }}
+                                                    className="text-red-500 hover:text-red-700"
+                                                >
+                                                    <i className="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                );
+            }
+
+            // Vista Compatta
+            function CompactList({ players, onSelect, onDelete }) {
+                return (
+                    <div className="bg-white rounded-xl shadow-lg p-4 space-y-2">
+                        {players.map(player => (
+                            <div key={player.id} 
+                                 className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
+                                 onClick={() => onSelect(player)}>
+                                <div className="flex items-center space-x-4 flex-1">
+                                    <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white font-bold">
+                                        {player.name.charAt(0)}
+                                    </div>
+                                    <div className="flex-1">
+                                        <div className="font-semibold">{player.name}</div>
+                                        <div className="text-sm text-gray-600">
+                                            {player.team} • {player.generalRole} • {player.age} anni
+                                        </div>
+                                    </div>
+                                    <div className="text-yellow-500">
+                                        {'★'.repeat(player.potentialValue)}
+                                    </div>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onDelete(player.id);
+                                        }}
+                                        className="text-red-500 hover:text-red-700 ml-4"
+                                    >
+                                        <i className="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                );
+            }
+
+            // Form Aggiunta Giocatore (Pagina Separata)
+            function AddPlayerForm() {
+                const [formData, setFormData] = useState({
+                    name: '',
+                    birthYear: new Date().getFullYear() - 20,
+                    age: 20,
+                    team: '',
+                    nationality: '',
+                    generalRole: 'Centrocampo',
+                    specificPosition: '',
+                    functions: '',
+                    preferredFoot: 'Destro',
+                    height: 180,
+                    weight: 75,
+                    athleticism: '',
+                    technicalSkills: '',
+                    tacticalSkills: '',
+                    potentialValue: 3,
+                    currentValue: 2,
+                    dataPotentialValue: 3,
+                    marketValue: '',
+                    contractUntil: '',
+                    notes: '',
+                    directorFeedback: '',
+                    checkType: 'Live/Video',
+                    scoutName: '',
+                    injuries: 'Nessuna',
+                    strongPoints: [],
+                    weakPoints: [],
+                    comparison: '',
+                    recommendedAction: 'Monitorare',
+                    priority: 'Media'
+                });
+
+                const [currentStep, setCurrentStep] = useState(1);
+                const totalSteps = 4;
+
+                const handleSubmit = (e) => {
+                    e.preventDefault();
+                    addPlayer(formData);
+                };
+
+                const updateAge = (year) => {
+                    const age = new Date().getFullYear() - year;
+                    setFormData({...formData, birthYear: year, age: age});
+                };
+
+                return (
+                    <div className="fade-in max-w-4xl mx-auto">
+                        <div className="bg-white rounded-xl shadow-lg p-8">
+                            <div className="mb-8">
+                                <h2 className="text-2xl font-bold gradient-text mb-2">Aggiungi Nuovo Giocatore</h2>
+                                <p className="text-gray-600">Compila tutti i campi per aggiungere un nuovo giocatore al database</p>
+                            </div>
+
+                            {/* Progress Steps */}
+                            <div className="flex justify-between mb-8">
+                                {[1, 2, 3, 4].map(step => (
+                                    <div key={step} className="flex items-center flex-1">
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold
+                                            ${currentStep >= step ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white' : 'bg-gray-200 text-gray-600'}`}>
+                                            {step}
+                                        </div>
+                                        {step < 4 && (
+                                            <div className={`flex-1 h-1 mx-2 
+                                                ${currentStep > step ? 'bg-gradient-to-r from-purple-500 to-blue-500' : 'bg-gray-200'}`}></div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+
+                            <form onSubmit={handleSubmit}>
+                                {/* Step 1: Informazioni Base */}
+                                {currentStep === 1 && (
+                                    <div className="space-y-6 fade-in">
+                                        <h3 className="text-lg font-semibold mb-4">📋 Informazioni Base</h3>
+                                        
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Nome Completo *
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                                    value={formData.functions}
+                                                    onChange={(e) => setFormData({...formData, functions: e.target.value})}
+                                                    placeholder="Es. Box-to-Box, Regista"
+                                                />
+                                            </div>
+
+                                            <div className="md:col-span-2">
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Caratteristiche Atletiche
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                                    value={formData.athleticism}
+                                                    onChange={(e) => setFormData({...formData, athleticism: e.target.value})}
+                                                    placeholder="Es. Velocità, Resistenza, Forza fisica"
+                                                />
+                                            </div>
+
+                                            <div className="md:col-span-2">
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Abilità Tecniche
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                                    value={formData.technicalSkills}
+                                                    onChange={(e) => setFormData({...formData, technicalSkills: e.target.value})}
+                                                    placeholder="Es. Controllo palla, Passaggi, Tiro"
+                                                />
+                                            </div>
+
+                                            <div className="md:col-span-2">
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Abilità Tattiche
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                                    value={formData.tacticalSkills}
+                                                    onChange={(e) => setFormData({...formData, tacticalSkills: e.target.value})}
+                                                    placeholder="Es. Lettura del gioco, Posizionamento"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Step 3: Valutazioni */}
+                                {currentStep === 3 && (
+                                    <div className="space-y-6 fade-in">
+                                        <h3 className="text-lg font-semibold mb-4">⭐ Valutazioni e Analisi</h3>
+                                        
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Valore Attuale (1-5) ⭐
+                                                </label>
+                                                <input
+                                                    type="range"
+                                                    min="1"
+                                                    max="5"
+                                                    className="w-full"
+                                                    value={formData.currentValue}
+                                                    onChange={(e) => setFormData({...formData, currentValue: parseInt(e.target.value)})}
+                                                />
+                                                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                                                    <span>Scarso</span>
+                                                    <span className="font-bold text-lg">{formData.currentValue}</span>
+                                                    <span>Eccellente</span>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Potenziale (1-5) ⭐
+                                                </label>
+                                                <input
+                                                    type="range"
+                                                    min="1"
+                                                    max="5"
+                                                    className="w-full"
+                                                    value={formData.potentialValue}
+                                                    onChange={(e) => setFormData({...formData, potentialValue: parseInt(e.target.value)})}
+                                                />
+                                                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                                                    <span>Scarso</span>
+                                                    <span className="font-bold text-lg">{formData.potentialValue}</span>
+                                                    <span>Eccellente</span>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Valore di Mercato
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                                    value={formData.marketValue}
+                                                    onChange={(e) => setFormData({...formData, marketValue: e.target.value})}
+                                                    placeholder="Es. 2.5M €"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Contratto fino al
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                                    value={formData.contractUntil}
+                                                    onChange={(e) => setFormData({...formData, contractUntil: e.target.value})}
+                                                    placeholder="Es. 2026"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Priorità
+                                                </label>
+                                                <select
+                                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                                    value={formData.priority}
+                                                    onChange={(e) => setFormData({...formData, priority: e.target.value})}
+                                                >
+                                                    <option value="Alta">🔴 Alta</option>
+                                                    <option value="Media">🟡 Media</option>
+                                                    <option value="Bassa">🟢 Bassa</option>
+                                                </select>
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Azione Consigliata
+                                                </label>
+                                                <select
+                                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                                    value={formData.recommendedAction}
+                                                    onChange={(e) => setFormData({...formData, recommendedAction: e.target.value})}
+                                                >
+                                                    <option value="Acquistare">Acquistare</option>
+                                                    <option value="Trattare">Trattare</option>
+                                                    <option value="Monitorare">Monitorare</option>
+                                                    <option value="Approfondire">Approfondire</option>
+                                                    <option value="Scartare">Scartare</option>
+                                                </select>
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Feedback Direttore
+                                                </label>
+                                                <select
+                                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                                    value={formData.directorFeedback}
+                                                    onChange={(e) => setFormData({...formData, directorFeedback: e.target.value})}
+                                                >
+                                                    <option value="">Seleziona...</option>
+                                                    <option value="Mi piace">Mi piace</option>
+                                                    <option value="Non mi piace">Non mi piace</option>
+                                                    <option value="Da valutare">Da valutare</option>
+                                                </select>
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Tipo di Analisi
+                                                </label>
+                                                <select
+                                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                                    value={formData.checkType}
+                                                    onChange={(e) => setFormData({...formData, checkType: e.target.value})}
+                                                >
+                                                    <option value="Live/Video">Live/Video</option>
+                                                    <option value="Dati">Solo Dati</option>
+                                                    <option value="Live/Video + Dati">Live/Video + Dati</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Step 4: Note e Dettagli */}
+                                {currentStep === 4 && (
+                                    <div className="space-y-6 fade-in">
+                                        <h3 className="text-lg font-semibold mb-4">📝 Note e Osservazioni</h3>
+                                        
+                                        <div className="space-y-4">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Nome Scout
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                                    value={formData.scoutName}
+                                                    onChange={(e) => setFormData({...formData, scoutName: e.target.value})}
+                                                    placeholder="Es. Marco Rossi"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Confronto con
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                                    value={formData.comparison}
+                                                    onChange={(e) => setFormData({...formData, comparison: e.target.value})}
+                                                    placeholder="Es. Stile simile a De Bruyne"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Storico Infortuni
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                                    value={formData.injuries}
+                                                    onChange={(e) => setFormData({...formData, injuries: e.target.value})}
+                                                    placeholder="Es. Nessuna, Caviglia (2023)"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Note Dettagliate
+                                                </label>
+                                                <textarea
+                                                    rows="6"
+                                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                                    value={formData.notes}
+                                                    onChange={(e) => setFormData({...formData, notes: e.target.value})}
+                                                    placeholder="Inserisci osservazioni dettagliate sul giocatore..."
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Navigation Buttons */}
+                                <div className="flex justify-between mt-8">
+                                    <button
+                                        type="button"
+                                        onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
+                                        className={`px-6 py-2 rounded-lg transition-colors ${
+                                            currentStep === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        }`}
+                                        disabled={currentStep === 1}
+                                    >
+                                        <i className="fas fa-arrow-left mr-2"></i>
+                                        Indietro
+                                    </button>
+
+                                    {currentStep < totalSteps ? (
+                                        <button
+                                            type="button"
+                                            onClick={() => setCurrentStep(Math.min(totalSteps, currentStep + 1))}
+                                            className="px-6 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:from-purple-600 hover:to-blue-600 transition-all"
+                                        >
+                                            Avanti
+                                            <i className="fas fa-arrow-right ml-2"></i>
+                                        </button>
+                                    ) : (
+                                        <button
+                                            type="submit"
+                                            className="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all font-semibold"
+                                        >
+                                            <i className="fas fa-save mr-2"></i>
+                                            Salva Giocatore
+                                        </button>
+                                    )}
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                );
+            }
+
+            // Modal Dettaglio Giocatore
+            function PlayerDetailModal({ player, onClose, onEdit, onDelete }) {
+                if (!player) return null;
+
+                return (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                        <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                            <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
+                                <h2 className="text-2xl font-bold gradient-text">Dettaglio Giocatore</h2>
+                                <button
+                                    onClick={onClose}
+                                    className="text-gray-500 hover:text-gray-700 text-2xl"
+                                >
+                                    <i className="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            <div className="p-6">
+                                {/* Header Info */}
+                                <div className="flex items-start justify-between mb-6">
+                                    <div>
+                                        <h3 className="text-3xl font-bold text-gray-800 mb-2">{player.name}</h3>
+                                        <div className="flex items-center space-x-4 text-gray-600">
+                                            <span>{player.nationality}</span>
+                                            <span>•</span>
+                                            <span>{player.age} anni ({player.birthYear})</span>
+                                            <span>•</span>
+                                            <span>{player.team}</span>
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <div className="text-sm text-gray-500 mb-1">Priorità</div>
+                                        <span className={`px-3 py-1 rounded-full text-sm font-semibold
+                                            ${player.priority === 'Alta' ? 'bg-red-100 text-red-700' :
+                                              player.priority === 'Media' ? 'bg-yellow-100 text-yellow-700' :
+                                              'bg-green-100 text-green-700'}`}>
+                                            {player.priority}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Tabs */}
+                                <div className="border-b mb-6">
+                                    <div className="flex space-x-6">
+                                        {['Generale', 'Tecnico', 'Valutazioni', 'Note'].map(tab => (
+                                            <button key={tab} className="pb-2 border-b-2 border-purple-500 font-semibold text-purple-600">
+                                                {tab}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Content Grid */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {/* Caratteristiche Fisiche */}
+                                    <div className="bg-gray-50 rounded-lg p-4">
+                                        <h4 className="font-semibold text-gray-700 mb-3">Caratteristiche Fisiche</h4>
+                                        <div className="space-y-2 text-sm">
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-600">Altezza:</span>
+                                                <span className="font-medium">{player.height} cm</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-600">Peso:</span>
+                                                <span className="font-medium">{player.weight} kg</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-600">Piede:</span>
+                                                <span className="font-medium">{player.preferredFoot}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Informazioni Tecniche */}
+                                    <div className="bg-gray-50 rounded-lg p-4">
+                                        <h4 className="font-semibold text-gray-700 mb-3">Informazioni Tecniche</h4>
+                                        <div className="space-y-2 text-sm">
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-600">Ruolo:</span>
+                                                <span className="font-medium">{player.generalRole}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-600">Posizione:</span>
+                                                <span className="font-medium">{player.specificPosition}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-600">Stile:</span>
+                                                <span className="font-medium">{player.functions}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Valutazioni */}
+                                    <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg p-4">
+                                        <h4 className="font-semibold text-gray-700 mb-3">Valutazioni</h4>
+                                        <div className="space-y-3">
+                                            <div>
+                                                <div className="flex justify-between mb-1">
+                                                    <span className="text-sm text-gray-600">Valore Attuale</span>
+                                                    <span className="text-yellow-500">{'★'.repeat(player.currentValue)}</span>
+                                                </div>
+                                                <div className="w-full bg-gray-200 rounded-full h-2">
+                                                    <div className="bg-yellow-500 h-2 rounded-full" 
+                                                         style={{width: `${(player.currentValue/5)*100}%`}}></div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div className="flex justify-between mb-1">
+                                                    <span className="text-sm text-gray-600">Potenziale</span>
+                                                    <span className="text-emerald-500">{'★'.repeat(player.potentialValue)}</span>
+                                                </div>
+                                                <div className="w-full bg-gray-200 rounded-full h-2">
+                                                    <div className="bg-emerald-500 h-2 rounded-full" 
+                                                         style={{width: `${(player.potentialValue/5)*100}%`}}></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Info Mercato */}
+                                    <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-4">
+                                        <h4 className="font-semibold text-gray-700 mb-3">Informazioni Mercato</h4>
+                                        <div className="space-y-2 text-sm">
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-600">Valore:</span>
+                                                <span className="font-medium text-green-600">{player.marketValue || 'N/D'}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-600">Contratto:</span>
+                                                <span className="font-medium">{player.contractUntil || 'N/D'}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-600">Azione:</span>
+                                                <span className="font-medium">{player.recommendedAction}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Note */}
+                                {player.notes && (
+                                    <div className="mt-6 bg-amber-50 border border-amber-200 rounded-lg p-4">
+                                        <h4 className="font-semibold text-gray-700 mb-2">Note Scout</h4>
+                                        <p className="text-gray-700 whitespace-pre-wrap">{player.notes}</p>
+                                    </div>
+                                )}
+
+                                {/* Footer Actions */}
+                                <div className="mt-6 pt-6 border-t flex justify-between">
+                                    <div className="text-sm text-gray-500">
+                                        Scout: {player.scoutName || 'N/D'} • Data: {player.scoutingDate || 'N/D'}
+                                    </div>
+                                    <div className="flex space-x-3">
+                                        <button
+                                            onClick={() => onDelete(player.id)}
+                                            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                                        >
+                                            <i className="fas fa-trash mr-2"></i>
+                                            Elimina
+                                        </button>
+                                        <button
+                                            onClick={onClose}
+                                            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+                                        >
+                                            Chiudi
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // Componente Report (placeholder)
+            function Reports() {
+                const topPlayers = [...players]
+                    .sort((a, b) => b.potentialValue - a.potentialValue)
+                    .slice(0, 5);
+
+                return (
+                    <div className="fade-in">
+                        <div className="bg-white rounded-xl p-6 shadow-lg">
+                            <h2 className="text-2xl font-bold gradient-text mb-6">Report e Statistiche</h2>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <h3 className="text-lg font-semibold mb-4">Top 5 per Potenziale</h3>
+                                    <div className="space-y-2">
+                                        {topPlayers.map((player, index) => (
+                                            <div key={player.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                                <div className="flex items-center space-x-3">
+                                                    <span className="text-2xl font-bold text-gray-400">#{index + 1}</span>
+                                                    <div>
+                                                        <div className="font-semibold">{player.name}</div>
+                                                        <div className="text-sm text-gray-600">{player.team}</div>
+                                                    </div>
+                                                </div>
+                                                <div className="text-yellow-500">
+                                                    {'★'.repeat(player.potentialValue)}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h3 className="text-lg font-semibold mb-4">Azioni Consigliate</h3>
+                                    <div className="space-y-3">
+                                        {players
+                                            .filter(p => p.recommendedAction === 'Acquistare' || p.recommendedAction === 'Trattare')
+                                            .slice(0, 5)
+                                            .map(player => (
+                                                <div key={player.id} className="flex items-center justify-between p-3 border rounded-lg">
+                                                    <div>
+                                                        <div className="font-semibold">{player.name}</div>
+                                                        <div className="text-sm text-gray-600">{player.marketValue}</div>
+                                                    </div>
+                                                    <span className={`px-3 py-1 rounded-full text-xs font-semibold
+                                                        ${player.recommendedAction === 'Acquistare' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
+                                                        {player.recommendedAction}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // Notification Component
+            function Notification() {
+                if (!notification) return null;
+
+                return (
+                    <div className={`fixed top-20 right-4 px-6 py-3 rounded-lg shadow-lg z-50 fade-in
+                        ${notification.type === 'success' ? 'bg-green-500' : 
+                          notification.type === 'error' ? 'bg-red-500' : 'bg-blue-500'} text-white`}>
+                        {notification.message}
+                    </div>
+                );
+            }
+
+            // Main Render
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+                    <Navigation />
+                    <Notification />
+                    
+                    <div className="max-w-7xl mx-auto px-4 py-8">
+                        {currentPage === 'dashboard' && <Dashboard />}
+                        {currentPage === 'database' && <Database />}
+                        {currentPage === 'add' && <AddPlayerForm />}
+                        {currentPage === 'reports' && <Reports />}
+                    </div>
+
+                    {selectedPlayer && (
+                        <PlayerDetailModal
+                            player={selectedPlayer}
+                            onClose={() => setSelectedPlayer(null)}
+                            onEdit={() => {}}
+                            onDelete={deletePlayer}
+                        />
+                    )}
+                </div>
+            );
+        }
+
+        // Render App
+        ReactDOM.render(<ScoutingApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>
+                                                    type="text"
+                                                    required
+                                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                                    value={formData.name}
+                                                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                                    placeholder="Es. Mario Rossi"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Anno di Nascita *
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    required
+                                                    min="1990"
+                                                    max="2010"
+                                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                                    value={formData.birthYear}
+                                                    onChange={(e) => updateAge(parseInt(e.target.value))}
+                                                />
+                                                <span className="text-sm text-gray-500 mt-1">Età: {formData.age} anni</span>
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Squadra Attuale *
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    required
+                                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                                    value={formData.team}
+                                                    onChange={(e) => setFormData({...formData, team: e.target.value})}
+                                                    placeholder="Es. Juventus U23"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Nazionalità
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                                    value={formData.nationality}
+                                                    onChange={(e) => setFormData({...formData, nationality: e.target.value})}
+                                                    placeholder="Es. 🇮🇹 Italia"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Altezza (cm)
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    min="150"
+                                                    max="210"
+                                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                                    value={formData.height}
+                                                    onChange={(e) => setFormData({...formData, height: parseInt(e.target.value)})}
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Peso (kg)
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    min="50"
+                                                    max="120"
+                                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                                    value={formData.weight}
+                                                    onChange={(e) => setFormData({...formData, weight: parseInt(e.target.value)})}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Step 2: Caratteristiche Tecniche */}
+                                {currentStep === 2 && (
+                                    <div className="space-y-6 fade-in">
+                                        <h3 className="text-lg font-semibold mb-4">⚽ Caratteristiche Tecniche</h3>
+                                        
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Ruolo Principale *
+                                                </label>
+                                                <select
+                                                    required
+                                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                                    value={formData.generalRole}
+                                                    onChange={(e) => setFormData({...formData, generalRole: e.target.value})}
+                                                >
+                                                    <option value="Portiere">Portiere</option>
+                                                    <option value="Difensore">Difensore</option>
+                                                    <option value="Centrocampo">Centrocampo</option>
+                                                    <option value="Attaccante">Attaccante</option>
+                                                </select>
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Posizione Specifica
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                                    value={formData.specificPosition}
+                                                    onChange={(e) => setFormData({...formData, specificPosition: e.target.value})}
+                                                    placeholder="Es. Mediano, Terzino Sinistro"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Piede Preferito *
+                                                </label>
+                                                <select
+                                                    required
+                                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 field-focus"
+                                                    value={formData.preferredFoot}
+                                                    onChange={(e) => setFormData({...formData, preferredFoot: e.target.value})}
+                                                >
+                                                    <option value="Destro">Destro</option>
+                                                    <option value="Sinistro">Sinistro</option>
+                                                    <option value="Ambidestro">Ambidestro</option>
+                                                </select>
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Funzioni/Stile di Gioco
+                                                </label>
+                                                <input

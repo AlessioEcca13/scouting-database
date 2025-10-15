@@ -10,28 +10,30 @@ function Navigation({ currentPage, setCurrentPage, playersCount }) {
   ];
 
   return (
-    <nav className="bg-white shadow-lg sticky top-0 z-50">
+    <nav className="bg-gradient-to-r from-blue-600 to-blue-700 shadow-lg sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           {/* Logo e Titolo */}
           <div className="flex items-center space-x-3">
-            <i className="fas fa-futbol text-3xl text-gradient"></i>
+            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+              <i className="fas fa-futbol text-2xl text-blue-600"></i>
+            </div>
             <div>
-              <h1 className="text-xl font-bold text-gradient">Scouting System</h1>
-              <p className="text-xs text-gray-500">Database Professionale</p>
+              <h1 className="text-xl font-bold text-white">Scouting System</h1>
+              <p className="text-xs text-blue-100">Database Professionale</p>
             </div>
           </div>
           
           {/* Menu Navigazione */}
-          <div className="flex space-x-2">
+          <div className="flex space-x-1">
             {navItems.map(item => (
               <button
                 key={item.id}
                 onClick={() => setCurrentPage(item.id)}
-                className={`px-4 py-2 rounded-lg transition-all duration-300 flex items-center space-x-2 
+                className={`px-4 py-2 rounded-lg transition-all duration-300 flex items-center space-x-2 text-sm font-medium
                   ${currentPage === item.id 
-                    ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white' 
-                    : 'text-gray-600 hover:bg-gray-100'}`}
+                    ? 'bg-white text-blue-600 shadow-md' 
+                    : 'text-blue-100 hover:bg-blue-500 hover:text-white'}`}
               >
                 <i className={item.icon}></i>
                 <span className="hidden md:inline">{item.label}</span>
@@ -41,12 +43,11 @@ function Navigation({ currentPage, setCurrentPage, playersCount }) {
 
           {/* Info e Profilo */}
           <div className="flex items-center space-x-3">
-            <span className="text-sm text-gray-500">
-              <i className="fas fa-users mr-1"></i>
+            <span className="text-sm text-blue-100">
               {playersCount} giocatori
             </span>
-            <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
-              <i className="fas fa-user text-gray-600"></i>
+            <button className="p-2 rounded-full bg-blue-500 hover:bg-blue-400 transition-colors">
+              <i className="fas fa-user text-white"></i>
             </button>
           </div>
         </div>
