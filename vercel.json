@@ -1,7 +1,9 @@
 {
-  "buildCommand": "cd scouting-app && npm install && npm run build",
+  "version": 2,
+  "buildCommand": "cd scouting-app && npm run build",
   "outputDirectory": "scouting-app/build",
   "installCommand": "cd scouting-app && npm install",
+  "devCommand": "cd scouting-app && npm start",
   "framework": null,
   "rewrites": [
     {
