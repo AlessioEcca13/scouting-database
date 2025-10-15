@@ -1,4 +1,8 @@
 {
+  "buildCommand": "cd scouting-app && npm install && npm run build",
+  "outputDirectory": "scouting-app/build",
+  "installCommand": "cd scouting-app && npm install",
+  "framework": null,
   "rewrites": [
     {
       "source": "/(.*)",
