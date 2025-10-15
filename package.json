@@ -50,10 +50,7 @@
     "@types/react-dom": "^19.1.9",
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.6",
-<<<<<<< HEAD
-=======
     "postcss-normalize": "^13.0.1",
->>>>>>> dff6e6a9 (feat: campo tattico completo con 12 moduli, colori e anti-duplicati)
     "tailwindcss": "^4.1.14"
   }
 }
