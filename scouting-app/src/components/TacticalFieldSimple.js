@@ -300,8 +300,14 @@ function TacticalFieldSimple() {
 
       if (matchingPos) {
         const posKey = `${matchingPos.role_abbr}_${matchingPos.x}_${matchingPos.y}`;
-        if (!newAssignments[posKey]) newAssignments[posKey] = [];
         
+        // IMPORTANTE: Rimuovi il giocatore da TUTTE le posizioni prima di aggiungerlo
+        Object.keys(newAssignments).forEach(key => {
+          newAssignments[key] = newAssignments[key].filter(id => id !== player.id);
+        });
+        
+        // Ora aggiungi alla nuova posizione
+        if (!newAssignments[posKey]) newAssignments[posKey] = [];
         newAssignments[posKey].push(player.id);
         addedInThisImport.add(player.id); // Marca come aggiunto
         importedCount++;
