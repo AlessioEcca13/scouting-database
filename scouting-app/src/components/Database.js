@@ -112,24 +112,24 @@ function Database({ players, onSelectPlayer, onDeletePlayer, onAddReport, loadin
   // Componente Lista Compatta
   function CompactList({ players }) {
     return (
-      <div className="bg-white rounded-xl shadow-lg p-4 space-y-2">
+      <div className="bg-white rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-4 space-y-2">
         {players.map(player => (
           <div 
             key={player.id} 
-            className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
+            className="flex items-center justify-between p-2 sm:p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
             onClick={() => onSelectPlayer(player)}
           >
-            <div className="flex items-center space-x-4 flex-1">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white font-bold">
+            <div className="flex items-center space-x-2 sm:space-x-4 flex-1 min-w-0">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm sm:text-base flex-shrink-0">
                 {player.name?.charAt(0) || '?'}
               </div>
-              <div className="flex-1">
-                <div className="font-semibold">{player.name}</div>
-                <div className="text-sm text-gray-600">
+              <div className="flex-1 min-w-0">
+                <div className="font-semibold text-sm sm:text-base truncate">{player.name}</div>
+                <div className="text-xs sm:text-sm text-gray-600 truncate">
                   {player.team} • {player.general_role} • {new Date().getFullYear() - (player.birth_year || 2000)} anni
                 </div>
               </div>
-              <div className="text-yellow-500">
+              <div className="text-yellow-500 text-sm sm:text-base hidden sm:block">
                 {'★'.repeat(player.potential_value || 0)}
               </div>
               <button
@@ -137,9 +137,9 @@ function Database({ players, onSelectPlayer, onDeletePlayer, onAddReport, loadin
                   e.stopPropagation();
                   onDeletePlayer(player.id);
                 }}
-                className="text-red-500 hover:text-red-700 ml-4"
+                className="text-red-500 hover:text-red-700 ml-2 sm:ml-4 p-1 flex-shrink-0"
               >
-                <i className="fas fa-times"></i>
+                <i className="fas fa-times text-sm sm:text-base"></i>
               </button>
             </div>
           </div>
@@ -160,34 +160,36 @@ function Database({ players, onSelectPlayer, onDeletePlayer, onAddReport, loadin
   }
 
   return (
-    <div className="space-y-6 animate-fadeIn">
+    <div className="space-y-4 sm:space-y-6 animate-fadeIn">
       {/* Header e Controlli */}
-      <div className="bg-white rounded-xl p-6 shadow-lg">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold text-gradient">{title}</h2>
-          <div className="flex items-center space-x-3">
+      <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-lg">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
+          <h2 className="text-xl sm:text-2xl font-bold text-gradient">{title}</h2>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
             {/* Toggle Filtri */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`px-4 py-2 rounded-lg transition-colors ${
+              className={`px-3 sm:px-4 py-2 rounded-lg transition-colors text-sm sm:text-base ${
                 showFilters ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'
-              } hover:opacity-80`}
+              } hover:opacity-80 flex-1 sm:flex-none`}
             >
-              <i className="fas fa-filter mr-2"></i>
-              Filtri {activeFiltersCount > 0 && `(${activeFiltersCount})`}
+              <i className="fas fa-filter mr-1 sm:mr-2"></i>
+              <span className="hidden sm:inline">Filtri</span>
+              <span className="sm:hidden">Filtri</span>
+              {activeFiltersCount > 0 && ` (${activeFiltersCount})`}
             </button>
 
             {/* Bottone Refresh */}
             <button
               onClick={onRefresh}
-              className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+              className="px-3 sm:px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm sm:text-base flex-1 sm:flex-none"
             >
-              <i className="fas fa-sync mr-2"></i>
-              Aggiorna
+              <i className="fas fa-sync mr-1 sm:mr-2"></i>
+              <span className="hidden sm:inline">Aggiorna</span>
             </button>
 
-            {/* Switch Vista */}
-            <div className="flex bg-gray-100 rounded-lg p-1">
+            {/* Switch Vista - Nascosto su mobile piccolo */}
+            <div className="hidden md:flex bg-gray-100 rounded-lg p-1">
               <button
                 onClick={() => setViewMode('cards')}
                 className={`px-3 py-1 rounded transition-colors ${
