@@ -111,12 +111,59 @@ export const AuthProvider = ({ children }) => {
 
     try {
       console.log('Caricamento profilo per utente:', authUser.id);
+      console.log('Esecuzione query users_profiles...');
       
-      const { data: profileData, error } = await supabase
-        .from('users_profiles')
-        .select('*')
-        .eq('id', authUser.id)
-        .single();
+      // Timeout per la query (8 secondi)
+      let profileData = null;
+      let error = null;
+      let timedOut = false;
+      
+      const timeoutId = setTimeout(() => {
+        timedOut = true;
+        console.error('⚠️ Query timeout dopo 8 secondi - possibile problema RLS o network');
+      }, 8000);
+      
+      try {
+        // Test 1: Verifica connessione base
+        console.log('Test connessione Supabase...');
+        const { data: testData, error: testError } = await supabase
+          .from('users_profiles')
+          .select('count');
+        console.log('Test count:', testData, testError);
+        
+        // Test 2: Query senza .single()
+        console.log('Query senza single()...');
+        const { data: allData, error: allError } = await supabase
+          .from('users_profiles')
+          .select('*')
+          .eq('id', authUser.id);
+        console.log('Risultato senza single():', allData, allError);
+        
+        // Query normale
+        const result = await supabase
+          .from('users_profiles')
+          .select('*')
+          .eq('id', authUser.id)
+          .single();
+        
+        clearTimeout(timeoutId);
+        
+        if (timedOut) {
+          console.warn('Query completata dopo timeout, ignorata');
+          throw new Error('Query timeout');
+        }
+        
+        profileData = result.data;
+        error = result.error;
+        console.log('✅ Query completata. Data:', profileData, 'Error:', error);
+      } catch (queryError) {
+        clearTimeout(timeoutId);
+        console.error('❌ Errore catch:', queryError);
+        if (timedOut) {
+          throw new Error('Query timeout - verifica RLS policies su Supabase');
+        }
+        throw queryError;
+      }
 
       if (error) {
         console.error('Errore query profilo:', error);
