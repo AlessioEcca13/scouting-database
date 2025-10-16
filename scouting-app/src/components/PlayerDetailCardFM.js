@@ -127,74 +127,74 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
     'Portiere': { x: 50, y: 95 },
     
     // Difensori (linea difensiva - basso visivo)
-    'LB': { x: 20, y: 75 },
+    'LB': { x: 15, y: 75 },
     'LCB': { x: 38, y: 75 },
     'CB': { x: 50, y: 75 },
     'RCB': { x: 62, y: 75 },
-    'RB': { x: 80, y: 75 },
-    'Terzino sinistro': { x: 20, y: 75 },
+    'RB': { x: 85, y: 75 },
+    'Terzino sinistro': { x: 15, y: 75 },
     'Difensore centrale sinistro': { x: 38, y: 75 },
     'Difensore centrale': { x: 50, y: 75 },
     'Difensore centrale destro': { x: 62, y: 75 },
-    'Terzino destro': { x: 80, y: 75 },
+    'Terzino destro': { x: 85, y: 75 },
     
     // Esterni a 5
-    'LWB': { x: 20, y: 55 },
-    'RWB': { x: 80, y: 55 },
-    'Esterno sinistro': { x: 20, y: 55 },
-    'Esterno destro': { x: 80, y: 55 },
-    'Esterno di sinistra': { x: 20, y: 55 },
-    'Esterno di destra': { x: 80, y: 55 },
+    'LWB': { x: 15, y: 55 },
+    'RWB': { x: 85, y: 55 },
+    'Esterno sinistro': { x: 15, y: 55 },
+    'Esterno destro': { x: 85, y: 55 },
+    'Esterno di sinistra': { x: 15, y: 55 },
+    'Esterno di destra': { x: 85, y: 55 },
     
     // Mediani
     'CDM': { x: 50, y: 62 },
-    'LDM': { x: 42, y: 60 },
-    'RDM': { x: 58, y: 60 },
+    'LDM': { x: 38, y: 60 },
+    'RDM': { x: 62, y: 60 },
     'Mediano': { x: 50, y: 62 },
-    'Mediano sinistro': { x: 42, y: 60 },
-    'Mediano destro': { x: 58, y: 60 },
+    'Mediano sinistro': { x: 38, y: 60 },
+    'Mediano destro': { x: 62, y: 60 },
     
     // Centrocampisti centrali
     'CM': { x: 50, y: 55 },
-    'LCM': { x: 38, y: 55 },
-    'RCM': { x: 62, y: 55 },
+    'LCM': { x: 35, y: 55 },
+    'RCM': { x: 65, y: 55 },
     'Centrocampista': { x: 50, y: 55 },
-    'Centrocampista sinistro': { x: 38, y: 55 },
-    'Centrocampista destro': { x: 62, y: 55 },
-    'Mezzala sinistra': { x: 38, y: 55 },
-    'Mezzala destra': { x: 62, y: 55 },
+    'Centrocampista sinistro': { x: 35, y: 55 },
+    'Centrocampista destro': { x: 65, y: 55 },
+    'Mezzala sinistra': { x: 35, y: 55 },
+    'Mezzala destra': { x: 65, y: 55 },
     
     // Esterni di centrocampo
-    'LM': { x: 30, y: 55 },
-    'RM': { x: 70, y: 55 },
+    'LM': { x: 25, y: 55 },
+    'RM': { x: 75, y: 55 },
     
     // Trequartisti
     'CAM': { x: 50, y: 42 },
-    'LAM': { x: 40, y: 45 },
-    'RAM': { x: 60, y: 45 },
+    'LAM': { x: 35, y: 45 },
+    'RAM': { x: 65, y: 45 },
     'Trequartista': { x: 50, y: 42 },
-    'Trequartista sinistro': { x: 40, y: 45 },
-    'Trequartista destro': { x: 60, y: 45 },
+    'Trequartista sinistro': { x: 35, y: 45 },
+    'Trequartista destro': { x: 65, y: 45 },
     
     // Ali
-    'LW': { x: 25, y: 30 },
-    'RW': { x: 75, y: 30 },
-    'Ala sinistra': { x: 25, y: 30 },
-    'Ala destra': { x: 75, y: 30 },
+    'LW': { x: 20, y: 30 },
+    'RW': { x: 80, y: 30 },
+    'Ala sinistra': { x: 20, y: 30 },
+    'Ala destra': { x: 80, y: 30 },
     
     // Seconde punte
     'SS': { x: 50, y: 32 },
-    'LS': { x: 45, y: 30 },
-    'RS': { x: 55, y: 30 },
+    'LS': { x: 42, y: 30 },
+    'RS': { x: 58, y: 30 },
     'Seconda punta': { x: 50, y: 32 },
-    'Seconda punta sinistra': { x: 45, y: 32 },
-    'Seconda punta destra': { x: 55, y: 32 },
+    'Seconda punta sinistra': { x: 42, y: 32 },
+    'Seconda punta destra': { x: 58, y: 32 },
     
     // Attaccanti (porta avversaria - alto visivo = Y basso)
     'ST': { x: 50, y: 25 },
     'Attaccante': { x: 50, y: 25 },
-    'Attaccante sinistro': { x: 45, y: 25 },
-    'Attaccante destro': { x: 55, y: 25 },
+    'Attaccante sinistro': { x: 42, y: 25 },
+    'Attaccante destro': { x: 58, y: 25 },
     'Punta': { x: 50, y: 25 }
   };
 
@@ -620,9 +620,9 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
                     {/* Ombra */}
                     <div className="absolute inset-0 bg-black rounded-full blur-sm opacity-30 transform translate-y-0.5"></div>
                     
-                    {/* Pallino principale - compatto */}
-                    <div className={`relative ${getRoleColor(player.general_role)} w-8 h-8 rounded-full flex items-center justify-center border-2 border-white shadow-lg`}>
-                      <span className="text-[10px] font-bold text-white drop-shadow-sm">
+                    {/* Pallino principale - più grande */}
+                    <div className={`relative ${getRoleColor(player.general_role)} w-10 h-10 rounded-full flex items-center justify-center border-2 border-white shadow-lg`}>
+                      <span className="text-xs font-bold text-white drop-shadow-sm">
                         {getRoleAbbreviation(player.specific_position)}
                       </span>
                     </div>
@@ -655,8 +655,8 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
                       })()
                     }}
                   >
-                    <div className="relative w-8 h-8 bg-white bg-opacity-90 rounded-full flex items-center justify-center border-2 border-gray-400 shadow-md">
-                      <span className="text-[8px] font-bold text-gray-700">
+                    <div className="relative w-9 h-9 bg-white bg-opacity-90 rounded-full flex items-center justify-center border-2 border-gray-400 shadow-md">
+                      <span className="text-[10px] font-bold text-gray-700">
                         {getRoleAbbreviation(player.natural_position)}
                       </span>
                     </div>
@@ -680,8 +680,8 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
                       })()
                     }}
                   >
-                    <div className="relative w-7 h-7 bg-gray-300 bg-opacity-85 rounded-full flex items-center justify-center border-2 border-gray-500 shadow-sm">
-                      <span className="text-[7px] font-bold text-gray-700">
+                    <div className="relative w-8 h-8 bg-gray-300 bg-opacity-85 rounded-full flex items-center justify-center border-2 border-gray-500 shadow-sm">
+                      <span className="text-[9px] font-bold text-gray-700">
                         {getRoleAbbreviation(player.other_positions)}
                       </span>
                     </div>
