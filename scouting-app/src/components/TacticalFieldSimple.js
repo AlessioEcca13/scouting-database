@@ -391,23 +391,59 @@ function TacticalFieldSimple() {
         </div>
       </div>
 
-      <div className="bg-gray-900 rounded-xl shadow-2xl p-6 mb-6">
+      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-xl shadow-2xl p-8 mb-6">
         <div className="flex justify-center">
           <div 
-            className="relative bg-gradient-to-b from-green-500 to-green-600 rounded-lg shadow-2xl"
-            style={{ width: '800px', height: '1200px' }}
+            className="relative rounded-xl shadow-2xl overflow-hidden border-4 border-gray-700"
+            style={{ width: '1000px', height: '1400px' }}
           >
-            <div className="absolute inset-0">
-              <div className="absolute w-full h-0.5 bg-white opacity-50" style={{ top: '50%' }} />
-              <div className="absolute border-2 border-white rounded-full opacity-50" 
-                style={{ width: '120px', height: '120px', left: 'calc(50% - 60px)', top: 'calc(50% - 60px)' }} 
-              />
-              <div className="absolute border-2 border-white opacity-50" 
-                style={{ width: '200px', height: '80px', left: 'calc(50% - 100px)', bottom: '0' }} 
-              />
-              <div className="absolute border-2 border-white opacity-50" 
-                style={{ width: '200px', height: '80px', left: 'calc(50% - 100px)', top: '0' }} 
-              />
+            {/* Texture campo */}
+            <div className="absolute inset-0 bg-gradient-to-b from-green-600 via-green-700 to-green-600"></div>
+            <div className="absolute inset-0 opacity-10" style={{ 
+              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 35px, rgba(255,255,255,0.1) 35px, rgba(255,255,255,0.1) 70px)'
+            }}></div>
+            
+            {/* Linee campo professionali */}
+            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 1000 1400" preserveAspectRatio="none">
+              {/* Bordo campo */}
+              <rect x="50" y="50" width="900" height="1300" fill="none" stroke="white" strokeWidth="4" opacity="0.8"/>
+              
+              {/* Linea metà campo */}
+              <line x1="50" y1="700" x2="950" y2="700" stroke="white" strokeWidth="4" opacity="0.8"/>
+              
+              {/* Cerchio centrale */}
+              <circle cx="500" cy="700" r="100" fill="none" stroke="white" strokeWidth="4" opacity="0.8"/>
+              <circle cx="500" cy="700" r="5" fill="white" opacity="0.8"/>
+              
+              {/* Area rigore superiore (porta avversaria) */}
+              <rect x="250" y="50" width="500" height="180" fill="none" stroke="white" strokeWidth="4" opacity="0.8"/>
+              <rect x="350" y="50" width="300" height="80" fill="none" stroke="white" strokeWidth="4" opacity="0.8"/>
+              <circle cx="500" cy="230" r="5" fill="white" opacity="0.8"/>
+              <path d="M 400 230 A 100 100 0 0 0 600 230" fill="none" stroke="white" strokeWidth="4" opacity="0.8"/>
+              
+              {/* Area rigore inferiore (nostra porta) */}
+              <rect x="250" y="1170" width="500" height="180" fill="none" stroke="white" strokeWidth="4" opacity="0.8"/>
+              <rect x="350" y="1270" width="300" height="80" fill="none" stroke="white" strokeWidth="4" opacity="0.8"/>
+              <circle cx="500" cy="1170" r="5" fill="white" opacity="0.8"/>
+              <path d="M 400 1170 A 100 100 0 0 1 600 1170" fill="none" stroke="white" strokeWidth="4" opacity="0.8"/>
+              
+              {/* Angoli */}
+              <path d="M 50 50 Q 70 50 70 70" fill="none" stroke="white" strokeWidth="3" opacity="0.6"/>
+              <path d="M 950 50 Q 930 50 930 70" fill="none" stroke="white" strokeWidth="3" opacity="0.6"/>
+              <path d="M 50 1350 Q 70 1350 70 1330" fill="none" stroke="white" strokeWidth="3" opacity="0.6"/>
+              <path d="M 950 1350 Q 930 1350 930 1330" fill="none" stroke="white" strokeWidth="3" opacity="0.6"/>
+            </svg>
+            
+            {/* Etichette porte */}
+            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
+              <div className="bg-red-600 bg-opacity-90 px-6 py-2 rounded-full shadow-lg border-2 border-white">
+                <span className="text-white font-bold text-sm tracking-wider">⚽ AVVERSARI</span>
+              </div>
+            </div>
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10">
+              <div className="bg-blue-600 bg-opacity-90 px-6 py-2 rounded-full shadow-lg border-2 border-white">
+                <span className="text-white font-bold text-sm tracking-wider">🛡️ NOSTRA PORTA</span>
+              </div>
             </div>
 
             {currentFormation.map((pos) => {
@@ -430,8 +466,8 @@ function TacticalFieldSimple() {
                   }}
                 >
                   {players.length > 0 ? (
-                    <div className="flex flex-col gap-1">
-                      {players.map((player) => {
+                    <div className="flex flex-col gap-2">
+                      {players.map((player, index) => {
                         const colorCategory = playerColors[player.id] || 'default';
                         const colors = playerColorCategories[colorCategory];
                         
@@ -441,21 +477,26 @@ function TacticalFieldSimple() {
                             draggable
                             onDragStart={() => setDraggedPlayer(player.id)}
                             className="relative group"
+                            style={{
+                              marginLeft: index > 0 ? `${index * 8}px` : '0',
+                              zIndex: 10 + index
+                            }}
                           >
                             <div 
-                              className="rounded-lg shadow-lg p-2 min-w-[140px] border-2 cursor-move hover:scale-105 transition-all"
+                              className="rounded-xl shadow-xl p-3 min-w-[160px] border-3 cursor-move hover:scale-110 hover:shadow-2xl transition-all"
                               style={{
                                 backgroundColor: colors.bg,
-                                borderColor: colors.border
+                                borderColor: colors.border,
+                                borderWidth: '3px'
                               }}
                             >
                               <div className="flex items-center gap-2">
                                 {player.profile_image && (
-                                  <img src={player.profile_image} alt={player.name} className="w-8 h-8 rounded-full object-cover border-2" style={{ borderColor: colors.border }} />
+                                  <img src={player.profile_image} alt={player.name} className="w-10 h-10 rounded-full object-cover border-3 shadow-md" style={{ borderColor: colors.border, borderWidth: '3px' }} />
                                 )}
                                 <div className="flex-1 min-w-0">
-                                  <p className="font-bold text-xs truncate" style={{ color: colors.text }}>{player.name}</p>
-                                  <p className="text-[10px]" style={{ color: colors.text, opacity: 0.8 }}>{player.team}</p>
+                                  <p className="font-bold text-sm truncate" style={{ color: colors.text }}>{player.name}</p>
+                                  <p className="text-xs" style={{ color: colors.text, opacity: 0.8 }}>{player.team}</p>
                                 </div>
                               </div>
                             </div>
@@ -483,9 +524,14 @@ function TacticalFieldSimple() {
                       })}
                     </div>
                   ) : (
-                    <div className="relative">
-                      <div className="w-12 h-12 rounded-full bg-white bg-opacity-40 border-2 border-white border-dashed flex items-center justify-center cursor-pointer hover:bg-opacity-60 transition-all">
-                        <span className="text-white text-xs font-bold">{pos.role_abbr}</span>
+                    <div className="relative group">
+                      <div className="w-16 h-16 rounded-full bg-white bg-opacity-30 border-4 border-white border-dashed flex items-center justify-center cursor-pointer hover:bg-opacity-50 hover:scale-110 transition-all shadow-lg">
+                        <span className="text-white text-sm font-bold drop-shadow-lg">{pos.role_abbr}</span>
+                      </div>
+                      <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="bg-black bg-opacity-75 px-2 py-1 rounded text-xs text-white whitespace-nowrap">
+                          Trascina qui
+                        </div>
                       </div>
                     </div>
                   )}
