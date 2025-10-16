@@ -185,7 +185,12 @@ function TacticalFieldSimple() {
   const [showColorModal, setShowColorModal] = useState(false);
   const [selectedPlayerForColor, setSelectedPlayerForColor] = useState(null);
   const [fieldColor, setFieldColor] = useState('green');
-  const [displayAttribute, setDisplayAttribute] = useState('team');
+  const [displayAttributes, setDisplayAttributes] = useState({
+    team: true,
+    age: false,
+    role: false,
+    value: false
+  });
 
   useEffect(() => {
     fetchAllPlayers();
@@ -329,28 +334,42 @@ function TacticalFieldSimple() {
     }
   };
 
+  const toggleAttribute = (attr) => {
+    setDisplayAttributes(prev => ({
+      ...prev,
+      [attr]: !prev[attr]
+    }));
+  };
+
   const getPlayerDisplayInfo = (player) => {
-    switch (displayAttribute) {
-      case 'age':
-        const age = player.birth_year ? new Date().getFullYear() - player.birth_year : 'N/D';
-        return `${age} anni`;
-      case 'role':
-        return player.specific_position || player.general_role || 'N/D';
-      case 'value':
-        if (player.market_value) {
-          const value = typeof player.market_value === 'number' ? player.market_value : parseFloat(player.market_value);
-          if (value >= 1000000) {
-            return `€${(value / 1000000).toFixed(1)}M`;
-          } else if (value >= 1000) {
-            return `€${(value / 1000).toFixed(0)}K`;
-          }
-          return `€${value}`;
-        }
-        return 'N/D';
-      case 'team':
-      default:
-        return player.team || 'N/D';
+    const info = [];
+    
+    if (displayAttributes.team && player.team) {
+      info.push(player.team);
     }
+    
+    if (displayAttributes.age && player.birth_year) {
+      const age = new Date().getFullYear() - player.birth_year;
+      info.push(`${age} anni`);
+    }
+    
+    if (displayAttributes.role) {
+      const role = player.specific_position || player.general_role;
+      if (role) info.push(role);
+    }
+    
+    if (displayAttributes.value && player.market_value) {
+      const value = typeof player.market_value === 'number' ? player.market_value : parseFloat(player.market_value);
+      if (value >= 1000000) {
+        info.push(`€${(value / 1000000).toFixed(1)}M`);
+      } else if (value >= 1000) {
+        info.push(`€${(value / 1000).toFixed(0)}K`);
+      } else {
+        info.push(`€${value}`);
+      }
+    }
+    
+    return info.length > 0 ? info.join(' • ') : 'N/D';
   };
 
   const getFilteredPlayers = () => {
@@ -423,17 +442,45 @@ function TacticalFieldSimple() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">📊 Mostra</label>
-            <select
-              value={displayAttribute}
-              onChange={(e) => setDisplayAttribute(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="team">Nome + Squadra</option>
-              <option value="age">Nome + Età</option>
-              <option value="role">Nome + Ruolo</option>
-              <option value="value">Nome + Valore</option>
-            </select>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">📊 Mostra Attributi</label>
+            <div className="bg-white border border-gray-300 rounded-lg p-3 space-y-2">
+              <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                <input
+                  type="checkbox"
+                  checked={displayAttributes.team}
+                  onChange={() => toggleAttribute('team')}
+                  className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                />
+                <span className="text-sm font-medium text-gray-700">🏟️ Squadra</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                <input
+                  type="checkbox"
+                  checked={displayAttributes.age}
+                  onChange={() => toggleAttribute('age')}
+                  className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                />
+                <span className="text-sm font-medium text-gray-700">🎂 Età</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                <input
+                  type="checkbox"
+                  checked={displayAttributes.role}
+                  onChange={() => toggleAttribute('role')}
+                  className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                />
+                <span className="text-sm font-medium text-gray-700">⚽ Ruolo</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                <input
+                  type="checkbox"
+                  checked={displayAttributes.value}
+                  onChange={() => toggleAttribute('value')}
+                  className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                />
+                <span className="text-sm font-medium text-gray-700">💰 Valore</span>
+              </label>
+            </div>
           </div>
 
           <div className="flex gap-2 items-end">
@@ -558,13 +605,13 @@ function TacticalFieldSimple() {
                                 borderWidth: '3px'
                               }}
                             >
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-start gap-2">
                                 {player.profile_image && (
-                                  <img src={player.profile_image} alt={player.name} className="w-10 h-10 rounded-full object-cover border-3 shadow-md" style={{ borderColor: colors.border, borderWidth: '3px' }} />
+                                  <img src={player.profile_image} alt={player.name} className="w-10 h-10 rounded-full object-cover border-3 shadow-md flex-shrink-0" style={{ borderColor: colors.border, borderWidth: '3px' }} />
                                 )}
                                 <div className="flex-1 min-w-0">
                                   <p className="font-bold text-sm truncate" style={{ color: colors.text }}>{player.name}</p>
-                                  <p className="text-xs" style={{ color: colors.text, opacity: 0.8 }}>{getPlayerDisplayInfo(player)}</p>
+                                  <p className="text-xs leading-relaxed" style={{ color: colors.text, opacity: 0.8, wordBreak: 'break-word' }}>{getPlayerDisplayInfo(player)}</p>
                                 </div>
                               </div>
                             </div>
