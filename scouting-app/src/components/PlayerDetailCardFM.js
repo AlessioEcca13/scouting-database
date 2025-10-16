@@ -8,8 +8,6 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
   const [showReports, setShowReports] = useState(false);
   const [reports, setReports] = useState([]);
   const [selectedScout, setSelectedScout] = useState('all');
-  const [loading, setLoading] = useState(true);
-  const [showNotes, setShowNotes] = useState(false);
   
   const currentYear = new Date().getFullYear();
   const age = player.birth_year ? currentYear - player.birth_year : null;
@@ -29,12 +27,11 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
         setReports(data || []);
       } catch (error) {
         console.error('Errore caricamento report:', error);
-      } finally {
-        setLoading(false);
       }
     };
 
     loadReports();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [player.id]);
 
   // Calcola media valutazioni da tutti i report
@@ -122,87 +119,83 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
   // Early return se player non esiste (dopo tutti gli hooks)
   if (!player) return null;
 
-  // Mappa coordinate per ogni ruolo (adattata al nostro campo)
-  // NOTA: Nel nostro campo Y:0 = porta avversaria (top), Y:100 = nostra porta (bottom)
+  // Mappa coordinate allineata a TacticalFieldSimple
+  // Y: 5 = nostra porta (basso), 75 = porta avversaria (alto)
   const POSITION_MAP = {
-    // Portieri (vicino alla nostra porta - in basso)
-    'GK': { x: 50, y: 90 },
-    'Portiere': { x: 50, y: 90 },
+    // Portieri (nostra porta - basso)
+    'GK': { x: 50, y: 5 },
+    'Portiere': { x: 50, y: 5 },
     
-    // Difensori centrali
-    'CB': { x: 50, y: 75 },
-    'CB-L': { x: 35, y: 75 },
-    'CB-R': { x: 65, y: 75 },
-    'Difensore centrale': { x: 50, y: 75 },
-    'Difensore centrale sinistro': { x: 35, y: 75 },
-    'Difensore centrale destro': { x: 65, y: 75 },
+    // Difensori (linea difensiva)
+    'LB': { x: 20, y: 25 },
+    'LCB': { x: 38, y: 25 },
+    'CB': { x: 50, y: 25 },
+    'RCB': { x: 62, y: 25 },
+    'RB': { x: 80, y: 25 },
+    'Terzino sinistro': { x: 20, y: 25 },
+    'Difensore centrale sinistro': { x: 38, y: 25 },
+    'Difensore centrale': { x: 50, y: 25 },
+    'Difensore centrale destro': { x: 62, y: 25 },
+    'Terzino destro': { x: 80, y: 25 },
     
-    // Terzini (più larghi)
-    'LB': { x: 18, y: 70 },
-    'RB': { x: 82, y: 70 },
-    'Terzino sinistro': { x: 18, y: 70 },
-    'Terzino destro': { x: 82, y: 70 },
-    
-    // Esterni a 5 (molto larghi)
-    'LWB': { x: 15, y: 55 },
-    'RWB': { x: 85, y: 55 },
-    'Esterno sinistro': { x: 15, y: 55 },
-    'Esterno destro': { x: 85, y: 55 },
-    'Esterno di sinistra': { x: 15, y: 55 },
-    'Esterno di destra': { x: 85, y: 55 },
+    // Esterni a 5
+    'LWB': { x: 20, y: 45 },
+    'RWB': { x: 80, y: 45 },
+    'Esterno sinistro': { x: 20, y: 45 },
+    'Esterno destro': { x: 80, y: 45 },
+    'Esterno di sinistra': { x: 20, y: 45 },
+    'Esterno di destra': { x: 80, y: 45 },
     
     // Mediani
-    'CDM': { x: 50, y: 55 },
-    'CDM-L': { x: 38, y: 55 },
-    'CDM-R': { x: 62, y: 55 },
-    'Mediano': { x: 50, y: 55 },
-    'Mediano sinistro': { x: 38, y: 55 },
-    'Mediano destro': { x: 62, y: 55 },
+    'CDM': { x: 50, y: 38 },
+    'LDM': { x: 42, y: 40 },
+    'RDM': { x: 58, y: 40 },
+    'Mediano': { x: 50, y: 38 },
+    'Mediano sinistro': { x: 42, y: 40 },
+    'Mediano destro': { x: 58, y: 40 },
     
     // Centrocampisti centrali
     'CM': { x: 50, y: 45 },
-    'CM-L': { x: 40, y: 45 },
-    'CM-R': { x: 60, y: 45 },
+    'LCM': { x: 38, y: 45 },
+    'RCM': { x: 62, y: 45 },
     'Centrocampista': { x: 50, y: 45 },
-    'Centrocampista sinistro': { x: 40, y: 45 },
-    'Centrocampista destro': { x: 60, y: 45 },
+    'Centrocampista sinistro': { x: 38, y: 45 },
+    'Centrocampista destro': { x: 62, y: 45 },
+    'Mezzala sinistra': { x: 38, y: 45 },
+    'Mezzala destra': { x: 62, y: 45 },
     
-    // Mezzali
-    'LCM': { x: 38, y: 40 },
-    'RCM': { x: 62, y: 40 },
-    'Mezzala sinistra': { x: 38, y: 40 },
-    'Mezzala destra': { x: 62, y: 40 },
+    // Esterni di centrocampo
+    'LM': { x: 30, y: 45 },
+    'RM': { x: 70, y: 45 },
     
     // Trequartisti
-    'CAM': { x: 50, y: 30 },
-    'CAM-L': { x: 42, y: 30 },
-    'CAM-R': { x: 58, y: 30 },
-    'Trequartista': { x: 50, y: 30 },
-    'Trequartista sinistro': { x: 42, y: 30 },
-    'Trequartista destro': { x: 58, y: 30 },
+    'CAM': { x: 50, y: 58 },
+    'LAM': { x: 40, y: 55 },
+    'RAM': { x: 60, y: 55 },
+    'Trequartista': { x: 50, y: 58 },
+    'Trequartista sinistro': { x: 40, y: 55 },
+    'Trequartista destro': { x: 60, y: 55 },
     
-    // Ali (molto larghi)
-    'LW': { x: 18, y: 25 },
-    'RW': { x: 82, y: 25 },
-    'Ala sinistra': { x: 18, y: 25 },
-    'Ala destra': { x: 82, y: 25 },
+    // Ali
+    'LW': { x: 25, y: 70 },
+    'RW': { x: 75, y: 70 },
+    'Ala sinistra': { x: 25, y: 70 },
+    'Ala destra': { x: 75, y: 70 },
     
     // Seconde punte
-    'SS': { x: 50, y: 18 },
-    'SS-L': { x: 42, y: 18 },
-    'SS-R': { x: 58, y: 18 },
-    'Seconda punta': { x: 50, y: 18 },
-    'Seconda punta sinistra': { x: 42, y: 18 },
-    'Seconda punta destra': { x: 58, y: 18 },
+    'SS': { x: 50, y: 68 },
+    'LS': { x: 45, y: 70 },
+    'RS': { x: 55, y: 70 },
+    'Seconda punta': { x: 50, y: 68 },
+    'Seconda punta sinistra': { x: 45, y: 68 },
+    'Seconda punta destra': { x: 55, y: 68 },
     
-    // Attaccanti (vicino alla porta avversaria - in alto)
-    'ST': { x: 50, y: 12 },
-    'ST-L': { x: 38, y: 12 },
-    'ST-R': { x: 62, y: 12 },
-    'Attaccante': { x: 50, y: 12 },
-    'Attaccante sinistro': { x: 38, y: 12 },
-    'Attaccante destro': { x: 62, y: 12 },
-    'Punta': { x: 50, y: 12 }
+    // Attaccanti (porta avversaria - alto)
+    'ST': { x: 50, y: 75 },
+    'Attaccante': { x: 50, y: 75 },
+    'Attaccante sinistro': { x: 45, y: 75 },
+    'Attaccante destro': { x: 55, y: 75 },
+    'Punta': { x: 50, y: 75 }
   };
 
   const getPositionCoordinates = (positionName) => {

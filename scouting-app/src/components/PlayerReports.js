@@ -35,6 +35,7 @@ function PlayerReports({ player, onClose }) {
   // Carica report esistenti
   useEffect(() => {
     loadReports();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [player.id]);
 
   const loadReports = async () => {

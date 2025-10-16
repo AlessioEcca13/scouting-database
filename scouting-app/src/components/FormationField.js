@@ -63,6 +63,7 @@ function FormationField({ list, onClose }) {
     if (list?.player_ids) {
       fetchPlayers();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [list]);
 
   const fetchPlayers = async () => {
@@ -79,6 +80,7 @@ function FormationField({ list, onClose }) {
     }
   };
 
+  // eslint-disable-next-line no-unused-vars
   const getRoleCategory = (role) => {
     if (!role) return 'MF';
     const r = role.toUpperCase();
@@ -88,9 +90,7 @@ function FormationField({ list, onClose }) {
     return 'MF';
   };
 
-  const getPlayersByRole = (roleCategory) => {
-    return players.filter(p => getRoleCategory(p.general_role) === roleCategory);
-  };
+  // Removed unused function getPlayersByRole
 
   const assignPlayersToPositions = () => {
     const formationData = formations[formation];

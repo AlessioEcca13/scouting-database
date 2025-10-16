@@ -2,7 +2,6 @@
 import React from 'react';
 
 function PlayerTable({ players, onSelect, onDelete, onAddReport }) {
-  const currentYear = new Date().getFullYear();
 
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden">

@@ -166,14 +166,20 @@ function PlayerForm({ onSave, onCancel }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('🚀 handleSubmit chiamato');
+    console.log('📋 formData:', formData);
+    console.log('📊 showReportSection:', showReportSection);
     
     // Controllo duplicati prima di salvare (nome + anno di nascita)
     await checkDuplicatePlayer(formData.name, formData.birth_year);
     
     // Se c'è un duplicato, non procedere
     if (duplicatePlayer) {
+      console.warn('⚠️ Duplicato trovato, blocco submit');
       return; // L'avviso è già mostrato nel form
     }
+    
+    console.log('✅ Nessun duplicato, procedo con onSave');
     
     // Passa anche lo stato showReportSection per determinare se è una segnalazione
     onSave({

@@ -39,9 +39,11 @@ export const AuthProvider = ({ children }) => {
           setLoading(false);
           setSessionChecked(true);
         } else if (event === 'TOKEN_REFRESHED' && session) {
-          // Session refreshed successfully
+          // Token refreshed - non ricaricare il profilo se è già caricato
           console.log('Token refreshed successfully');
-          await loadUserProfile(session.user);
+          if (!profile) {
+            await loadUserProfile(session.user);
+          }
         } else if (event === 'USER_UPDATED' && session) {
           await loadUserProfile(session.user);
         }
@@ -51,6 +53,7 @@ export const AuthProvider = ({ children }) => {
     return () => {
       authListener?.subscription?.unsubscribe();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Timeout di sicurezza separato che osserva i cambiamenti di loading
@@ -110,8 +113,6 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      console.log('Caricamento profilo per utente:', authUser.id);
-      console.log('Esecuzione query users_profiles...');
       
       // Timeout per la query (8 secondi)
       let profileData = null;
@@ -124,22 +125,6 @@ export const AuthProvider = ({ children }) => {
       }, 8000);
       
       try {
-        // Test 1: Verifica connessione base
-        console.log('Test connessione Supabase...');
-        const { data: testData, error: testError } = await supabase
-          .from('users_profiles')
-          .select('count');
-        console.log('Test count:', testData, testError);
-        
-        // Test 2: Query senza .single()
-        console.log('Query senza single()...');
-        const { data: allData, error: allError } = await supabase
-          .from('users_profiles')
-          .select('*')
-          .eq('id', authUser.id);
-        console.log('Risultato senza single():', allData, allError);
-        
-        // Query normale
         const result = await supabase
           .from('users_profiles')
           .select('*')
@@ -155,10 +140,8 @@ export const AuthProvider = ({ children }) => {
         
         profileData = result.data;
         error = result.error;
-        console.log('✅ Query completata. Data:', profileData, 'Error:', error);
       } catch (queryError) {
         clearTimeout(timeoutId);
-        console.error('❌ Errore catch:', queryError);
         if (timedOut) {
           throw new Error('Query timeout - verifica RLS policies su Supabase');
         }
@@ -223,7 +206,6 @@ export const AuthProvider = ({ children }) => {
         return;
       }
 
-      console.log('Profilo caricato con successo:', profileData.full_name);
       setUser(authUser);
       setProfile(profileData);
       setLoading(false);

@@ -188,6 +188,21 @@ function AppContent() {
                 console.log('🔍 isScouted:', isScouted);
                 console.log('📝 playerFields:', playerFields);
                 
+                // Fix preferred_foot: normalizza il valore
+                if (playerFields.preferred_foot) {
+                  const foot = playerFields.preferred_foot.toLowerCase();
+                  if (foot.includes('dest') || foot === 'right') {
+                    playerFields.preferred_foot = 'Destro';
+                  } else if (foot.includes('sin') || foot === 'left') {
+                    playerFields.preferred_foot = 'Sinistro';
+                  } else if (foot.includes('entr') || foot.includes('both') || foot.includes('amb')) {
+                    playerFields.preferred_foot = 'Entrambi';
+                  } else {
+                    // Valore non riconosciuto, usa default
+                    playerFields.preferred_foot = 'Destro';
+                  }
+                }
+                
                 // Inserisci il giocatore
                 const { data: player, error: playerError } = await supabase
                   .from('players')
