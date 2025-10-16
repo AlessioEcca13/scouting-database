@@ -25,16 +25,6 @@ export const AuthProvider = ({ children }) => {
     // Controlla se c'è una sessione attiva
     checkUser();
 
-    // Timeout di sicurezza: se dopo 10 secondi non ha finito, forza il completamento
-    const loadingTimeout = setTimeout(() => {
-      if (loading && !sessionChecked) {
-        console.warn('Timeout caricamento sessione, forzo completamento');
-        setLoading(false);
-        setSessionChecked(true);
-        toast.error('Timeout caricamento. Ricarica la pagina o effettua nuovamente il login.');
-      }
-    }, 10000);
-
     // Ascolta i cambiamenti di autenticazione
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
@@ -59,10 +49,23 @@ export const AuthProvider = ({ children }) => {
     );
 
     return () => {
-      clearTimeout(loadingTimeout);
       authListener?.subscription?.unsubscribe();
     };
   }, []);
+
+  // Timeout di sicurezza separato che osserva i cambiamenti di loading
+  useEffect(() => {
+    if (!loading || sessionChecked) return;
+
+    const timeoutId = setTimeout(() => {
+      console.warn('Timeout caricamento sessione dopo 15 secondi');
+      setLoading(false);
+      setSessionChecked(true);
+      toast.error('Timeout caricamento. Ricarica la pagina.');
+    }, 15000);
+
+    return () => clearTimeout(timeoutId);
+  }, [loading, sessionChecked]);
 
   const checkUser = async () => {
     try {
@@ -102,10 +105,13 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       setProfile(null);
       setLoading(false);
+      setSessionChecked(true);
       return;
     }
 
     try {
+      console.log('Caricamento profilo per utente:', authUser.id);
+      
       const { data: profileData, error } = await supabase
         .from('users_profiles')
         .select('*')
@@ -122,6 +128,7 @@ export const AuthProvider = ({ children }) => {
           setUser(null);
           setProfile(null);
           setLoading(false);
+          setSessionChecked(true);
           setRetryCount(0);
           return;
         }
@@ -140,6 +147,7 @@ export const AuthProvider = ({ children }) => {
           setUser(null);
           setProfile(null);
           setLoading(false);
+          setSessionChecked(true);
           setRetryCount(0);
           return;
         }
@@ -154,6 +162,7 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         setProfile(null);
         setLoading(false);
+        setSessionChecked(true);
         return;
       }
 
@@ -163,18 +172,22 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         setProfile(null);
         setLoading(false);
+        setSessionChecked(true);
         return;
       }
 
+      console.log('Profilo caricato con successo:', profileData.full_name);
       setUser(authUser);
       setProfile(profileData);
       setLoading(false);
+      setSessionChecked(true);
     } catch (error) {
       console.error('Errore caricamento profilo:', error);
       toast.error('Errore nel caricamento del profilo');
       setUser(null);
       setProfile(null);
       setLoading(false);
+      setSessionChecked(true);
     }
   };
 
