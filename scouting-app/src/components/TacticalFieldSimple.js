@@ -320,19 +320,18 @@ function TacticalFieldSimple() {
   };
 
   const assignPlayerToPosition = (playerId, posKey) => {
-    // Controlla se il giocatore è già presente in qualsiasi posizione
-    const isPlayerAlreadyAssigned = Object.values(positionAssignments).some(
-      playerIds => playerIds && playerIds.includes(playerId)
-    );
-    
-    if (isPlayerAlreadyAssigned) {
-      toast.error('Giocatore già presente sul campo');
-      return;
-    }
-    
     setPositionAssignments(prev => {
-      const current = prev[posKey] || [];
-      return { ...prev, [posKey]: [...current, playerId] };
+      // Trova e rimuovi il giocatore da qualsiasi posizione precedente
+      const newAssignments = {};
+      Object.keys(prev).forEach(key => {
+        newAssignments[key] = prev[key].filter(id => id !== playerId);
+      });
+      
+      // Aggiungi il giocatore alla nuova posizione
+      const current = newAssignments[posKey] || [];
+      newAssignments[posKey] = [...current, playerId];
+      
+      return newAssignments;
     });
   };
 
