@@ -40,15 +40,15 @@ function Dashboard({ players, onSelectPlayer }) {
     .slice(0, 5);
 
   return (
-    <div className="space-y-6 animate-fadeIn">
+    <div className="space-y-4 sm:space-y-6 animate-fadeIn px-2 sm:px-0">
       {/* Header con Logo Prominente */}
-      <div className="bg-gradient-to-r from-slate-800 via-slate-900 to-slate-800 rounded-2xl p-12 shadow-2xl border border-slate-700 flex items-center justify-center">
+      <div className="bg-gradient-to-r from-slate-800 via-slate-900 to-slate-800 rounded-xl sm:rounded-2xl p-6 sm:p-8 lg:p-12 shadow-2xl border border-slate-700 flex items-center justify-center">
         {/* Logo Centrale Grande */}
         <div className="relative">
           <img 
             src="/logo-lamecca-dark.png" 
             alt="La M.E.cca - Database Scouting" 
-            className="h-40 w-auto object-contain drop-shadow-2xl transition-transform hover:scale-105 duration-300"
+            className="h-20 sm:h-32 lg:h-40 w-auto object-contain drop-shadow-2xl transition-transform hover:scale-105 duration-300"
             style={{ filter: 'drop-shadow(0 0 30px rgba(34, 197, 94, 0.5))' }}
             onError={(e) => {
               console.error('Logo dark non trovato, usando fallback');
@@ -58,7 +58,7 @@ function Dashboard({ players, onSelectPlayer }) {
           />
           {/* Fallback icon */}
           <div 
-            className="h-40 w-40 rounded-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center text-white font-bold text-6xl shadow-xl"
+            className="h-20 w-20 sm:h-32 sm:w-32 lg:h-40 lg:w-40 rounded-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center text-white font-bold text-4xl sm:text-5xl lg:text-6xl shadow-xl"
             style={{ display: 'none' }}
           >
             👁️
@@ -67,49 +67,49 @@ function Dashboard({ players, onSelectPlayer }) {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white transform hover:scale-105 transition-transform shadow-lg">
-          <i className="fas fa-users text-3xl mb-2 opacity-80"></i>
-          <div className="text-3xl font-bold">{stats.totalPlayers}</div>
-          <div className="text-sm opacity-90">Giocatori Valutati</div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg sm:rounded-xl p-3 sm:p-4 text-white transform hover:scale-105 transition-transform shadow-lg">
+          <i className="fas fa-users text-xl sm:text-2xl lg:text-3xl mb-1 sm:mb-2 opacity-80"></i>
+          <div className="text-2xl sm:text-3xl font-bold">{stats.totalPlayers}</div>
+          <div className="text-xs sm:text-sm opacity-90">Giocatori Valutati</div>
         </div>
         
-        <div className="bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl p-4 text-white transform hover:scale-105 transition-transform shadow-lg">
-          <i className="fas fa-bell text-3xl mb-2 opacity-80"></i>
-          <div className="text-3xl font-bold">{stats.totalSignalazioni}</div>
-          <div className="text-sm opacity-90">Segnalazioni da Valutare</div>
+        <div className="bg-gradient-to-br from-yellow-500 to-orange-500 rounded-lg sm:rounded-xl p-3 sm:p-4 text-white transform hover:scale-105 transition-transform shadow-lg">
+          <i className="fas fa-bell text-xl sm:text-2xl lg:text-3xl mb-1 sm:mb-2 opacity-80"></i>
+          <div className="text-2xl sm:text-3xl font-bold">{stats.totalSignalazioni}</div>
+          <div className="text-xs sm:text-sm opacity-90">Segnalazioni</div>
         </div>
         
-        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 text-white transform hover:scale-105 transition-transform shadow-lg">
-          <i className="fas fa-star text-3xl mb-2 opacity-80"></i>
-          <div className="text-3xl font-bold">{stats.avgPotential}</div>
-          <div className="text-sm opacity-90">Media Potenziale</div>
+        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg sm:rounded-xl p-3 sm:p-4 text-white transform hover:scale-105 transition-transform shadow-lg">
+          <i className="fas fa-star text-xl sm:text-2xl lg:text-3xl mb-1 sm:mb-2 opacity-80"></i>
+          <div className="text-2xl sm:text-3xl font-bold">{stats.avgPotential}</div>
+          <div className="text-xs sm:text-sm opacity-90">Media Potenziale</div>
         </div>
         
-        <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 text-white transform hover:scale-105 transition-transform shadow-lg">
-          <i className="fas fa-gem text-3xl mb-2 opacity-80"></i>
-          <div className="text-3xl font-bold">{stats.highPotential}</div>
-          <div className="text-sm opacity-90">Alto Potenziale (4+)</div>
+        <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg sm:rounded-xl p-3 sm:p-4 text-white transform hover:scale-105 transition-transform shadow-lg">
+          <i className="fas fa-gem text-xl sm:text-2xl lg:text-3xl mb-1 sm:mb-2 opacity-80"></i>
+          <div className="text-2xl sm:text-3xl font-bold">{stats.highPotential}</div>
+          <div className="text-xs sm:text-sm opacity-90">Alto Potenziale</div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Distribuzione Ruoli */}
-        <div className="bg-white rounded-xl p-6 shadow-lg">
-          <h3 className="text-lg font-semibold mb-4">
+        <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-lg">
+          <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
             <i className="fas fa-chart-pie mr-2 text-purple-500"></i>
             Distribuzione per Ruolo
           </h3>
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             {Object.entries(stats.positions).map(([role, count]) => (
               <div key={role} className="flex items-center">
-                <div className="w-32 text-sm font-medium text-gray-600">{role}</div>
-                <div className="flex-1 bg-gray-200 rounded-full h-8 relative overflow-hidden">
+                <div className="w-20 sm:w-28 lg:w-32 text-xs sm:text-sm font-medium text-gray-600">{role}</div>
+                <div className="flex-1 bg-gray-200 rounded-full h-6 sm:h-8 relative overflow-hidden">
                   <div 
-                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transition-all duration-1000 flex items-center justify-end pr-3"
+                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transition-all duration-1000 flex items-center justify-end pr-2 sm:pr-3"
                     style={{width: players.length > 0 ? `${(count / players.length) * 100}%` : '0%'}}
                   >
-                    <span className="text-white text-xs font-bold">{count}</span>
+                    <span className="text-white text-xs sm:text-sm font-bold">{count}</span>
                   </div>
                 </div>
               </div>
@@ -118,8 +118,8 @@ function Dashboard({ players, onSelectPlayer }) {
         </div>
 
         {/* Giocatori Prioritari */}
-        <div className="bg-white rounded-xl p-6 shadow-lg">
-          <h3 className="text-lg font-semibold mb-4">
+        <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-lg">
+          <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
             <i className="fas fa-exclamation-circle mr-2 text-red-500"></i>
             Giocatori Priorità Alta
           </h3>
@@ -128,14 +128,14 @@ function Dashboard({ players, onSelectPlayer }) {
               {highPriorityPlayers.map(player => (
                 <div 
                   key={player.id}
-                  className="flex items-center justify-between p-3 bg-red-50 rounded-lg hover:bg-red-100 cursor-pointer transition-colors"
+                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-2 sm:p-3 bg-red-50 rounded-lg hover:bg-red-100 cursor-pointer transition-colors gap-2"
                   onClick={() => onSelectPlayer(player)}
                 >
-                  <div>
-                    <div className="font-semibold">{player.name}</div>
-                    <div className="text-sm text-gray-600">{player.team} • {player.general_role}</div>
+                  <div className="flex-1">
+                    <div className="font-semibold text-sm sm:text-base">{player.name}</div>
+                    <div className="text-xs sm:text-sm text-gray-600">{player.team} • {player.general_role}</div>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 self-end sm:self-auto">
                     <span className="text-yellow-500">
                       {'★'.repeat(player.potential_value || 0)}
                     </span>
@@ -153,14 +153,14 @@ function Dashboard({ players, onSelectPlayer }) {
       </div>
 
       {/* Segnalazioni da Valutare */}
-      <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-6 shadow-lg border-2 border-yellow-300">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold">
+      <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-lg border-2 border-yellow-300">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 sm:mb-4 gap-2">
+          <h3 className="text-base sm:text-lg font-semibold">
             <i className="fas fa-bell mr-2 text-orange-500"></i>
             📌 Segnalazioni da Valutare
           </h3>
           {stats.totalSignalazioni > 0 && (
-            <span className="px-3 py-1 bg-orange-500 text-white text-sm font-bold rounded-full animate-pulse">
+            <span className="px-2 sm:px-3 py-1 bg-orange-500 text-white text-xs sm:text-sm font-bold rounded-full animate-pulse">
               {stats.totalSignalazioni} in attesa
             </span>
           )}
@@ -170,16 +170,16 @@ function Dashboard({ players, onSelectPlayer }) {
             {recentSignalazioni.map(player => (
               <div 
                 key={player.id}
-                className="flex items-center justify-between p-4 bg-white rounded-lg hover:shadow-md cursor-pointer transition-all border-l-4 border-orange-400"
+                className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 bg-white rounded-lg hover:shadow-md cursor-pointer transition-all border-l-4 border-orange-400 gap-2"
                 onClick={() => onSelectPlayer(player)}
               >
-                <div className="flex items-center gap-4 flex-1">
+                <div className="flex items-center gap-3 sm:gap-4 flex-1 w-full">
                   {/* Immagine */}
                   {player.profile_image ? (
                     <img 
                       src={player.profile_image} 
                       alt={player.name}
-                      className="w-12 h-12 rounded-lg object-cover object-top border-2 border-orange-300"
+                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover object-top border-2 border-orange-300"
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.style.display = 'none';
@@ -188,32 +188,32 @@ function Dashboard({ players, onSelectPlayer }) {
                     />
                   ) : null}
                   <div 
-                    className="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-400 to-yellow-500 flex items-center justify-center text-white font-bold text-lg border-2 border-orange-300"
+                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br from-orange-400 to-yellow-500 flex items-center justify-center text-white font-bold text-base sm:text-lg border-2 border-orange-300"
                     style={{ display: player.profile_image ? 'none' : 'flex' }}
                   >
                     {player.name?.[0] || '?'}
                   </div>
                   
                   {/* Info */}
-                  <div className="flex-1">
-                    <div className="font-semibold text-gray-800">{player.name}</div>
-                    <div className="text-sm text-gray-600">
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-sm sm:text-base text-gray-800 truncate">{player.name}</div>
+                    <div className="text-xs sm:text-sm text-gray-600 truncate">
                       {player.team || 'N/D'} • {player.general_role} • {player.nationality || 'N/D'}
                     </div>
                   </div>
                 </div>
                 
                 {/* Badge e Data */}
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
                   {player.signaler_name && (
-                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded whitespace-nowrap">
                       Segnalato da: {player.signaler_name}
                     </span>
                   )}
                   <span className="text-xs text-gray-500">
                     {new Date(player.created_at).toLocaleDateString('it-IT')}
                   </span>
-                  <i className="fas fa-chevron-right text-orange-400"></i>
+                  <i className="fas fa-chevron-right text-orange-400 hidden sm:inline"></i>
                 </div>
               </div>
             ))}
@@ -227,26 +227,26 @@ function Dashboard({ players, onSelectPlayer }) {
       </div>
 
       {/* Ultimi Giocatori Aggiunti */}
-      <div className="bg-white rounded-xl p-6 shadow-lg">
-        <h3 className="text-lg font-semibold mb-4">
+      <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-lg">
+        <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
           <i className="fas fa-clock mr-2 text-blue-500"></i>
           Ultimi Giocatori Valutati
         </h3>
         {recentPlayers.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {recentPlayers.map(player => (
               <div 
                 key={player.id} 
-                className="border rounded-lg p-4 hover:shadow-md transition-all cursor-pointer transform hover:scale-105"
+                className="border rounded-lg p-3 sm:p-4 hover:shadow-md transition-all cursor-pointer transform hover:scale-105"
                 onClick={() => onSelectPlayer(player)}
               >
                 <div className="flex justify-between items-start mb-2">
-                  <h4 className="font-semibold">{player.name}</h4>
+                  <h4 className="font-semibold text-sm sm:text-base truncate flex-1 mr-2">{player.name}</h4>
                   <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
                     {player.general_role}
                   </span>
                 </div>
-                <p className="text-sm text-gray-600 mb-1">{player.team}</p>
+                <p className="text-xs sm:text-sm text-gray-600 mb-1 truncate">{player.team}</p>
                 <div className="flex justify-between items-center">
                   <div className="text-sm">
                     {'⭐'.repeat(player.potential_value || 0)}

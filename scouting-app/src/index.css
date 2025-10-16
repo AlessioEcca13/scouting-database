@@ -44,10 +44,11 @@ code {
 @keyframes slideDown {
   from {
     opacity: 0;
-    max-height: 0;
+    transform: translateY(-10px);
   }
   to {
     opacity: 1;
+    transform: translateY(0);
     max-height: 500px;
   }
 }
