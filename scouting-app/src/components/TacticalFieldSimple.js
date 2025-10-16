@@ -184,6 +184,8 @@ function TacticalFieldSimple() {
   const [playerColors, setPlayerColors] = useState({});
   const [showColorModal, setShowColorModal] = useState(false);
   const [selectedPlayerForColor, setSelectedPlayerForColor] = useState(null);
+  const [fieldColor, setFieldColor] = useState('green');
+  const [displayAttribute, setDisplayAttribute] = useState('team');
 
   useEffect(() => {
     fetchAllPlayers();
@@ -297,9 +299,18 @@ function TacticalFieldSimple() {
   };
 
   const assignPlayerToPosition = (playerId, posKey) => {
+    // Controlla se il giocatore è già presente in qualsiasi posizione
+    const isPlayerAlreadyAssigned = Object.values(positionAssignments).some(
+      playerIds => playerIds && playerIds.includes(playerId)
+    );
+    
+    if (isPlayerAlreadyAssigned) {
+      toast.error('Giocatore già presente sul campo');
+      return;
+    }
+    
     setPositionAssignments(prev => {
       const current = prev[posKey] || [];
-      if (current.includes(playerId)) return prev;
       return { ...prev, [posKey]: [...current, playerId] };
     });
   };
@@ -315,6 +326,30 @@ function TacticalFieldSimple() {
     if (window.confirm('Vuoi davvero svuotare il campo?')) {
       setPositionAssignments({});
       toast.success('Campo svuotato!');
+    }
+  };
+
+  const getPlayerDisplayInfo = (player) => {
+    switch (displayAttribute) {
+      case 'age':
+        const age = player.birth_year ? new Date().getFullYear() - player.birth_year : 'N/D';
+        return `${age} anni`;
+      case 'role':
+        return player.specific_position || player.general_role || 'N/D';
+      case 'value':
+        if (player.market_value) {
+          const value = typeof player.market_value === 'number' ? player.market_value : parseFloat(player.market_value);
+          if (value >= 1000000) {
+            return `€${(value / 1000000).toFixed(1)}M`;
+          } else if (value >= 1000) {
+            return `€${(value / 1000).toFixed(0)}K`;
+          }
+          return `€${value}`;
+        }
+        return 'N/D';
+      case 'team':
+      default:
+        return player.team || 'N/D';
     }
   };
 
@@ -373,6 +408,34 @@ function TacticalFieldSimple() {
             </select>
           </div>
 
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">🎨 Colore Campo</label>
+            <select
+              value={fieldColor}
+              onChange={(e) => setFieldColor(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="green">Verde Classico</option>
+              <option value="blue">Blu</option>
+              <option value="red">Rosso</option>
+              <option value="gray">Grigio</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">📊 Mostra</label>
+            <select
+              value={displayAttribute}
+              onChange={(e) => setDisplayAttribute(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="team">Nome + Squadra</option>
+              <option value="age">Nome + Età</option>
+              <option value="role">Nome + Ruolo</option>
+              <option value="value">Nome + Valore</option>
+            </select>
+          </div>
+
           <div className="flex gap-2 items-end">
             <button
               onClick={() => setShowImportModal(true)}
@@ -397,8 +460,13 @@ function TacticalFieldSimple() {
             className="relative rounded-xl shadow-2xl overflow-hidden border-4 border-gray-700"
             style={{ width: '1000px', height: '1400px' }}
           >
-            {/* Texture campo */}
-            <div className="absolute inset-0 bg-gradient-to-b from-green-600 via-green-700 to-green-600"></div>
+            {/* Texture campo - colore dinamico */}
+            <div className={`absolute inset-0 ${
+              fieldColor === 'green' ? 'bg-gradient-to-b from-green-600 via-green-700 to-green-600' :
+              fieldColor === 'blue' ? 'bg-gradient-to-b from-blue-600 via-blue-700 to-blue-600' :
+              fieldColor === 'red' ? 'bg-gradient-to-b from-red-600 via-red-700 to-red-600' :
+              'bg-gradient-to-b from-gray-600 via-gray-700 to-gray-600'
+            }`}></div>
             <div className="absolute inset-0 opacity-10" style={{ 
               backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 35px, rgba(255,255,255,0.1) 35px, rgba(255,255,255,0.1) 70px)'
             }}></div>
@@ -496,7 +564,7 @@ function TacticalFieldSimple() {
                                 )}
                                 <div className="flex-1 min-w-0">
                                   <p className="font-bold text-sm truncate" style={{ color: colors.text }}>{player.name}</p>
-                                  <p className="text-xs" style={{ color: colors.text, opacity: 0.8 }}>{player.team}</p>
+                                  <p className="text-xs" style={{ color: colors.text, opacity: 0.8 }}>{getPlayerDisplayInfo(player)}</p>
                                 </div>
                               </div>
                             </div>
