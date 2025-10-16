@@ -259,8 +259,25 @@ function TacticalFieldSimple() {
     const newAssignments = { ...positionAssignments };
     const currentFormation = formations[formation];
     let importedCount = 0;
+    
+    // Set per tracciare i giocatori già aggiunti in questa sessione di import
+    const addedInThisImport = new Set();
 
     playersToImport.forEach(player => {
+      // Verifica se il giocatore è già stato aggiunto in questa sessione
+      if (addedInThisImport.has(player.id)) {
+        return; // Salta questo giocatore
+      }
+      
+      // Verifica se il giocatore è già presente in qualsiasi posizione
+      const isAlreadyOnField = Object.values(newAssignments).some(
+        playerIds => playerIds && playerIds.includes(player.id)
+      );
+      
+      if (isAlreadyOnField) {
+        return; // Salta questo giocatore
+      }
+      
       const matchingPos = currentFormation.find(pos => {
         const roleMatch = player.general_role?.toLowerCase() || '';
         const posRole = pos.role_abbr?.toLowerCase();
@@ -284,11 +301,10 @@ function TacticalFieldSimple() {
       if (matchingPos) {
         const posKey = `${matchingPos.role_abbr}_${matchingPos.x}_${matchingPos.y}`;
         if (!newAssignments[posKey]) newAssignments[posKey] = [];
-        // Doppio controllo per evitare duplicati
-        if (!newAssignments[posKey].includes(player.id)) {
-          newAssignments[posKey].push(player.id);
-          importedCount++;
-        }
+        
+        newAssignments[posKey].push(player.id);
+        addedInThisImport.add(player.id); // Marca come aggiunto
+        importedCount++;
       }
     });
 
