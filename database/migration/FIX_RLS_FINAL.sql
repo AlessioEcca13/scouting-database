@@ -8,7 +8,7 @@
 -- STEP 1: Disabilita RLS temporaneamente per debug
 ALTER TABLE users_profiles DISABLE ROW LEVEL SECURITY;
 
--- STEP 2: Rimuovi TUTTE le policies esistenti
+-- STEP 2: Rimuovi TUTTE le policies esistenti (incluse quelle nuove)
 DROP POLICY IF EXISTS "Users can view own profile" ON users_profiles;
 DROP POLICY IF EXISTS "Admins can view all profiles" ON users_profiles;
 DROP POLICY IF EXISTS "Admins can update all profiles" ON users_profiles;
@@ -18,6 +18,10 @@ DROP POLICY IF EXISTS "Users can insert own profile" ON users_profiles;
 DROP POLICY IF EXISTS "Enable read access for authenticated users" ON users_profiles;
 DROP POLICY IF EXISTS "Enable insert for authenticated users only" ON users_profiles;
 DROP POLICY IF EXISTS "Enable update for users based on id" ON users_profiles;
+DROP POLICY IF EXISTS "authenticated_select_all" ON users_profiles;
+DROP POLICY IF EXISTS "authenticated_insert_own" ON users_profiles;
+DROP POLICY IF EXISTS "authenticated_update_own" ON users_profiles;
+DROP POLICY IF EXISTS "authenticated_delete_own" ON users_profiles;
 
 -- STEP 3: Riabilita RLS
 ALTER TABLE users_profiles ENABLE ROW LEVEL SECURITY;
