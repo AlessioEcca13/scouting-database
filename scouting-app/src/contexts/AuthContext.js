@@ -114,15 +114,15 @@ export const AuthProvider = ({ children }) => {
 
     try {
       
-      // Timeout per la query (8 secondi)
+      // Timeout per la query (3 secondi - ridotto per UX migliore)
       let profileData = null;
       let error = null;
       let timedOut = false;
       
       const timeoutId = setTimeout(() => {
         timedOut = true;
-        console.error('⚠️ Query timeout dopo 8 secondi - possibile problema RLS o network');
-      }, 8000);
+        console.error('⚠️ Query timeout dopo 3 secondi - usando profilo di fallback');
+      }, 3000);
       
       try {
         const result = await supabase
@@ -134,18 +134,34 @@ export const AuthProvider = ({ children }) => {
         clearTimeout(timeoutId);
         
         if (timedOut) {
-          console.warn('Query completata dopo timeout, ignorata');
-          throw new Error('Query timeout');
+          console.warn('Query completata dopo timeout, usando profilo di fallback');
+          // Crea profilo di fallback invece di bloccare l'app
+          profileData = {
+            id: authUser.id,
+            email: authUser.email,
+            role: 'user',
+            created_at: new Date().toISOString()
+          };
+          error = null;
+        } else {
+          profileData = result.data;
+          error = result.error;
         }
-        
-        profileData = result.data;
-        error = result.error;
       } catch (queryError) {
         clearTimeout(timeoutId);
         if (timedOut) {
-          throw new Error('Query timeout - verifica RLS policies su Supabase');
+          // Timeout: usa profilo di fallback
+          console.warn('Timeout confermato, usando profilo di fallback');
+          profileData = {
+            id: authUser.id,
+            email: authUser.email,
+            role: 'user',
+            created_at: new Date().toISOString()
+          };
+          error = null;
+        } else {
+          throw queryError;
         }
-        throw queryError;
       }
 
       if (error) {
