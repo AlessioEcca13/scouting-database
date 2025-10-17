@@ -262,14 +262,37 @@ function TacticalFieldSimple() {
     
     // Set per tracciare i giocatori già aggiunti in questa sessione di import
     const addedInThisImport = new Set();
+    
+    // Set per tracciare combinazioni uniche (nome + squadra + età)
+    const addedPlayerSignatures = new Set();
+    
+    // Popola le signatures dei giocatori già sul campo
+    Object.values(newAssignments).forEach(playerIds => {
+      playerIds.forEach(id => {
+        const existingPlayer = allPlayers.find(p => p.id === id);
+        if (existingPlayer) {
+          const signature = `${existingPlayer.name?.toLowerCase()}_${existingPlayer.team?.toLowerCase()}_${existingPlayer.birth_year}`;
+          addedPlayerSignatures.add(signature);
+        }
+      });
+    });
 
     playersToImport.forEach(player => {
-      // Verifica se il giocatore è già stato aggiunto in questa sessione
+      // Crea signature univoca per questo giocatore
+      const playerSignature = `${player.name?.toLowerCase()}_${player.team?.toLowerCase()}_${player.birth_year}`;
+      
+      // Verifica se giocatore con stessa signature già aggiunto
+      if (addedPlayerSignatures.has(playerSignature)) {
+        console.log(`⚠️ Duplicato rilevato: ${player.name} (${player.team}) - saltato`);
+        return; // Salta questo giocatore
+      }
+      
+      // Verifica se il giocatore è già stato aggiunto in questa sessione (per ID)
       if (addedInThisImport.has(player.id)) {
         return; // Salta questo giocatore
       }
       
-      // Verifica se il giocatore è già presente in qualsiasi posizione
+      // Verifica se il giocatore è già presente in qualsiasi posizione (per ID)
       const isAlreadyOnField = Object.values(newAssignments).some(
         playerIds => playerIds && playerIds.includes(player.id)
       );
@@ -309,7 +332,8 @@ function TacticalFieldSimple() {
         // Ora aggiungi alla nuova posizione
         if (!newAssignments[posKey]) newAssignments[posKey] = [];
         newAssignments[posKey].push(player.id);
-        addedInThisImport.add(player.id); // Marca come aggiunto
+        addedInThisImport.add(player.id); // Marca come aggiunto per ID
+        addedPlayerSignatures.add(playerSignature); // Marca come aggiunto per signature
         importedCount++;
       }
     });
