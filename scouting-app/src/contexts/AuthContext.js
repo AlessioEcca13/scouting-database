@@ -127,7 +127,14 @@ export const AuthProvider = ({ children }) => {
         email: authUser.email,
         role: isAdmin ? 'admin' : 'user',
         is_active: true, // IMPORTANTE: necessario per evitare logout automatico
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
+        // Permessi: admin ha tutto, user ha permessi base
+        can_add_players: true,
+        can_edit_players: isAdmin,
+        can_delete_players: isAdmin,
+        can_add_reports: true,
+        can_view_all_reports: isAdmin,
+        can_manage_lists: true // TUTTI possono gestire liste
       };
       
       console.log(`👤 Profilo caricato: ${authUser.email} (${profileData.role})`);
