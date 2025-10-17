@@ -14,6 +14,11 @@ import PlayerReports from './components/PlayerReports';
 import PlayerLists from './components/PlayerLists';
 import FormationField from './components/FormationField';
 import TacticalFieldSimple from './components/TacticalFieldSimple';
+import { 
+  findDuplicatePlayers,
+  findPlayerByTransfermarktUrl,
+  createDuplicateMessage 
+} from './utils/playerDeduplication';
 
 function AppContent() {
   const { user, profile, loading: authLoading, signOut, canAddPlayers, canDeletePlayers, canAddReports, canManageLists } = useAuth();
@@ -146,6 +151,49 @@ function AppContent() {
           <PlayerForm 
             onSave={async (playerData) => {
               try {
+                // ============================================
+                // CONTROLLO DUPLICATI FINALE (Server-side)
+                // ============================================
+                
+                // 1. Carica tutti i giocatori esistenti
+                const { data: allPlayers, error: fetchError } = await supabase
+                  .from('players')
+                  .select('*');
+                
+                if (fetchError) throw fetchError;
+                
+                // 2. Check link Transfermarkt
+                if (playerData.transfermarkt_link) {
+                  const existingByUrl = findPlayerByTransfermarktUrl(
+                    playerData.transfermarkt_link, 
+                    allPlayers || []
+                  );
+                  
+                  if (existingByUrl) {
+                    alert(`❌ Link Transfermarkt già utilizzato!\n\n${createDuplicateMessage(existingByUrl)}\n\nVai al Database e compila un report per questo giocatore.`);
+                    return; // Blocca inserimento
+                  }
+                }
+                
+                // 3. Check ID univoco (nome + nazionalità + anno)
+                const newPlayer = {
+                  name: playerData.name,
+                  nationality: playerData.nationality,
+                  birth_year: playerData.birth_year
+                };
+                
+                const duplicates = findDuplicatePlayers(newPlayer, allPlayers || []);
+                
+                if (duplicates.length > 0) {
+                  const duplicate = duplicates[0];
+                  alert(`❌ Giocatore già presente!\n\n${createDuplicateMessage(duplicate)}\n\nVai al Database e compila un report per questo giocatore.`);
+                  return; // Blocca inserimento
+                }
+                
+                // ============================================
+                // INSERIMENTO GIOCATORE (se nessun duplicato)
+                // ============================================
+                
                 // Separa i campi del giocatore dai campi del report
                 const reportFields = [
                   'scout_name', 'scout_role', 'check_type', 'match_name', 'match_date',
