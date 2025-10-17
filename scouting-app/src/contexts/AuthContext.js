@@ -122,6 +122,7 @@ export const AuthProvider = ({ children }) => {
         id: authUser.id,
         email: authUser.email,
         role: 'user',
+        is_active: true, // IMPORTANTE: necessario per evitare logout automatico
         created_at: new Date().toISOString()
       };
       const error = null;
