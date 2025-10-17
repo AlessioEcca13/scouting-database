@@ -114,63 +114,17 @@ export const AuthProvider = ({ children }) => {
 
     try {
       
-      // Timeout per la query (3 secondi - ridotto per UX migliore)
-      let profileData = null;
-      let error = null;
-      let timedOut = false;
+      // BYPASS TEMPORANEO: Usa sempre profilo di fallback senza query
+      // Questo elimina completamente il timeout
+      console.log('⚡ Usando profilo di fallback diretto (bypass query database)');
       
-      console.log('🔍 Inizio query profilo per user:', authUser.id);
-      const startTime = performance.now();
-      
-      const timeoutId = setTimeout(() => {
-        timedOut = true;
-        console.error('⚠️ Query timeout dopo 3 secondi - usando profilo di fallback');
-        console.error('📊 Possibili cause: RLS policies lente, network lento, o problema database');
-      }, 3000);
-      
-      try {
-        const result = await supabase
-          .from('users_profiles')
-          .select('*')
-          .eq('id', authUser.id)
-          .single();
-        
-        const endTime = performance.now();
-        const duration = Math.round(endTime - startTime);
-        console.log(`✅ Query completata in ${duration}ms`);
-        
-        clearTimeout(timeoutId);
-        
-        if (timedOut) {
-          console.warn('Query completata dopo timeout, usando profilo di fallback');
-          // Crea profilo di fallback invece di bloccare l'app
-          profileData = {
-            id: authUser.id,
-            email: authUser.email,
-            role: 'user',
-            created_at: new Date().toISOString()
-          };
-          error = null;
-        } else {
-          profileData = result.data;
-          error = result.error;
-        }
-      } catch (queryError) {
-        clearTimeout(timeoutId);
-        if (timedOut) {
-          // Timeout: usa profilo di fallback
-          console.warn('Timeout confermato, usando profilo di fallback');
-          profileData = {
-            id: authUser.id,
-            email: authUser.email,
-            role: 'user',
-            created_at: new Date().toISOString()
-          };
-          error = null;
-        } else {
-          throw queryError;
-        }
-      }
+      const profileData = {
+        id: authUser.id,
+        email: authUser.email,
+        role: 'user',
+        created_at: new Date().toISOString()
+      };
+      const error = null;
 
       if (error) {
         console.error('Errore query profilo:', error);
