@@ -47,7 +47,7 @@ function PlayerForm({ onSave, onCancel }) {
     potential_value: '',
     market_value: '',
     contract_expiry: '',
-    priority: 'Media',
+    priority: null, // Solo "Urgente" o null
     recommended_action: 'Monitorare',
     director_feedback: 'Da valutare',
     check_type: 'Live',
@@ -567,18 +567,19 @@ function PlayerForm({ onSave, onCancel }) {
             </select>
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">🚨 Priorità</label>
-            <select
-              value={formData.priority}
-              onChange={(e) => setFormData({...formData, priority: e.target.value})}
-              className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-            >
-              <option value="Bassa">Bassa</option>
-              <option value="Media">Media</option>
-              <option value="Alta">Alta</option>
-              <option value="Urgente">Urgente</option>
-            </select>
+          <div className="col-span-2">
+            <label className="flex items-center gap-3 p-4 bg-red-50 border-2 border-red-300 rounded-lg cursor-pointer hover:bg-red-100 transition-all">
+              <input
+                type="checkbox"
+                checked={formData.priority === 'Urgente'}
+                onChange={(e) => setFormData({...formData, priority: e.target.checked ? 'Urgente' : null})}
+                className="w-5 h-5 text-red-600 border-gray-300 rounded focus:ring-red-500"
+              />
+              <div className="flex-1">
+                <span className="text-lg font-bold text-red-700">🚨 PRIORITÀ URGENTE</span>
+                <p className="text-sm text-red-600">Segna questo giocatore come priorità urgente nelle segnalazioni</p>
+              </div>
+            </label>
           </div>
 
           {/* Sezione Report Scouting - Collassabile */}

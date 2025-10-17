@@ -17,14 +17,6 @@ function PlayerCompactCard({ player, onClick }) {
     return colors[role] || 'bg-gray-500';
   };
 
-  const getPriorityBadge = (priority) => {
-    const colors = {
-      'Alta': 'bg-red-100 text-red-700 border-red-300',
-      'Media': 'bg-yellow-100 text-yellow-700 border-yellow-300',
-      'Bassa': 'bg-green-100 text-green-700 border-green-300'
-    };
-    return colors[priority] || 'bg-gray-100 text-gray-700 border-gray-300';
-  };
 
   return (
     <div
@@ -65,11 +57,6 @@ function PlayerCompactCard({ player, onClick }) {
               </h3>
               <p className="text-sm text-gray-600">{player.team || 'Senza squadra'}</p>
             </div>
-            {player.priority && (
-              <span className={`px-2 py-1 rounded-full text-xs font-semibold border ${getPriorityBadge(player.priority)}`}>
-                {player.priority}
-              </span>
-            )}
           </div>
 
           <div className="grid grid-cols-3 gap-2 text-xs text-gray-600 mb-2">

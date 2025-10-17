@@ -2,14 +2,6 @@
 import React from 'react';
 
 function PlayerCard({ player, onSelect, onDelete, onAddReport, isSignalazione = false }) {
-  const getPriorityColor = (priority) => {
-    switch(priority) {
-      case 'Alta': return 'bg-red-100 text-red-700 border-red-300';
-      case 'Media': return 'bg-yellow-100 text-yellow-700 border-yellow-300';
-      case 'Bassa': return 'bg-green-100 text-green-700 border-green-300';
-      default: return 'bg-gray-100 text-gray-700';
-    }
-  };
 
   const getFeedbackColor = (feedback) => {
     switch(feedback) {
@@ -67,12 +59,10 @@ function PlayerCard({ player, onSelect, onDelete, onAddReport, isSignalazione = 
                 )}
               </div>
               <p className="text-xs sm:text-sm text-gray-600 truncate">{player.nationality || 'Nazionalità N/D'}</p>
-              {player.priority && (
-                <span className={`inline-block mt-1 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs font-bold border-2 ${getPriorityColor(player.priority)} shadow-sm`}>
-                  {player.priority === 'Alta' && '🔴 '}
-                  {player.priority === 'Media' && '🟡 '}
-                  {player.priority === 'Bassa' && '🟢 '}
-                  {player.priority}
+              {/* Mostra badge URGENTE solo nelle segnalazioni */}
+              {isSignalazione && player.priority === 'Urgente' && (
+                <span className="inline-block mt-1 px-3 py-1 rounded-full text-xs font-bold border-2 bg-red-100 text-red-700 border-red-400 shadow-md animate-pulse">
+                  🚨 URGENTE
                 </span>
               )}
             </div>
