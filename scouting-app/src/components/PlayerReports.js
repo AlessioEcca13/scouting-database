@@ -50,8 +50,14 @@ function PlayerReports({ player, onClose }) {
       if (error) throw error;
 
       setReports(data || []);
-      // Non selezionare automaticamente nessun report
-      setSelectedReport(null);
+      
+      // Se non ci sono report, apri automaticamente il form di creazione
+      if (!data || data.length === 0) {
+        setShowNewReportForm(true);
+      } else {
+        // Altrimenti non selezionare nessun report
+        setSelectedReport(null);
+      }
     } catch (error) {
       console.error('Errore caricamento report:', error);
       alert('Errore nel caricamento dei report');
