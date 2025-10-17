@@ -4,6 +4,12 @@ import toast from 'react-hot-toast';
 import { supabase } from '../supabaseClient';
 import AttributeInput from './AttributeInput';
 import { getAllStrengths, getAllWeaknesses } from '../data/playerAttributes';
+import { 
+  generatePlayerUniqueId, 
+  findDuplicatePlayers,
+  findPlayerByTransfermarktUrl,
+  createDuplicateMessage 
+} from '../utils/playerDeduplication';
 
 function PlayerForm({ onSave, onCancel }) {
   const [duplicatePlayer, setDuplicatePlayer] = useState(null);
@@ -132,7 +138,7 @@ function PlayerForm({ onSave, onCancel }) {
     }
   };
 
-  const checkDuplicatePlayer = async (playerName, birthYear) => {
+  const checkDuplicatePlayer = async (playerName, birthYear, nationality = null) => {
     if (!playerName || playerName.trim().length < 3) {
       setDuplicatePlayer(null);
       return;
@@ -145,22 +151,45 @@ function PlayerForm({ onSave, onCancel }) {
     }
     
     try {
-      const { data, error } = await supabase
+      // 1. Check per link Transfermarkt (più affidabile)
+      if (transfermarktUrl) {
+        const { data: allPlayers } = await supabase
+          .from('players')
+          .select('*');
+        
+        const existingByUrl = findPlayerByTransfermarktUrl(transfermarktUrl, allPlayers || []);
+        if (existingByUrl) {
+          setDuplicatePlayer(existingByUrl);
+          toast.error(`⚠️ Link Transfermarkt già usato! ${createDuplicateMessage(existingByUrl)}`);
+          return;
+        }
+      }
+      
+      // 2. Check per ID univoco (nome + nazionalità + anno)
+      const newPlayer = {
+        name: playerName.trim(),
+        nationality: nationality || formData.nationality,
+        birth_year: birthYear
+      };
+      
+      const { data: allPlayers, error } = await supabase
         .from('players')
-        .select('*')
-        .ilike('name', playerName.trim())
-        .eq('birth_year', birthYear)
-        .limit(1);
+        .select('*');
       
       if (error) throw error;
       
-      if (data && data.length > 0) {
-        setDuplicatePlayer(data[0]);
+      const duplicates = findDuplicatePlayers(newPlayer, allPlayers || []);
+      
+      if (duplicates.length > 0) {
+        const duplicate = duplicates[0];
+        setDuplicatePlayer(duplicate);
+        console.log('🔍 Duplicato trovato:', duplicate);
       } else {
         setDuplicatePlayer(null);
       }
     } catch (error) {
       console.error('Errore controllo duplicati:', error);
+      setDuplicatePlayer(null);
     }
   };
 
@@ -170,12 +199,13 @@ function PlayerForm({ onSave, onCancel }) {
     console.log('📋 formData:', formData);
     console.log('📊 showReportSection:', showReportSection);
     
-    // Controllo duplicati prima di salvare (nome + anno di nascita)
-    await checkDuplicatePlayer(formData.name, formData.birth_year);
+    // Controllo duplicati prima di salvare (nome + nazionalità + anno di nascita)
+    await checkDuplicatePlayer(formData.name, formData.birth_year, formData.nationality);
     
     // Se c'è un duplicato, non procedere
     if (duplicatePlayer) {
       console.warn('⚠️ Duplicato trovato, blocco submit');
+      toast.error('❌ Impossibile aggiungere: giocatore già presente nel database');
       return; // L'avviso è già mostrato nel form
     }
     
@@ -283,32 +313,42 @@ function PlayerForm({ onSave, onCancel }) {
             
             {/* Avviso Duplicato */}
             {duplicatePlayer && (
-              <div className="mt-3 p-4 bg-red-50 border-2 border-red-300 rounded-lg">
+              <div className="mt-3 p-4 bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-400 rounded-lg shadow-lg animate-pulse">
                 <div className="flex items-start gap-3">
-                  <i className="fas fa-exclamation-triangle text-red-500 text-xl mt-1"></i>
+                  <i className="fas fa-exclamation-triangle text-red-500 text-2xl mt-1"></i>
                   <div className="flex-1">
-                    <h4 className="font-bold text-red-800 mb-2">⚠️ Giocatore già presente nel database!</h4>
+                    <h4 className="font-bold text-red-800 mb-2 text-lg">⚠️ Giocatore Duplicato Rilevato!</h4>
                     <p className="text-sm text-red-700 mb-3">
-                      <strong>{duplicatePlayer.name}</strong> ({duplicatePlayer.birth_year}) è già stato inserito.
+                      <strong>{duplicatePlayer.name}</strong> ({duplicatePlayer.birth_year}) è già presente nel database.
+                      {transfermarktUrl && ' Il link Transfermarkt è già stato utilizzato.'}
                     </p>
                     <div className="bg-white rounded-lg p-3 mb-3 border border-red-200">
-                      <p className="text-xs text-gray-600 mb-1">Dettagli giocatore esistente:</p>
-                      <p className="text-sm"><strong>Anno di nascita:</strong> {duplicatePlayer.birth_year || 'N/D'}</p>
-                      <p className="text-sm"><strong>Squadra:</strong> {duplicatePlayer.team || 'N/D'}</p>
-                      <p className="text-sm"><strong>Ruolo:</strong> {duplicatePlayer.general_role || 'N/D'}</p>
-                      <p className="text-sm"><strong>Nazionalità:</strong> {duplicatePlayer.nationality || 'N/D'}</p>
+                      <p className="text-xs font-semibold text-gray-700 mb-2">📋 Dettagli giocatore esistente:</p>
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <p><strong>Anno:</strong> {duplicatePlayer.birth_year || 'N/D'}</p>
+                        <p><strong>Nazionalità:</strong> {duplicatePlayer.nationality || 'N/D'}</p>
+                        <p><strong>Squadra:</strong> {duplicatePlayer.team || 'N/D'}</p>
+                        <p><strong>Ruolo:</strong> {duplicatePlayer.general_role || 'N/D'}</p>
+                      </div>
+                    </div>
+                    <div className="bg-blue-50 border-l-4 border-blue-500 p-3 mb-3 rounded">
+                      <p className="text-sm text-blue-800">
+                        <i className="fas fa-lightbulb mr-2"></i>
+                        <strong>💡 Suggerimento:</strong> Invece di aggiungere un duplicato, compila un <strong>report di scouting</strong> per questo giocatore!
+                      </p>
                     </div>
                     <div className="flex gap-2">
                       <button
                         type="button"
                         onClick={() => {
                           // Vai alla pagina del giocatore per aggiungere un report
-                          toast.info('Vai al Database e cerca il giocatore per aggiungere un report');
+                          toast.success('✅ Vai al Database e cerca il giocatore per aggiungere un report di scouting');
                           onCancel();
                         }}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all text-sm font-semibold"
+                        className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:opacity-90 transition-all text-sm font-semibold flex items-center justify-center gap-2"
                       >
-                        📋 Aggiungi Report
+                        <i className="fas fa-clipboard-list"></i>
+                        📋 Compila Report Scouting
                       </button>
                       <button
                         type="button"
@@ -365,7 +405,18 @@ function PlayerForm({ onSave, onCancel }) {
             <input
               type="text"
               value={formData.nationality}
-              onChange={(e) => setFormData({...formData, nationality: e.target.value})}
+              onChange={(e) => {
+                const newNationality = e.target.value;
+                setFormData({...formData, nationality: newNationality});
+                
+                // Controlla duplicati quando cambia nazionalità
+                if (formData.name && formData.birth_year) {
+                  clearTimeout(window.duplicateCheckTimeout);
+                  window.duplicateCheckTimeout = setTimeout(() => {
+                    checkDuplicatePlayer(formData.name, formData.birth_year, newNationality);
+                  }, 500);
+                }
+              }}
               className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
               placeholder="Italia, Francia..."
             />
