@@ -118,13 +118,19 @@ export const AuthProvider = ({ children }) => {
       // Questo elimina completamente il timeout
       console.log('⚡ Usando profilo di fallback diretto (bypass query database)');
       
+      // Determina ruolo basato su email
+      const isAdmin = authUser.email?.toLowerCase().includes('admin') || 
+                      authUser.email === 'alessio@scouting.com';
+      
       const profileData = {
         id: authUser.id,
         email: authUser.email,
-        role: 'user',
+        role: isAdmin ? 'admin' : 'user',
         is_active: true, // IMPORTANTE: necessario per evitare logout automatico
         created_at: new Date().toISOString()
       };
+      
+      console.log(`👤 Profilo caricato: ${authUser.email} (${profileData.role})`);
       const error = null;
 
       if (error) {
