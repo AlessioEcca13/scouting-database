@@ -125,45 +125,19 @@ function PlayerReports({ player, onClose }) {
 
       console.log('✅ Report salvato:', data);
       
-      // Controlla quanti scout hanno compilato report per questo giocatore
-      const { data: allReports, error: reportsError } = await supabase
-        .from('player_reports')
-        .select('scout_name')
-        .eq('player_id', player.id);
-      
-      if (!reportsError && allReports) {
-        // Ottieni lista scout unici che hanno compilato report
-        const uniqueScouts = [...new Set(allReports.map(r => r.scout_name))];
-        console.log('👥 Scout che hanno compilato:', uniqueScouts);
+      // Se il giocatore ha almeno 1 report, deve essere spostato nel Database
+      if (!player.is_scouted) {
+        const { error: updateError } = await supabase
+          .from('players')
+          .update({ is_scouted: true })
+          .eq('id', player.id);
         
-        // Lista scout previsti (puoi configurarla)
-        const expectedScouts = ['Alessio', 'Roberto'];
-        
-        // Controlla se tutti gli scout hanno compilato
-        const allScoutsCompleted = expectedScouts.every(scout => 
-          uniqueScouts.includes(scout)
-        );
-        
-        console.log('✅ Tutti gli scout hanno compilato?', allScoutsCompleted);
-        
-        // Se il giocatore non era scouted E tutti gli scout hanno compilato
-        if (!player.is_scouted && allScoutsCompleted) {
-          const { error: updateError } = await supabase
-            .from('players')
-            .update({ is_scouted: true })
-            .eq('id', player.id);
-          
-          if (updateError) {
-            console.error('⚠️ Errore aggiornamento is_scouted:', updateError);
-          } else {
-            console.log('✅ Giocatore spostato nel Database (tutti gli scout hanno compilato)');
-            toast.success('✅ Report aggiunto! Tutti gli scout hanno compilato. Il giocatore è ora nel Database.');
-          }
-        } else if (!player.is_scouted) {
-          const remainingScouts = expectedScouts.filter(scout => !uniqueScouts.includes(scout));
-          toast.success(`✅ Report aggiunto! In attesa di: ${remainingScouts.join(', ')}`);
+        if (updateError) {
+          console.error('⚠️ Errore aggiornamento is_scouted:', updateError);
+          toast.error('⚠️ Errore aggiornamento stato giocatore');
         } else {
-          toast.success('✅ Report aggiunto con successo!');
+          console.log('✅ Giocatore spostato nel Database (ha almeno 1 report)');
+          toast.success('✅ Report aggiunto! Il giocatore è ora nel Database.');
         }
       } else {
         toast.success('✅ Report aggiunto con successo!');
