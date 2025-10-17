@@ -119,9 +119,13 @@ export const AuthProvider = ({ children }) => {
       let error = null;
       let timedOut = false;
       
+      console.log('🔍 Inizio query profilo per user:', authUser.id);
+      const startTime = performance.now();
+      
       const timeoutId = setTimeout(() => {
         timedOut = true;
         console.error('⚠️ Query timeout dopo 3 secondi - usando profilo di fallback');
+        console.error('📊 Possibili cause: RLS policies lente, network lento, o problema database');
       }, 3000);
       
       try {
@@ -130,6 +134,10 @@ export const AuthProvider = ({ children }) => {
           .select('*')
           .eq('id', authUser.id)
           .single();
+        
+        const endTime = performance.now();
+        const duration = Math.round(endTime - startTime);
+        console.log(`✅ Query completata in ${duration}ms`);
         
         clearTimeout(timeoutId);
         
