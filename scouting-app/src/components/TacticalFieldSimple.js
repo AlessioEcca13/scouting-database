@@ -3,6 +3,73 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { toast } from 'react-hot-toast';
 
+// Mappa abbreviazioni italiane -> inglesi
+const roleMapping = {
+  // Portieri
+  'P': 'GK',
+  'POR': 'GK',
+  
+  // Difensori
+  'TS': 'LB',  // Terzino Sinistro
+  'TD': 'RB',  // Terzino Destro
+  'DCS': 'LCB', // Difensore Centrale Sinistro
+  'DCD': 'RCB', // Difensore Centrale Destro
+  'DC': 'CB',   // Difensore Centrale
+  'ES': 'LWB',  // Esterno Sinistro
+  'ED': 'RWB',  // Esterno Destro
+  
+  // Centrocampisti
+  'MS': 'LCM',  // Mezzala Sinistra
+  'MD': 'RCM',  // Mezzala Destra
+  'CC': 'CM',   // Centrocampista Centrale
+  'MED': 'CDM', // Mediano
+  'REG': 'CM',  // Regista
+  'TRQ': 'CAM', // Trequartista
+  
+  // Attaccanti
+  'AS': 'LW',   // Ala Sinistra
+  'AD': 'RW',   // Ala Destra
+  'EST': 'LM',  // Esterno (generico)
+  'PC': 'ST',   // Punta Centrale
+  'AT': 'ST',   // Attaccante
+  'SS': 'SS',   // Seconda Punta
+};
+
+// Funzione per convertire ruolo italiano in inglese
+const normalizeRole = (role) => {
+  if (!role) return null;
+  
+  // Se è già un'abbreviazione inglese, restituiscila
+  if (role.length <= 3 && role === role.toUpperCase()) {
+    return roleMapping[role] || role;
+  }
+  
+  // Altrimenti cerca per nome completo
+  const roleLower = role.toLowerCase();
+  
+  if (roleLower.includes('portiere')) return 'GK';
+  if (roleLower.includes('terzino sin') || roleLower === 'ts') return 'LB';
+  if (roleLower.includes('terzino des') || roleLower === 'td') return 'RB';
+  if (roleLower.includes('difensore centrale sin') || roleLower === 'dcs') return 'LCB';
+  if (roleLower.includes('difensore centrale des') || roleLower === 'dcd') return 'RCB';
+  if (roleLower.includes('difensore centrale') || roleLower === 'dc') return 'CB';
+  if (roleLower.includes('esterno sin') || roleLower === 'es') return 'LWB';
+  if (roleLower.includes('esterno des') || roleLower === 'ed') return 'RWB';
+  if (roleLower.includes('mezzala sin') || roleLower === 'ms') return 'LCM';
+  if (roleLower.includes('mezzala des') || roleLower === 'md') return 'RCM';
+  if (roleLower.includes('centrocampista centrale') || roleLower === 'cc') return 'CM';
+  if (roleLower.includes('mediano') || roleLower === 'med') return 'CDM';
+  if (roleLower.includes('regista') || roleLower === 'reg') return 'CM';
+  if (roleLower.includes('trequartista') || roleLower === 'trq') return 'CAM';
+  if (roleLower.includes('ala sin') || roleLower === 'as') return 'LW';
+  if (roleLower.includes('ala des') || roleLower === 'ad') return 'RW';
+  if (roleLower.includes('punta centrale') || roleLower === 'pc') return 'ST';
+  if (roleLower.includes('attaccante') || roleLower === 'at') return 'ST';
+  if (roleLower.includes('seconda punta') || roleLower === 'ss') return 'SS';
+  
+  return null;
+};
+
 const formations = {
   '4-3-3': [
     { role_abbr: 'GK', x: 50, y: 5 },
@@ -301,23 +368,39 @@ function TacticalFieldSimple() {
         return; // Salta questo giocatore
       }
       
+      // Usa specific_position se disponibile, altrimenti general_role
+      const playerRole = player.specific_position || player.general_role;
+      const normalizedRole = normalizeRole(playerRole);
+      
+      // Cerca una posizione che corrisponda al ruolo normalizzato
       const matchingPos = currentFormation.find(pos => {
-        const roleMatch = player.general_role?.toLowerCase() || '';
-        const posRole = pos.role_abbr?.toLowerCase();
+        if (!normalizedRole) return false;
         
-        if (roleMatch.includes('portiere') || roleMatch.includes('gk')) return posRole === 'gk';
-        if (roleMatch.includes('difens') || roleMatch.includes('terzin')) {
+        // Match esatto
+        if (pos.role_abbr === normalizedRole) return true;
+        
+        // Match per categoria (fallback se non c'è match esatto)
+        const posRole = pos.role_abbr?.toLowerCase();
+        const normRole = normalizedRole.toLowerCase();
+        
+        // Portieri
+        if (normRole === 'gk') return posRole === 'gk';
+        
+        // Difensori
+        if (['lb', 'lcb', 'cb', 'rcb', 'rb', 'lwb', 'rwb'].includes(normRole)) {
           return posRole?.includes('cb') || posRole?.includes('lb') || posRole?.includes('rb') || posRole?.includes('wb');
         }
-        if (roleMatch.includes('centroc') || roleMatch.includes('mediano')) {
-          return posRole?.includes('cm') || posRole?.includes('dm') || posRole?.includes('cdm');
+        
+        // Centrocampisti
+        if (['lcm', 'cm', 'rcm', 'cdm', 'ldm', 'rdm', 'cam', 'lam', 'ram'].includes(normRole)) {
+          return posRole?.includes('cm') || posRole?.includes('dm') || posRole?.includes('am');
         }
-        if (roleMatch.includes('attacc') || roleMatch.includes('punta')) {
-          return posRole?.includes('st') || posRole?.includes('cf') || posRole?.includes('s');
+        
+        // Attaccanti
+        if (['lw', 'rw', 'st', 'cf', 'ss', 'ls', 'rs'].includes(normRole)) {
+          return posRole?.includes('w') || posRole?.includes('st') || posRole?.includes('s') || posRole?.includes('cf');
         }
-        if (roleMatch.includes('ala') || roleMatch.includes('esterno')) {
-          return posRole?.includes('w') || posRole?.includes('m');
-        }
+        
         return false;
       });
 
