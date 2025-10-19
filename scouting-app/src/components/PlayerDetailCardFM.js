@@ -124,14 +124,21 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
   const POSITION_MAP = {
     // Portieri (nostra porta - basso visivo = Y alto)
     'GK': { x: 50, y: 95 },
+    'P': { x: 50, y: 95 },
+    'POR': { x: 50, y: 95 },
     'Portiere': { x: 50, y: 95 },
     
     // Difensori (linea difensiva - basso visivo)
     'LB': { x: 15, y: 75 },
+    'TS': { x: 15, y: 75 },  // Terzino Sinistro
     'LCB': { x: 38, y: 75 },
+    'DCS': { x: 38, y: 75 }, // Difensore Centrale Sinistro
     'CB': { x: 50, y: 75 },
+    'DC': { x: 50, y: 75 },  // Difensore Centrale
     'RCB': { x: 62, y: 75 },
+    'DCD': { x: 62, y: 75 }, // Difensore Centrale Destro
     'RB': { x: 85, y: 75 },
+    'TD': { x: 85, y: 75 },  // Terzino Destro
     'Terzino sinistro': { x: 15, y: 75 },
     'Difensore centrale sinistro': { x: 38, y: 75 },
     'Difensore centrale': { x: 50, y: 75 },
@@ -140,7 +147,9 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
     
     // Esterni a 5
     'LWB': { x: 15, y: 55 },
+    'ES': { x: 15, y: 55 },  // Esterno Sinistro
     'RWB': { x: 85, y: 55 },
+    'ED': { x: 85, y: 55 },  // Esterno Destro
     'Esterno sinistro': { x: 15, y: 55 },
     'Esterno destro': { x: 85, y: 55 },
     'Esterno di sinistra': { x: 15, y: 55 },
@@ -148,6 +157,7 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
     
     // Mediani
     'CDM': { x: 50, y: 62 },
+    'MED': { x: 50, y: 62 }, // Mediano
     'LDM': { x: 38, y: 60 },
     'RDM': { x: 62, y: 60 },
     'Mediano': { x: 50, y: 62 },
@@ -156,8 +166,12 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
     
     // Centrocampisti centrali
     'CM': { x: 50, y: 55 },
+    'CC': { x: 50, y: 55 },  // Centrocampista Centrale
+    'REG': { x: 50, y: 55 }, // Regista
     'LCM': { x: 35, y: 55 },
+    'MS': { x: 35, y: 55 },  // Mezzala Sinistra
     'RCM': { x: 65, y: 55 },
+    'MD': { x: 65, y: 55 },  // Mezzala Destra
     'Centrocampista': { x: 50, y: 55 },
     'Centrocampista sinistro': { x: 35, y: 55 },
     'Centrocampista destro': { x: 65, y: 55 },
@@ -167,9 +181,11 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
     // Esterni di centrocampo
     'LM': { x: 25, y: 55 },
     'RM': { x: 75, y: 55 },
+    'EST': { x: 25, y: 55 }, // Esterno (generico)
     
     // Trequartisti
     'CAM': { x: 50, y: 42 },
+    'TRQ': { x: 50, y: 42 }, // Trequartista
     'LAM': { x: 35, y: 45 },
     'RAM': { x: 65, y: 45 },
     'Trequartista': { x: 50, y: 42 },
@@ -178,7 +194,9 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
     
     // Ali
     'LW': { x: 20, y: 30 },
+    'AS': { x: 20, y: 30 },  // Ala Sinistra
     'RW': { x: 80, y: 30 },
+    'AD': { x: 80, y: 30 },  // Ala Destra
     'Ala sinistra': { x: 20, y: 30 },
     'Ala destra': { x: 80, y: 30 },
     
@@ -192,6 +210,8 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
     
     // Attaccanti (porta avversaria - alto visivo = Y basso)
     'ST': { x: 50, y: 25 },
+    'PC': { x: 50, y: 25 },  // Punta Centrale
+    'AT': { x: 50, y: 25 },  // Attaccante
     'Attaccante': { x: 50, y: 25 },
     'Attaccante sinistro': { x: 42, y: 25 },
     'Attaccante destro': { x: 58, y: 25 },
