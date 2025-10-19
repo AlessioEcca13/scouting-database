@@ -289,12 +289,17 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
     const abbr = {
       // Portieri
       'Portiere': 'POR',
+      'P': 'POR',
+      'POR': 'POR',
       'GK': 'POR',
       
       // Difensori
       'Difensore centrale': 'DC',
       'Difensore centrale sinistro': 'DCS',
       'Difensore centrale destro': 'DCD',
+      'DC': 'DC',
+      'DCS': 'DCS',
+      'DCD': 'DCD',
       'CB': 'DC',
       'CB-L': 'DCS',
       'CB-R': 'DCD',
@@ -302,6 +307,8 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
       // Terzini
       'Terzino sinistro': 'TS',
       'Terzino destro': 'TD',
+      'TS': 'TS',
+      'TD': 'TD',
       'LB': 'TS',
       'RB': 'TD',
       
@@ -310,6 +317,8 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
       'Esterno destro': 'ED',
       'Esterno di sinistra': 'ES',
       'Esterno di destra': 'ED',
+      'ES': 'ES',
+      'ED': 'ED',
       'LWB': 'ES',
       'RWB': 'ED',
       
@@ -317,6 +326,9 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
       'Mediano': 'MED',
       'Mediano sinistro': 'MS',
       'Mediano destro': 'MD',
+      'MED': 'MED',
+      'MS': 'MS',
+      'MD': 'MD',
       'CDM': 'MED',
       'CDM-L': 'MS',
       'CDM-R': 'MD',
@@ -325,6 +337,10 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
       'Centrocampista': 'CC',
       'Centrocampista sinistro': 'CS',
       'Centrocampista destro': 'CD',
+      'CC': 'CC',
+      'CS': 'CS',
+      'CD': 'CD',
+      'REG': 'REG',
       'CM': 'CC',
       'CM-L': 'CS',
       'CM-R': 'CD',
@@ -332,6 +348,8 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
       // Mezzali
       'Mezzala sinistra': 'MZS',
       'Mezzala destra': 'MZD',
+      'MZS': 'MZS',
+      'MZD': 'MZD',
       'LCM': 'MZS',
       'RCM': 'MZD',
       
@@ -339,6 +357,9 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
       'Trequartista': 'TRQ',
       'Trequartista sinistro': 'TRS',
       'Trequartista destro': 'TRD',
+      'TRQ': 'TRQ',
+      'TRS': 'TRS',
+      'TRD': 'TRD',
       'CAM': 'TRQ',
       'CAM-L': 'TRS',
       'CAM-R': 'TRD',
@@ -346,6 +367,8 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
       // Ali
       'Ala sinistra': 'AS',
       'Ala destra': 'AD',
+      'AS': 'AS',
+      'AD': 'AD',
       'LW': 'AS',
       'RW': 'AD',
       
@@ -353,6 +376,9 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
       'Seconda punta': 'SP',
       'Seconda punta sinistra': 'SPS',
       'Seconda punta destra': 'SPD',
+      'SP': 'SP',
+      'SPS': 'SPS',
+      'SPD': 'SPD',
       'SS': 'SP',
       'SS-L': 'SPS',
       'SS-R': 'SPD',
@@ -362,6 +388,11 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
       'Attaccante sinistro': 'ATS',
       'Attaccante destro': 'ATD',
       'Punta': 'ATT',
+      'PC': 'ATT',
+      'AT': 'ATT',
+      'ATT': 'ATT',
+      'ATS': 'ATS',
+      'ATD': 'ATD',
       'ST': 'ATT',
       'ST-L': 'ATS',
       'ST-R': 'ATD'
