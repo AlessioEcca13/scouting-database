@@ -303,18 +303,20 @@ class MultiLangTransfermarktScraper:
             # Info box principale
             info_table = soup.find('div', class_='info-table')
             if info_table:
-                rows = info_table.find_all('span', class_='info-table__content')
+                # Trova tutte le coppie label-value
+                labels = info_table.find_all('span', class_='info-table__content--regular')
                 
-                for row in rows:
-                    label_tag = row.find_previous('span', class_='info-table__content--bold')
-                    if not label_tag:
+                for label_tag in labels:
+                    # Il valore è nel prossimo span con classe --bold
+                    value_tag = label_tag.find_next_sibling('span', class_='info-table__content--bold')
+                    if not value_tag:
                         continue
                     
                     label = self.clean_text(label_tag.get_text()).lower()
-                    value = self.clean_text(row.get_text())
+                    value = self.clean_text(value_tag.get_text())
                     
                     # Data di nascita / età
-                    if any(keyword in label for keyword in ['birth', 'nascita', 'nacimiento', 'geburt', 'naissance', 'nascimento']):
+                    if any(keyword in label for keyword in ['birth', 'nascita', 'nacim', 'nacimiento', 'geburt', 'naissance', 'nascimento', 'edad', 'age', 'età']):
                         # Estrai anno
                         year_match = re.search(r'\b(19|20)\d{2}\b', value)
                         if year_match:
@@ -326,19 +328,35 @@ class MultiLangTransfermarktScraper:
                             player_data['age'] = int(age_match.group(1))
                     
                     # Altezza
-                    elif any(keyword in label for keyword in ['height', 'altezza', 'altura', 'größe', 'taille', 'altura']):
-                        height_match = re.search(r'(\d+)[,.]?(\d*)\s*m', value)
+                    elif any(keyword in label for keyword in ['height', 'altezza', 'altura', 'größe', 'taille', 'height']):
+                        # Supporta formati: "1,77 m", "1.77 m", "177 cm"
+                        height_match = re.search(r'(\d+)[,.](\d+)\s*m', value)
                         if height_match:
-                            meters = float(f"{height_match.group(1)}.{height_match.group(2) or '0'}")
+                            meters = float(f"{height_match.group(1)}.{height_match.group(2)}")
                             player_data['height_cm'] = int(meters * 100)
-                    
-                    # Nazionalità
-                    elif any(keyword in label for keyword in ['citizenship', 'nazionalità', 'nacionalidad', 'nationalität', 'nationalité', 'nacionalidade']):
-                        # Traduce nazionalità in inglese
-                        if self.detected_language != 'en':
-                            player_data['nationality_primary'] = self.translate_to_english(value, self.detected_language)
                         else:
-                            player_data['nationality_primary'] = value
+                            # Prova formato cm
+                            cm_match = re.search(r'(\d+)\s*cm', value)
+                            if cm_match:
+                                player_data['height_cm'] = int(cm_match.group(1))
+                    
+                    # Nazionalità (cerca anche "lugar de nac" per nazionalità)
+                    elif any(keyword in label for keyword in ['citizenship', 'nazionalità', 'nacionalidad', 'nationalität', 'nationalité', 'nacionalidade', 'lugar', 'place']):
+                        # Estrai nome paese (ignora città)
+                        # Cerca img con alt che contiene il nome del paese
+                        img_tag = value_tag.find('img', alt=True)
+                        if img_tag and img_tag.get('alt'):
+                            nationality = img_tag['alt']
+                            if self.detected_language != 'en':
+                                player_data['nationality_primary'] = self.translate_to_english(nationality, self.detected_language)
+                            else:
+                                player_data['nationality_primary'] = nationality
+                        elif value and not any(x in value.lower() for x in ['unknown', 'n/a', '-']):
+                            # Fallback: usa il testo
+                            if self.detected_language != 'en':
+                                player_data['nationality_primary'] = self.translate_to_english(value, self.detected_language)
+                            else:
+                                player_data['nationality_primary'] = value
                     
                     # Posizione
                     elif any(keyword in label for keyword in ['position', 'posizione', 'posición', 'position', 'posição']):
