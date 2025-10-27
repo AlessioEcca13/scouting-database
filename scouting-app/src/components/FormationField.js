@@ -214,7 +214,7 @@ function FormationField({ list, onClose }) {
             >
               <option value="green">Verde Chiaro</option>
               <option value="darkGreen">Verde Scuro</option>
-              <option value="blue">Blu</option>
+              <option value="blue">Blue</option>
             </select>
 
             {/* Zoom */}
@@ -246,11 +246,11 @@ function FormationField({ list, onClose }) {
         <div className="bg-gray-800 px-6 py-3 flex gap-4 text-sm">
           {Object.entries({
             photo: 'Foto',
-            age: 'Età',
-            club: 'Squadra',
+            age: 'Age',
+            club: 'Club',
             shirtNumber: 'Numero',
             marketValue: 'Valore',
-            height: 'Altezza'
+            height: 'Height'
           }).map(([key, label]) => (
             <label key={key} className="flex items-center gap-2 text-white cursor-pointer">
               <input
@@ -384,7 +384,7 @@ function FormationField({ list, onClose }) {
                         <button
                           onClick={() => removePlayerFromPosition(pos.posKey)}
                           className="bg-red-600 text-white p-1 rounded-full shadow-lg hover:bg-red-700"
-                          title="Rimuovi"
+                          title="Remove"
                         >
                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

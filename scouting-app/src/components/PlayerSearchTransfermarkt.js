@@ -19,9 +19,9 @@ const PlayerSearchTransfermarkt = ({ onSelectPlayer }) => {
       nationality: '🇳🇴 Norvegia',
       birth_year: 2000,
       height: '194 cm',
-      general_role: 'Attaccante',
+      general_role: 'Forward',
       specific_position: 'Centre-Forward',
-      preferred_foot: 'Sinistro',
+      preferred_foot: 'Left',
       market_value: '€180M',
       transfermarkt_link: 'https://www.transfermarkt.com/erling-haaland/profil/spieler/418560'
     },
@@ -32,9 +32,9 @@ const PlayerSearchTransfermarkt = ({ onSelectPlayer }) => {
       nationality: '🇫🇷 Francia',
       birth_year: 1998,
       height: '178 cm',
-      general_role: 'Attaccante',
+      general_role: 'Forward',
       specific_position: 'Left Winger',
-      preferred_foot: 'Destro',
+      preferred_foot: 'Right',
       market_value: '€180M',
       transfermarkt_link: 'https://www.transfermarkt.com/kylian-mbappe/profil/spieler/342229'
     },
@@ -45,9 +45,9 @@ const PlayerSearchTransfermarkt = ({ onSelectPlayer }) => {
       nationality: '🇦🇷 Argentina',
       birth_year: 1987,
       height: '170 cm',
-      general_role: 'Attaccante',
+      general_role: 'Forward',
       specific_position: 'Right Winger',
-      preferred_foot: 'Sinistro',
+      preferred_foot: 'Left',
       market_value: '€25M',
       transfermarkt_link: 'https://www.transfermarkt.com/lionel-messi/profil/spieler/28003'
     },
@@ -60,7 +60,7 @@ const PlayerSearchTransfermarkt = ({ onSelectPlayer }) => {
       height: '186 cm',
       general_role: 'Centrocampo',
       specific_position: 'Central Midfield',
-      preferred_foot: 'Destro',
+      preferred_foot: 'Right',
       market_value: '€180M',
       transfermarkt_link: 'https://www.transfermarkt.com/jude-bellingham/profil/spieler/581678'
     },
@@ -73,7 +73,7 @@ const PlayerSearchTransfermarkt = ({ onSelectPlayer }) => {
       height: '174 cm',
       general_role: 'Centrocampo',
       specific_position: 'Central Midfield',
-      preferred_foot: 'Destro',
+      preferred_foot: 'Right',
       market_value: '€100M',
       transfermarkt_link: 'https://www.transfermarkt.com/pedri/profil/spieler/533399'
     },
@@ -86,7 +86,7 @@ const PlayerSearchTransfermarkt = ({ onSelectPlayer }) => {
       height: '176 cm',
       general_role: 'Ala',
       specific_position: 'Left Winger',
-      preferred_foot: 'Destro',
+      preferred_foot: 'Right',
       market_value: '€150M',
       transfermarkt_link: 'https://www.transfermarkt.com/vinicius-junior/profil/spieler/371998'
     },
@@ -97,9 +97,9 @@ const PlayerSearchTransfermarkt = ({ onSelectPlayer }) => {
       nationality: '🇮🇹 Italia',
       birth_year: 1999,
       height: '196 cm',
-      general_role: 'Portiere',
+      general_role: 'Goalkeeper',
       specific_position: 'Goalkeeper',
-      preferred_foot: 'Destro',
+      preferred_foot: 'Right',
       market_value: '€60M',
       transfermarkt_link: 'https://www.transfermarkt.com/gianluigi-donnarumma/profil/spieler/315858'
     },
@@ -110,9 +110,9 @@ const PlayerSearchTransfermarkt = ({ onSelectPlayer }) => {
       nationality: '🇳🇱 Olanda',
       birth_year: 1991,
       height: '193 cm',
-      general_role: 'Difensore',
+      general_role: 'Defender',
       specific_position: 'Centre-Back',
-      preferred_foot: 'Destro',
+      preferred_foot: 'Right',
       market_value: '€45M',
       transfermarkt_link: 'https://www.transfermarkt.com/virgil-van-dijk/profil/spieler/139208'
     }
@@ -299,7 +299,7 @@ const PlayerSearchTransfermarkt = ({ onSelectPlayer }) => {
       {showDropdown && !loading && suggestions.length === 0 && searchQuery.length >= 2 && (
         <div className="absolute z-50 w-full mt-2 bg-white border-2 border-gray-200 rounded-xl shadow-xl p-6 text-center">
           <i className="fas fa-search text-4xl text-gray-300 mb-2"></i>
-          <p className="text-gray-600 font-medium">Nessun giocatore trovato</p>
+          <p className="text-gray-600 font-medium">No players found</p>
           <p className="text-sm text-gray-500 mt-1">
             Prova con un altro nome o cognome
           </p>

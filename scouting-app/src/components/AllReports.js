@@ -100,7 +100,7 @@ function AllReports({ onPlayerClick }) {
               onChange={(e) => setFilter(e.target.value)}
               className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <option value="all">Tutti</option>
+              <option value="all">All</option>
               <option value="Live">🔴 Live</option>
               <option value="Video">🎥 Video</option>
               <option value="Video/Live">🔴🎥 Video/Live</option>
@@ -116,7 +116,7 @@ function AllReports({ onPlayerClick }) {
               onChange={(e) => setScoutFilter(e.target.value)}
               className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <option value="all">Tutti</option>
+              <option value="all">All</option>
               {scouts.map(scout => (
                 <option key={scout} value={scout}>{scout}</option>
               ))}
@@ -125,7 +125,7 @@ function AllReports({ onPlayerClick }) {
 
           {/* Filtro Valutazione */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Valutazione</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Rating</label>
             <select
               value={ratingFilter}
               onChange={(e) => setRatingFilter(e.target.value)}
@@ -219,7 +219,7 @@ function AllReports({ onPlayerClick }) {
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500">Valutazione</p>
+                      <p className="text-xs text-gray-500">Rating</p>
                       <p className="font-semibold text-gray-800">
                         Attuale: {report.current_value}⭐ • Potenziale: {report.potential_value}⭐
                       </p>

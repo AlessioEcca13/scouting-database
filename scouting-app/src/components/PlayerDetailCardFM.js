@@ -126,7 +126,7 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
     'GK': { x: 50, y: 95 },
     'P': { x: 50, y: 95 },
     'POR': { x: 50, y: 95 },
-    'Portiere': { x: 50, y: 95 },
+    'Goalkeeper': { x: 50, y: 95 },
     
     // Difensori (linea difensiva - basso visivo)
     'LB': { x: 15, y: 75 },
@@ -172,7 +172,7 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
     'MS': { x: 35, y: 55 },  // Mezzala Sinistra
     'RCM': { x: 65, y: 55 },
     'MD': { x: 65, y: 55 },  // Mezzala Destra
-    'Centrocampista': { x: 50, y: 55 },
+    'Midfielder': { x: 50, y: 55 },
     'Centrocampista sinistro': { x: 35, y: 55 },
     'Centrocampista destro': { x: 65, y: 55 },
     'Mezzala sinistra': { x: 35, y: 55 },
@@ -212,7 +212,7 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
     'ST': { x: 50, y: 25 },
     'PC': { x: 50, y: 25 },  // Punta Centrale
     'AT': { x: 50, y: 25 },  // Attaccante
-    'Attaccante': { x: 50, y: 25 },
+    'Forward': { x: 50, y: 25 },
     'Attaccante sinistro': { x: 42, y: 25 },
     'Attaccante destro': { x: 58, y: 25 },
     'Punta': { x: 50, y: 25 }
@@ -270,12 +270,12 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
 
   const getRoleColor = (role) => {
     const colors = {
-      'Portiere': 'bg-yellow-500',
-      'Difensore': 'bg-blue-500',
+      'Goalkeeper': 'bg-yellow-500',
+      'Defender': 'bg-blue-500',
       'Terzino': 'bg-blue-400',
       'Centrocampo': 'bg-green-500',
       'Ala': 'bg-purple-500',
-      'Attaccante': 'bg-red-500'
+      'Forward': 'bg-red-500'
     };
     return colors[role] || 'bg-gray-500';
   };
@@ -288,7 +288,7 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
     
     const abbr = {
       // Portieri
-      'Portiere': 'POR',
+      'Goalkeeper': 'POR',
       'P': 'POR',
       'POR': 'POR',
       'GK': 'POR',
@@ -334,7 +334,7 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
       'CDM-R': 'MD',
       
       // Centrocampisti
-      'Centrocampista': 'CC',
+      'Midfielder': 'CC',
       'Centrocampista sinistro': 'CS',
       'Centrocampista destro': 'CD',
       'CC': 'CC',
@@ -384,7 +384,7 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
       'SS-R': 'SPD',
       
       // Attaccanti
-      'Attaccante': 'ATT',
+      'Forward': 'ATT',
       'Attaccante sinistro': 'ATS',
       'Attaccante destro': 'ATD',
       'Punta': 'ATT',
@@ -535,12 +535,12 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
               {/* Info Personali */}
               <div className="space-y-2 text-xs">
                 <div className="bg-gray-900 rounded p-1.5">
-                  <p className="text-gray-400 text-[10px]">Nazionalità</p>
+                  <p className="text-gray-400 text-[10px]">Nationality</p>
                   <p className="font-bold text-white text-sm">{player.nationality || 'N/A'}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-1.5">
                   <div className="bg-gray-900 rounded p-1.5">
-                    <p className="text-gray-400 text-[10px]">Età</p>
+                    <p className="text-gray-400 text-[10px]">Age</p>
                     <p className="font-bold text-white text-sm">{age ? `${age}` : 'N/A'}</p>
                   </div>
                   <div className="bg-gray-900 rounded p-1.5">
@@ -584,12 +584,12 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
                   <p className="text-[9px] text-gray-500">cm</p>
                 </div>
                 <div className="bg-gray-900 rounded p-2 border border-gray-700">
-                  <p className="text-gray-400 text-[10px]">Peso</p>
+                  <p className="text-gray-400 text-[10px]">Weight</p>
                   <p className="font-bold text-sm text-white">{player.weight_kg ? `${player.weight_kg}` : 'N/A'}</p>
                   <p className="text-[9px] text-gray-500">kg</p>
                 </div>
                 <div className="bg-gray-900 rounded p-2 border border-gray-700">
-                  <p className="text-gray-400 text-[10px]">Piede</p>
+                  <p className="text-gray-400 text-[10px]">Foot</p>
                   <p className="font-bold text-sm text-white">{player.preferred_foot || 'N/A'}</p>
                 </div>
               </div>
@@ -815,7 +815,7 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
                     <p className="text-2xl font-bold mt-2 text-yellow-400">{averageRatings.currentValue}/5</p>
                   </div>
                   <div className="text-center bg-gray-900 rounded-lg p-3">
-                    <p className="text-xs text-gray-400 mb-2">Potenziale</p>
+                    <p className="text-xs text-gray-400 mb-2">Potential</p>
                     {renderStars(averageRatings.potentialValue)}
                     <p className="text-2xl font-bold mt-2 text-green-400">{averageRatings.potentialValue}/5</p>
                   </div>

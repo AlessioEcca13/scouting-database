@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import PlayerCard from './PlayerCard';
 import PlayerTable from './PlayerTable';
 
-function Database({ players, onSelectPlayer, onDeletePlayer, onAddReport, loading, onRefresh, title = "🗄️ Database Giocatori", emptyMessage = "Nessun giocatore trovato", isSignalazione = false }) {
+function Database({ players, onSelectPlayer, onDeletePlayer, onAddReport, loading, onRefresh, title = "🗄️ Database Giocatori", emptyMessage = "No players found", isSignalazione = false }) {
   const [viewMode, setViewMode] = useState('cards'); // cards, table, compact
   const [showFilters, setShowFilters] = useState(true);
   const [sortBy, setSortBy] = useState('name');
@@ -240,13 +240,13 @@ function Database({ players, onSelectPlayer, onDeletePlayer, onAddReport, loadin
                 value={filters.role}
                 onChange={(e) => setFilters({...filters, role: e.target.value})}
               >
-                <option value="">Tutti i ruoli</option>
-                <option value="Portiere">Portiere</option>
-                <option value="Difensore">Difensore</option>
+                <option value="">All Positions</option>
+                <option value="Goalkeeper">Goalkeeper</option>
+                <option value="Defender">Defender</option>
                 <option value="Terzino">Terzino</option>
                 <option value="Centrocampo">Centrocampo</option>
                 <option value="Ala">Ala</option>
-                <option value="Attaccante">Attaccante</option>
+                <option value="Forward">Forward</option>
               </select>
 
               {/* Potenziale Minimo */}
@@ -282,9 +282,9 @@ function Database({ players, onSelectPlayer, onDeletePlayer, onAddReport, loadin
                 onChange={(e) => setFilters({...filters, foot: e.target.value})}
               >
                 <option value="">Piede...</option>
-                <option value="Destro">Destro</option>
-                <option value="Sinistro">Sinistro</option>
-                <option value="Ambidestro">Ambidestro</option>
+                <option value="Right">Right</option>
+                <option value="Left">Left</option>
+                <option value="Both">Both</option>
               </select>
 
               {/* Priorità */}
@@ -354,11 +354,11 @@ function Database({ players, onSelectPlayer, onDeletePlayer, onAddReport, loadin
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
             >
-              <option value="name">Nome</option>
+              <option value="name">Name</option>
               <option value="birth_year">Anno nascita</option>
-              <option value="potential_value">Potenziale</option>
-              <option value="team">Squadra</option>
-              <option value="created_at">Data aggiunta</option>
+              <option value="potential_value">Potential</option>
+              <option value="team">Club</option>
+              <option value="created_at">Date Added</option>
             </select>
             <button
               onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}

@@ -102,7 +102,7 @@ function PlayerCard({ player, onSelect, onDelete, onAddReport, isSignalazione = 
               )}
               {player.potential_value && (
                 <div className="text-center">
-                  <p className="text-xs text-gray-500 mb-0.5 sm:mb-1">Potenziale</p>
+                  <p className="text-xs text-gray-500 mb-0.5 sm:mb-1">Potential</p>
                   <div className="text-emerald-500 text-sm sm:text-base">
                     {'★'.repeat(player.potential_value)}{'☆'.repeat(5-player.potential_value)}
                   </div>

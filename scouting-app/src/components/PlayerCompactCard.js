@@ -7,12 +7,12 @@ function PlayerCompactCard({ player, onClick }) {
 
   const getRoleColor = (role) => {
     const colors = {
-      'Portiere': 'bg-yellow-500',
-      'Difensore': 'bg-blue-500',
+      'Goalkeeper': 'bg-yellow-500',
+      'Defender': 'bg-blue-500',
       'Terzino': 'bg-blue-400',
       'Centrocampo': 'bg-green-500',
       'Ala': 'bg-purple-500',
-      'Attaccante': 'bg-red-500'
+      'Forward': 'bg-red-500'
     };
     return colors[role] || 'bg-gray-500';
   };

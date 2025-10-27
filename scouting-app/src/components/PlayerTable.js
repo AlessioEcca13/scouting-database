@@ -10,14 +10,14 @@ function PlayerTable({ players, onSelect, onDelete, onAddReport }) {
           <thead className="bg-gradient-to-r from-purple-500 to-blue-500 text-white">
             <tr>
               <th className="px-4 py-3 text-center text-sm font-semibold w-20">Foto</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold">Nome</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold">Età</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold">Squadra</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold">Ruolo</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold">Nazionalità</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold">Potenziale</th>
+              <th className="px-4 py-3 text-left text-sm font-semibold">Name</th>
+              <th className="px-4 py-3 text-left text-sm font-semibold">Age</th>
+              <th className="px-4 py-3 text-left text-sm font-semibold">Club</th>
+              <th className="px-4 py-3 text-left text-sm font-semibold">Position</th>
+              <th className="px-4 py-3 text-left text-sm font-semibold">Nationality</th>
+              <th className="px-4 py-3 text-left text-sm font-semibold">Potential</th>
               <th className="px-4 py-3 text-left text-sm font-semibold">Priorità</th>
-              <th className="px-4 py-3 text-center text-sm font-semibold">Azioni</th>
+              <th className="px-4 py-3 text-center text-sm font-semibold">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -121,7 +121,7 @@ function PlayerTable({ players, onSelect, onDelete, onAddReport }) {
                         onDelete(player.id);
                       }}
                       className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                      title="Elimina"
+                      title="Delete"
                     >
                       <i className="fas fa-trash"></i>
                     </button>
@@ -136,7 +136,7 @@ function PlayerTable({ players, onSelect, onDelete, onAddReport }) {
       {players.length === 0 && (
         <div className="text-center py-12">
           <i className="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
-          <p className="text-gray-600 text-lg">Nessun giocatore trovato</p>
+          <p className="text-gray-600 text-lg">No players found</p>
         </div>
       )}
     </div>

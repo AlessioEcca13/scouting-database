@@ -42,7 +42,7 @@ function PlayerForm({ onSave, onCancel }) {
     weight: '',
     shirt_number: '',
     general_role: 'Centrocampo',
-    preferred_foot: 'Destro',
+    preferred_foot: 'Right',
     current_value: '',
     potential_value: '',
     market_value: '',
@@ -389,7 +389,7 @@ function PlayerForm({ onSave, onCancel }) {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Squadra</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Club</label>
             <input
               type="text"
               value={formData.team}
@@ -400,7 +400,7 @@ function PlayerForm({ onSave, onCancel }) {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Nazionalità</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Nationality</label>
             <input
               type="text"
               value={formData.nationality}
@@ -466,12 +466,12 @@ function PlayerForm({ onSave, onCancel }) {
               onChange={(e) => setFormData({...formData, general_role: e.target.value})}
               className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
             >
-              <option value="Portiere">🥅 Portiere</option>
-              <option value="Difensore">🛡️ Difensore</option>
+              <option value="Goalkeeper">🥅 Portiere</option>
+              <option value="Defender">🛡️ Difensore</option>
               <option value="Terzino">↔️ Terzino</option>
               <option value="Centrocampo">⚽ Centrocampo</option>
               <option value="Ala">🦅 Ala</option>
-              <option value="Attaccante">🎯 Attaccante</option>
+              <option value="Forward">🎯 Attaccante</option>
             </select>
           </div>
 
@@ -493,9 +493,9 @@ function PlayerForm({ onSave, onCancel }) {
               onChange={(e) => setFormData({...formData, preferred_foot: e.target.value})}
               className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
             >
-              <option value="Destro">👉 Destro</option>
-              <option value="Sinistro">👈 Sinistro</option>
-              <option value="Ambidestro">👐 Ambidestro</option>
+              <option value="Right">👉 Destro</option>
+              <option value="Left">👈 Sinistro</option>
+              <option value="Both">👐 Ambidestro</option>
             </select>
           </div>
 

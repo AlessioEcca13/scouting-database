@@ -236,7 +236,7 @@ const playerColorCategories = {
   prestito: { name: 'In Prestito', bg: '#e9d5ff', border: '#a855f7', text: '#581c87' },
   svincolato: { name: 'Svincolato', bg: '#d1fae5', border: '#10b981', text: '#064e3b' },
   titolare: { name: 'Titolare', bg: '#fed7aa', border: '#f97316', text: '#7c2d12' },
-  default: { name: 'Nessuno', bg: '#ffffff', border: '#ffffff', text: '#1f2937' }
+  default: { name: 'None', bg: '#ffffff', border: '#ffffff', text: '#1f2937' }
 };
 
 function TacticalFieldSimple() {
@@ -831,7 +831,7 @@ function TacticalFieldSimple() {
                               <button
                                 onClick={() => removePlayerFromPosition(posKey, player.id)}
                                 className="bg-red-600 text-white p-1 rounded-full text-[10px] w-5 h-5 flex items-center justify-center"
-                                title="Rimuovi"
+                                title="Remove"
                               >
                                 ×
                               </button>

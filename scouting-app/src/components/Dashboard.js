@@ -15,10 +15,10 @@ function Dashboard({ players, onSelectPlayer }) {
       : 0,
     highPotential: scoutedPlayers.filter(p => (p.potential_value || 0) >= 4).length,
     positions: {
-      'Portiere': scoutedPlayers.filter(p => p.general_role === 'Portiere').length,
-      'Difensore': scoutedPlayers.filter(p => p.general_role === 'Difensore').length,
+      'Goalkeeper': scoutedPlayers.filter(p => p.general_role === 'Goalkeeper').length,
+      'Defender': scoutedPlayers.filter(p => p.general_role === 'Defender').length,
       'Centrocampo': scoutedPlayers.filter(p => p.general_role === 'Centrocampo').length,
-      'Attaccante': scoutedPlayers.filter(p => p.general_role === 'Attaccante').length,
+      'Forward': scoutedPlayers.filter(p => p.general_role === 'Forward').length,
       'Terzino': scoutedPlayers.filter(p => p.general_role === 'Terzino').length,
       'Ala': scoutedPlayers.filter(p => p.general_role === 'Ala').length
     }

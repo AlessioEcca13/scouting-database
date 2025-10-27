@@ -73,7 +73,7 @@ function DirectorFeedbackModal({ report, onClose, onSaved }) {
                 <p className="font-semibold">{report.scout_name}</p>
               </div>
               <div>
-                <p className="text-gray-400">Valutazione</p>
+                <p className="text-gray-400">Rating</p>
                 <p className="font-semibold text-yellow-400 text-lg">{report.final_rating || 'N/A'}</p>
               </div>
               <div>

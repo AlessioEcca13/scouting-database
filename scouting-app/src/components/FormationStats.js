@@ -44,7 +44,7 @@ function FormationStats({ players, assignedPlayers, formation }) {
         {/* Modulo */}
         <div className="bg-white rounded-lg p-4 text-center shadow">
           <div className="text-3xl font-bold text-blue-600">{formation}</div>
-          <div className="text-xs text-gray-600 mt-1">Modulo</div>
+          <div className="text-xs text-gray-600 mt-1">Formation</div>
         </div>
         
         {/* Giocatori Schierati */}
