@@ -278,9 +278,10 @@ function TacticalFieldSimple() {
         .select('*')
         .order('name');
       if (error) throw error;
+      console.log('✅ Giocatori caricati:', data?.length || 0);
       setAllPlayers(data || []);
     } catch (error) {
-      console.error('Errore:', error);
+      console.error('❌ Errore caricamento giocatori:', error);
       toast.error('Errore caricamento giocatori');
     }
   };
@@ -603,11 +604,13 @@ function TacticalFieldSimple() {
   const getFilteredPlayers = () => {
     if (!searchTerm) return [];
     const term = searchTerm.toLowerCase();
-    return allPlayers.filter(p =>
+    const filtered = allPlayers.filter(p =>
       p.name?.toLowerCase().includes(term) ||
       p.team?.toLowerCase().includes(term) ||
       p.general_role?.toLowerCase().includes(term)
     );
+    console.log(`🔍 Ricerca "${searchTerm}": ${filtered.length} risultati su ${allPlayers.length} giocatori`);
+    return filtered;
   };
 
   const getAssignedPlayerIds = () => {
@@ -902,34 +905,43 @@ function TacticalFieldSimple() {
         </div>
       </div>
 
-      {filteredPlayers.length > 0 && (
-        <div className="bg-white rounded-xl shadow-lg p-6">
+      {/* Risultati Ricerca */}
+      {searchTerm && (
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
           <h3 className="text-lg font-bold text-gray-800 mb-4">
-            Risultati Ricerca ({filteredPlayers.length})
+            🔍 Risultati Ricerca ({filteredPlayers.length})
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {filteredPlayers.map(player => (
-              <div
-                key={player.id}
-                draggable
-                onDragStart={() => setDraggedPlayer(player.id)}
-                className={`p-3 rounded-lg border-2 cursor-move hover:shadow-lg transition-all ${
-                  assignedIds.has(player.id) ? 'bg-green-50 border-green-500' : 'bg-white border-gray-300'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  {player.profile_image && (
-                    <img src={player.profile_image} alt={player.name} className="w-10 h-10 rounded-full object-cover" />
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <p className="font-bold text-sm truncate">{player.name}</p>
-                    <p className="text-xs text-gray-600">{player.team}</p>
-                    <p className="text-xs text-gray-500">{player.general_role}</p>
+          
+          {filteredPlayers.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {filteredPlayers.map(player => (
+                <div
+                  key={player.id}
+                  draggable
+                  onDragStart={() => setDraggedPlayer(player.id)}
+                  className={`p-3 rounded-lg border-2 cursor-move hover:shadow-lg transition-all ${
+                    assignedIds.has(player.id) ? 'bg-green-50 border-green-500' : 'bg-white border-gray-300'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    {player.profile_image && (
+                      <img src={player.profile_image} alt={player.name} className="w-10 h-10 rounded-full object-cover" />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-sm truncate">{player.name}</p>
+                      <p className="text-xs text-gray-600">{player.team}</p>
+                      <p className="text-xs text-gray-500">{player.general_role}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-gray-500 text-lg">❌ Nessun giocatore trovato per "{searchTerm}"</p>
+              <p className="text-gray-400 text-sm mt-2">Prova con un altro nome, squadra o ruolo</p>
+            </div>
+          )}
         </div>
       )}
 
