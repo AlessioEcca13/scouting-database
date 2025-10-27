@@ -9,6 +9,10 @@ lxml>=4.9.0
 # Translation
 deep-translator>=1.11.4
 
+# API Server
+flask>=3.0.0
+flask-cors>=4.0.0
+
 # Optional: for better performance
 cchardet>=2.1.7
 aiodns>=3.0.0
