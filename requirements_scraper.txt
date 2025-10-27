@@ -1,0 +1,14 @@
+# Transfermarkt Multilingual Scraper Requirements
+# Install with: pip install -r requirements_scraper.txt
+
+# Core dependencies
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# Translation
+deep-translator>=1.11.4
+
+# Optional: for better performance
+cchardet>=2.1.7
+aiodns>=3.0.0
