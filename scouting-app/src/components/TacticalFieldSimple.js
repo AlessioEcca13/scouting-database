@@ -626,128 +626,42 @@ function TacticalFieldSimple() {
   const assignedIds = getAssignedPlayerIds();
 
   return (
-    <div className="p-6">
+    <div className="p-6 max-w-[1920px] mx-auto">
+      {/* Header */}
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">⚽ Campo Tattico</h1>
-        <p className="text-gray-600">Cerca e posiziona giocatori sul campo</p>
+        <h1 className="text-4xl font-bold text-gray-800 mb-2">⚽ Campo Tattico Professionale</h1>
+        <p className="text-gray-600 text-lg">Crea e gestisci le tue formazioni tattiche</p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">🔍 Cerca Giocatore</label>
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Nome, squadra o ruolo..."
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">📋 Modulo</label>
-            <select
-              value={formation}
-              onChange={(e) => setFormation(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {Object.keys(formations).map(f => (
-                <option key={f} value={f}>{f}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">🎨 Colore Campo</label>
-            <select
-              value={fieldColor}
-              onChange={(e) => setFieldColor(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="green">Verde Classico</option>
-              <option value="blue">Blu</option>
-              <option value="red">Rosso</option>
-              <option value="gray">Grigio</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">📊 Mostra Attributi</label>
-            <div className="bg-white border border-gray-300 rounded-lg p-3 space-y-2">
-              <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+      {/* Layout a 2 colonne: Campo + Sidebar */}
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_400px] gap-6">
+        
+        {/* COLONNA SINISTRA: Campo + Ricerca */}
+        <div className="space-y-6">
+          
+          {/* Barra Ricerca Compatta */}
+          <div className="bg-white rounded-xl shadow-lg p-4">
+            <div className="flex gap-3">
+              <div className="flex-1">
                 <input
-                  type="checkbox"
-                  checked={displayAttributes.team}
-                  onChange={() => toggleAttribute('team')}
-                  className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="🔍 Cerca giocatore per nome, squadra o ruolo..."
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
                 />
-                <span className="text-sm font-medium text-gray-700">🏟️ Squadra</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
-                <input
-                  type="checkbox"
-                  checked={displayAttributes.age}
-                  onChange={() => toggleAttribute('age')}
-                  className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
-                />
-                <span className="text-sm font-medium text-gray-700">🎂 Età</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
-                <input
-                  type="checkbox"
-                  checked={displayAttributes.role}
-                  onChange={() => toggleAttribute('role')}
-                  className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
-                />
-                <span className="text-sm font-medium text-gray-700">⚽ Ruolo</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
-                <input
-                  type="checkbox"
-                  checked={displayAttributes.value}
-                  onChange={() => toggleAttribute('value')}
-                  className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
-                />
-                <span className="text-sm font-medium text-gray-700">💰 Valore</span>
-              </label>
+              </div>
+              <select
+                value={formation}
+                onChange={(e) => setFormation(e.target.value)}
+                className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-gray-700"
+              >
+                {Object.keys(formations).map(f => (
+                  <option key={f} value={f}>📋 {f}</option>
+                ))}
+              </select>
             </div>
           </div>
-
-          <div className="flex gap-2 items-end">
-            <button
-              onClick={() => setShowImportModal(true)}
-              className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-all"
-            >
-              📥 Importa
-            </button>
-            <button
-              onClick={clearField}
-              disabled={Object.keys(positionAssignments).length === 0}
-              className="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-all disabled:opacity-50"
-            >
-              🗑️ Svuota
-            </button>
-          </div>
-
-          <div className="flex gap-2 items-end">
-            <button
-              onClick={() => setShowSaveModal(true)}
-              disabled={Object.keys(positionAssignments).length === 0}
-              className="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-all disabled:opacity-50"
-            >
-              💾 Salva Formazione
-            </button>
-            <button
-              onClick={() => setShowLoadModal(true)}
-              disabled={savedFormations.length === 0}
-              className="flex-1 px-4 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-all disabled:opacity-50"
-            >
-              📂 Carica Formazione
-            </button>
-          </div>
-        </div>
-      </div>
 
       {/* Risultati Ricerca - SPOSTATO PRIMA DEL CAMPO */}
       {searchTerm && (
@@ -944,9 +858,166 @@ function TacticalFieldSimple() {
           </div>
         </div>
       </div>
+        </div>
 
-      {/* Legenda Colori */}
-      <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+        {/* COLONNA DESTRA: Sidebar Controlli */}
+        <div className="space-y-6">
+          
+          {/* Azioni Rapide */}
+          <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl shadow-xl p-6 text-white">
+            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <span>⚡</span> Azioni Rapide
+            </h3>
+            <div className="space-y-3">
+              <button
+                onClick={() => setShowSaveModal(true)}
+                disabled={Object.keys(positionAssignments).length === 0}
+                className="w-full px-4 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+              >
+                💾 Salva Formazione
+              </button>
+              <button
+                onClick={() => setShowLoadModal(true)}
+                disabled={savedFormations.length === 0}
+                className="w-full px-4 py-3 bg-white text-purple-600 rounded-lg font-semibold hover:bg-gray-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+              >
+                📂 Carica Formazione
+              </button>
+              <button
+                onClick={() => setShowImportModal(true)}
+                className="w-full px-4 py-3 bg-white text-green-600 rounded-lg font-semibold hover:bg-gray-100 transition-all shadow-lg"
+              >
+                📥 Importa da Liste
+              </button>
+              <button
+                onClick={clearField}
+                disabled={Object.keys(positionAssignments).length === 0}
+                className="w-full px-4 py-3 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+              >
+                🗑️ Svuota Campo
+              </button>
+            </div>
+          </div>
+
+          {/* Personalizzazione */}
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <span>🎨</span> Personalizzazione
+            </h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Colore Campo</label>
+                <select
+                  value={fieldColor}
+                  onChange={(e) => setFieldColor(e.target.value)}
+                  className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="green">🟢 Verde Classico</option>
+                  <option value="blue">🔵 Blu</option>
+                  <option value="red">🔴 Rosso</option>
+                  <option value="gray">⚫ Grigio</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-3">Mostra Attributi</label>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={displayAttributes.team}
+                      onChange={() => toggleAttribute('team')}
+                      className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                    />
+                    <span className="text-sm font-medium text-gray-700">🏟️ Squadra</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={displayAttributes.age}
+                      onChange={() => toggleAttribute('age')}
+                      className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                    />
+                    <span className="text-sm font-medium text-gray-700">🎂 Età</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={displayAttributes.role}
+                      onChange={() => toggleAttribute('role')}
+                      className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                    />
+                    <span className="text-sm font-medium text-gray-700">⚽ Ruolo</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={displayAttributes.value}
+                      onChange={() => toggleAttribute('value')}
+                      className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                    />
+                    <span className="text-sm font-medium text-gray-700">💰 Valore</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Statistiche */}
+          <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-xl shadow-lg p-6 border-2 border-green-200">
+            <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <span>📊</span> Statistiche
+            </h3>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-700 font-medium">Modulo:</span>
+                <span className="text-blue-600 font-bold text-lg">{formation}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-700 font-medium">Giocatori:</span>
+                <span className="text-green-600 font-bold text-lg">{assignedIds.size}/11</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-700 font-medium">Formazioni salvate:</span>
+                <span className="text-purple-600 font-bold text-lg">{savedFormations.length}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Legenda Colori Compatta */}
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <span>🎨</span> Legenda Colori
+            </h3>
+            <div className="grid grid-cols-2 gap-2">
+              {Object.entries(playerColorCategories).filter(([key]) => key !== 'default').map(([key, cat]) => (
+                <div
+                  key={key}
+                  className="flex items-center gap-2 p-2 rounded-lg border-2 text-xs"
+                  style={{
+                    backgroundColor: cat.bg,
+                    borderColor: cat.border
+                  }}
+                >
+                  <div 
+                    className="w-3 h-3 rounded-full border-2 flex-shrink-0" 
+                    style={{ 
+                      backgroundColor: cat.bg,
+                      borderColor: cat.border
+                    }} 
+                  />
+                  <span className="font-semibold truncate" style={{ color: cat.text }}>{cat.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* Legenda Colori Mobile (nascosta su desktop) */}
+      <div className="xl:hidden bg-white rounded-xl shadow-lg p-6 mb-6">
         <h3 className="text-lg font-bold text-gray-800 mb-4">🎨 Legenda Colori</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
           {Object.entries(playerColorCategories).filter(([key]) => key !== 'default').map(([key, cat]) => (
