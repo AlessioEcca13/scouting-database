@@ -35,11 +35,11 @@ function Navigation({ currentPage, setCurrentPage, playersCount, userProfile, on
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: 'fas fa-home' },
     { id: 'database', label: 'Database', icon: 'fas fa-database' },
-    { id: 'segnalazioni', label: 'Segnalazioni', icon: 'fas fa-bookmark' },
-    { id: 'add', label: 'Aggiungi Giocatore', icon: 'fas fa-plus-circle' },
-    { id: 'reports', label: 'Report', icon: 'fas fa-chart-bar' },
-    { id: 'lists', label: 'Liste & Formazioni', icon: 'fas fa-users' },
-    { id: 'tactical', label: 'Campo Tattico', icon: 'fas fa-futbol' }
+    { id: 'segnalazioni', label: 'Bookmarks', icon: 'fas fa-bookmark' },
+    { id: 'add', label: 'Add Player', icon: 'fas fa-plus-circle' },
+    { id: 'reports', label: 'Reports', icon: 'fas fa-chart-bar' },
+    { id: 'lists', label: 'Lists & Formations', icon: 'fas fa-users' },
+    { id: 'tactical', label: 'Tactical Board', icon: 'fas fa-futbol' }
   ];
 
   return (
@@ -60,7 +60,7 @@ function Navigation({ currentPage, setCurrentPage, playersCount, userProfile, on
             <i className="fas fa-futbol text-2xl sm:text-3xl text-gradient" style={{ display: 'none' }}></i>
             <div className="hidden sm:block">
               <h1 className="text-base sm:text-lg lg:text-xl font-bold text-gradient">La M.E.cca</h1>
-              <p className="text-xs text-gray-500 hidden lg:block">Visione. Intuito. Dati.</p>
+              <p className="text-xs text-gray-500 hidden lg:block">Vision. Insight. Data.</p>
             </div>
           </div>
           
@@ -139,14 +139,14 @@ function Navigation({ currentPage, setCurrentPage, playersCount, userProfile, on
                   )}
                   
                   <div className="px-4 py-2 border-b border-gray-200">
-                    <p className="text-xs text-gray-500 mb-1">Permessi:</p>
+                    <p className="text-xs text-gray-500 mb-1">Permissions:</p>
                     <div className="space-y-1">
                       {userProfile?.can_add_players && (
                         <div className="flex items-center gap-2 text-xs text-green-600">
                           <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                           </svg>
-                          Aggiungi giocatori
+                          Add players
                         </div>
                       )}
                       {userProfile?.can_add_reports && (
@@ -154,7 +154,7 @@ function Navigation({ currentPage, setCurrentPage, playersCount, userProfile, on
                           <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                           </svg>
-                          Compila report
+                          Create reports
                         </div>
                       )}
                       {userProfile?.can_manage_lists && (
@@ -162,7 +162,7 @@ function Navigation({ currentPage, setCurrentPage, playersCount, userProfile, on
                           <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                           </svg>
-                          Gestisci liste
+                          Manage lists
                         </div>
                       )}
                     </div>
@@ -218,7 +218,7 @@ function Navigation({ currentPage, setCurrentPage, playersCount, userProfile, on
                 <div className="px-4 py-2 text-sm text-gray-600 flex items-center justify-between">
                   <span className="flex items-center gap-2">
                     <i className="fas fa-users"></i>
-                    Giocatori nel database
+                    Players in database
                   </span>
                   <span className="font-bold text-purple-600">{playersCount}</span>
                 </div>
