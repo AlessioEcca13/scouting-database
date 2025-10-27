@@ -1,5 +1,6 @@
 // src/components/PlayerCard.js
 import React from 'react';
+import { translateRole, translateFoot } from '../utils/translate';
 
 function PlayerCard({ player, onSelect, onDelete, onAddReport, isSignalazione = false }) {
 
@@ -13,7 +14,7 @@ function PlayerCard({ player, onSelect, onDelete, onAddReport, isSignalazione = 
   };
 
   const currentYear = new Date().getFullYear();
-  const age = player.birth_year ? currentYear - player.birth_year : 'N/D';
+  const age = player.birth_year ? currentYear - player.birth_year : 'N/A';
 
   return (
     <div 
@@ -72,19 +73,19 @@ function PlayerCard({ player, onSelect, onDelete, onAddReport, isSignalazione = 
         <div className="space-y-1.5 sm:space-y-2 mb-3 sm:mb-4">
           <div className="flex justify-between text-xs sm:text-sm gap-2">
             <span className="text-gray-600">Squadra:</span>
-            <span className="font-medium truncate">{player.team || 'N/D'}</span>
+            <span className="font-medium truncate">{player.team || 'N/A'}</span>
           </div>
           <div className="flex justify-between text-xs sm:text-sm gap-2">
-            <span className="text-gray-600">Ruolo:</span>
-            <span className="font-medium truncate">{player.general_role || 'N/D'}</span>
+            <span className="text-gray-600">Position:</span>
+            <span className="font-medium truncate">{translateRole(player.general_role) || 'N/A'}</span>
           </div>
           <div className="flex justify-between text-xs sm:text-sm gap-2">
-            <span className="text-gray-600">Età:</span>
-            <span className="font-medium">{age} anni</span>
+            <span className="text-gray-600">Age:</span>
+            <span className="font-medium">{age} years</span>
           </div>
           <div className="flex justify-between text-xs sm:text-sm gap-2">
-            <span className="text-gray-600">Piede:</span>
-            <span className="font-medium truncate">{player.preferred_foot || 'N/D'}</span>
+            <span className="text-gray-600">Foot:</span>
+            <span className="font-medium truncate">{translateFoot(player.preferred_foot) || 'N/A'}</span>
           </div>
         </div>
 
@@ -130,7 +131,7 @@ function PlayerCard({ player, onSelect, onDelete, onAddReport, isSignalazione = 
           <div className="flex justify-between items-center pt-2 sm:pt-3 border-t">
             <div className="flex items-center space-x-1 sm:space-x-2">
               <div className={`w-2 h-2 rounded-full ${getFeedbackColor(player.director_feedback)}`}></div>
-              <span className="text-xs text-gray-600 truncate">{player.director_feedback || 'N/D'}</span>
+              <span className="text-xs text-gray-600 truncate">{player.director_feedback || 'N/A'}</span>
             </div>
             <button
               onClick={(e) => {

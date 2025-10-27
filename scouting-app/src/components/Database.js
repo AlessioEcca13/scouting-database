@@ -1,5 +1,6 @@
 // src/components/Database.js
 import React, { useState, useMemo } from 'react';
+import { translateRole, translatePosition, translateFoot } from '../utils/translate';
 import PlayerCard from './PlayerCard';
 import PlayerTable from './PlayerTable';
 
@@ -126,7 +127,7 @@ function Database({ players, onSelectPlayer, onDeletePlayer, onAddReport, loadin
               <div className="flex-1 min-w-0">
                 <div className="font-semibold text-sm sm:text-base truncate">{player.name}</div>
                 <div className="text-xs sm:text-sm text-gray-600 truncate">
-                  {player.team} • {player.general_role} • {new Date().getFullYear() - (player.birth_year || 2000)} anni
+                  {player.team} • {translateRole(player.general_role)} • {new Date().getFullYear() - (player.birth_year || 2000)} anni
                 </div>
               </div>
               <div className="text-yellow-500 text-sm sm:text-base hidden sm:block">

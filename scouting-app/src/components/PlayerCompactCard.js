@@ -1,5 +1,6 @@
 // src/components/PlayerCompactCard.js
 import React from 'react';
+import { translateRole, translatePosition, translateFoot } from '../utils/translate';
 
 function PlayerCompactCard({ player, onClick }) {
   const currentYear = new Date().getFullYear();
@@ -44,7 +45,7 @@ function PlayerCompactCard({ player, onClick }) {
           </div>
           {/* Badge ruolo */}
           <div className={`absolute bottom-0 left-0 right-0 ${getRoleColor(player.general_role)} text-white text-xs font-bold py-1 text-center`}>
-            {player.general_role}
+            {translateRole(player.general_role)}
           </div>
         </div>
 
@@ -67,7 +68,7 @@ function PlayerCompactCard({ player, onClick }) {
               <span className="font-semibold">Naz:</span> {player.nationality || 'N/A'}
             </div>
             <div>
-              <span className="font-semibold">Piede:</span> {player.preferred_foot || 'N/A'}
+              <span className="font-semibold">Piede:</span> {translateFoot(player.preferred_foot) || 'N/A'}
             </div>
           </div>
 

@@ -1,5 +1,6 @@
 // src/components/PlayerDetailCardFM.js - Stile Football Manager
 import React, { useState, useEffect } from 'react';
+import { translateRole, translatePosition, translateFoot } from '../utils/translate';
 import { supabase } from '../supabaseClient';
 import PlayerReports from './PlayerReports';
 import CategorizedAttributes from './CategorizedAttributes';
@@ -245,7 +246,7 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
   };
 
   const formatMarketValue = (value) => {
-    if (!value) return 'N/D';
+    if (!value) return 'N/A';
     
     const numValue = typeof value === 'string' ? parseFloat(value) : value;
     
@@ -590,7 +591,7 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
                 </div>
                 <div className="bg-gray-900 rounded p-2 border border-gray-700">
                   <p className="text-gray-400 text-[10px]">Foot</p>
-                  <p className="font-bold text-sm text-white">{player.preferred_foot || 'N/A'}</p>
+                  <p className="font-bold text-sm text-white">{translateFoot(player.preferred_foot) || 'N/A'}</p>
                 </div>
               </div>
             </div>

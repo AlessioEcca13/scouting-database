@@ -1,5 +1,6 @@
 // src/components/TacticalFieldSimple.js - Campo tattico completo
 import React, { useState, useEffect } from 'react';
+import { translateRole, translatePosition, translateFoot } from '../utils/translate';
 import { supabase } from '../supabaseClient';
 import { toast } from 'react-hot-toast';
 
@@ -579,7 +580,7 @@ function TacticalFieldSimple() {
     
     if (displayAttributes.age && player.birth_year) {
       const age = new Date().getFullYear() - player.birth_year;
-      info.push(`${age} anni`);
+      info.push(`${age} years`);
     }
     
     if (displayAttributes.role) {
@@ -598,7 +599,7 @@ function TacticalFieldSimple() {
       }
     }
     
-    return info.length > 0 ? info.join(' • ') : 'N/D';
+    return info.length > 0 ? info.join(' • ') : 'N/A';
   };
 
   const getFilteredPlayers = () => {
@@ -688,7 +689,7 @@ function TacticalFieldSimple() {
                     <div className="flex-1 min-w-0">
                       <p className="font-bold text-sm truncate">{player.name}</p>
                       <p className="text-xs text-gray-600">{player.team}</p>
-                      <p className="text-xs text-gray-500">{player.general_role}</p>
+                      <p className="text-xs text-gray-500">{translateRole(player.general_role)}</p>
                     </div>
                   </div>
                 </div>
