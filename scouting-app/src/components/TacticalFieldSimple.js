@@ -248,6 +248,12 @@ function TacticalFieldSimple() {
   const [draggedPlayer, setDraggedPlayer] = useState(null);
   const [showImportModal, setShowImportModal] = useState(false);
   const [selectedListsToImport, setSelectedListsToImport] = useState([]);
+  
+  // Stati per salvataggio/caricamento formazioni
+  const [savedFormations, setSavedFormations] = useState([]);
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [showLoadModal, setShowLoadModal] = useState(false);
+  const [formationName, setFormationName] = useState('');
   const [playerColors, setPlayerColors] = useState({});
   const [showColorModal, setShowColorModal] = useState(false);
   const [selectedPlayerForColor, setSelectedPlayerForColor] = useState(null);
@@ -262,6 +268,7 @@ function TacticalFieldSimple() {
   useEffect(() => {
     fetchAllPlayers();
     fetchLists();
+    loadSavedFormations();
   }, []);
 
   const fetchAllPlayers = async () => {
@@ -462,6 +469,99 @@ function TacticalFieldSimple() {
     }
   };
 
+  // ========================================
+  // SALVATAGGIO/CARICAMENTO FORMAZIONI
+  // ========================================
+  
+  const loadSavedFormations = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('tactical_formations')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      setSavedFormations(data || []);
+    } catch (error) {
+      console.error('Errore caricamento formazioni:', error);
+    }
+  };
+
+  const saveFormation = async () => {
+    if (!formationName.trim()) {
+      toast.error('Inserisci un nome per la formazione!');
+      return;
+    }
+
+    if (Object.keys(positionAssignments).length === 0) {
+      toast.error('Posiziona almeno un giocatore sul campo!');
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('tactical_formations')
+        .insert({
+          name: formationName.trim(),
+          formation_type: formation,
+          position_assignments: positionAssignments,
+          player_colors: playerColors,
+          display_attributes: displayAttributes,
+          field_color: fieldColor
+        });
+
+      if (error) throw error;
+
+      toast.success(`✅ Formazione "${formationName}" salvata!`);
+      setFormationName('');
+      setShowSaveModal(false);
+      loadSavedFormations();
+    } catch (error) {
+      console.error('Errore salvataggio formazione:', error);
+      toast.error('Errore nel salvataggio della formazione');
+    }
+  };
+
+  const loadFormation = async (savedFormation) => {
+    try {
+      setFormation(savedFormation.formation_type);
+      setPositionAssignments(savedFormation.position_assignments || {});
+      setPlayerColors(savedFormation.player_colors || {});
+      setDisplayAttributes(savedFormation.display_attributes || {
+        team: true,
+        age: false,
+        role: true,
+        value: false
+      });
+      setFieldColor(savedFormation.field_color || 'green');
+      
+      toast.success(`✅ Formazione "${savedFormation.name}" caricata!`);
+      setShowLoadModal(false);
+    } catch (error) {
+      console.error('Errore caricamento formazione:', error);
+      toast.error('Errore nel caricamento della formazione');
+    }
+  };
+
+  const deleteFormation = async (id, name) => {
+    if (!window.confirm(`Vuoi eliminare la formazione "${name}"?`)) return;
+
+    try {
+      const { error } = await supabase
+        .from('tactical_formations')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast.success(`🗑️ Formazione "${name}" eliminata!`);
+      loadSavedFormations();
+    } catch (error) {
+      console.error('Errore eliminazione formazione:', error);
+      toast.error('Errore nell\'eliminazione della formazione');
+    }
+  };
+
   const toggleAttribute = (attr) => {
     setDisplayAttributes(prev => ({
       ...prev,
@@ -624,6 +724,23 @@ function TacticalFieldSimple() {
               className="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-all disabled:opacity-50"
             >
               🗑️ Svuota
+            </button>
+          </div>
+
+          <div className="flex gap-2 items-end">
+            <button
+              onClick={() => setShowSaveModal(true)}
+              disabled={Object.keys(positionAssignments).length === 0}
+              className="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-all disabled:opacity-50"
+            >
+              💾 Salva Formazione
+            </button>
+            <button
+              onClick={() => setShowLoadModal(true)}
+              disabled={savedFormations.length === 0}
+              className="flex-1 px-4 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-all disabled:opacity-50"
+            >
+              📂 Carica Formazione
             </button>
           </div>
         </div>
@@ -944,6 +1061,95 @@ function TacticalFieldSimple() {
                 Importa
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Salva Formazione */}
+      {showSaveModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
+            <h3 className="text-xl font-bold text-gray-800 mb-4">💾 Salva Formazione</h3>
+            <p className="text-sm text-gray-600 mb-4">Dai un nome alla tua formazione per salvarla</p>
+            
+            <input
+              type="text"
+              value={formationName}
+              onChange={(e) => setFormationName(e.target.value)}
+              placeholder="Nome formazione (es: 4-3-3 Offensivo)"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent mb-4"
+              onKeyPress={(e) => e.key === 'Enter' && saveFormation()}
+            />
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowSaveModal(false);
+                  setFormationName('');
+                }}
+                className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-all"
+              >
+                Annulla
+              </button>
+              <button
+                onClick={saveFormation}
+                disabled={!formationName.trim()}
+                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-all disabled:opacity-50"
+              >
+                Salva
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Carica Formazione */}
+      {showLoadModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full p-6">
+            <h3 className="text-xl font-bold text-gray-800 mb-4">📂 Carica Formazione</h3>
+            <p className="text-sm text-gray-600 mb-4">Seleziona una formazione salvata</p>
+            
+            <div className="space-y-2 mb-4 max-h-96 overflow-y-auto">
+              {savedFormations.map(formation => (
+                <div key={formation.id} className="flex items-center gap-3 p-4 border-2 rounded-lg hover:border-purple-500 transition-all">
+                  <div className="flex-1">
+                    <p className="font-bold text-gray-800">{formation.name}</p>
+                    <p className="text-sm text-gray-600">
+                      {formation.formation_type} • {Object.keys(formation.position_assignments || {}).length} giocatori
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {new Date(formation.created_at).toLocaleDateString('it-IT', { 
+                        day: '2-digit', 
+                        month: 'short', 
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => loadFormation(formation)}
+                    className="px-4 py-2 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-all"
+                  >
+                    Carica
+                  </button>
+                  <button
+                    onClick={() => deleteFormation(formation.id, formation.name)}
+                    className="px-3 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-all"
+                  >
+                    🗑️
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setShowLoadModal(false)}
+              className="w-full px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-all"
+            >
+              Chiudi
+            </button>
           </div>
         </div>
       )}
