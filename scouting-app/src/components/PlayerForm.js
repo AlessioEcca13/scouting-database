@@ -93,34 +93,33 @@ function PlayerForm({ onSave, onCancel }) {
         throw new Error(result.error || 'Errore durante l\'importazione');
       }
 
-      const dbData = result.db_format;
+      const dbData = result.data;
       
       // Aggiorna solo i campi che hanno un valore valido dall'API
       // IMPORTANTE: Converti tutti i valori in stringhe per mantenere controlled inputs
       setFormData(prev => {
         const updatedData = { ...prev };
         
-        if (dbData.name) updatedData.name = String(dbData.name);
+        // Rimuovi numero maglia dal nome se presente (es: "#29 James Penrice" → "James Penrice")
+        if (dbData.name) {
+          const cleanName = dbData.name.replace(/^#\d+\s+/, '');
+          updatedData.name = String(cleanName);
+        }
+        
         if (dbData.birth_year !== null && dbData.birth_year !== undefined) {
           updatedData.birth_year = String(dbData.birth_year);
         }
-        if (dbData.birth_place) updatedData.birth_place = String(dbData.birth_place);
         if (dbData.team) updatedData.team = String(dbData.team);
-        if (dbData.nationality) updatedData.nationality = String(dbData.nationality);
+        if (dbData.nationality_primary) updatedData.nationality = String(dbData.nationality_primary);
         if (dbData.height_cm) updatedData.height = String(dbData.height_cm);
-        if (dbData.weight_kg) updatedData.weight = String(dbData.weight_kg);
-        if (dbData.shirt_number) updatedData.shirt_number = String(dbData.shirt_number);
         if (dbData.general_role) updatedData.general_role = String(dbData.general_role);
         if (dbData.specific_position) updatedData.specific_position = String(dbData.specific_position);
         if (dbData.preferred_foot) updatedData.preferred_foot = String(dbData.preferred_foot);
         if (dbData.market_value) updatedData.market_value = String(dbData.market_value);
         if (dbData.contract_expiry) updatedData.contract_expiry = String(dbData.contract_expiry);
-        if (dbData.transfermarkt_link) updatedData.transfermarkt_link = String(dbData.transfermarkt_link);
+        if (dbData.transfermarkt_url) updatedData.transfermarkt_link = String(dbData.transfermarkt_url);
         if (dbData.profile_image) updatedData.profile_image = String(dbData.profile_image);
-        if (dbData.natural_position) updatedData.natural_position = String(dbData.natural_position);
         if (dbData.other_positions) updatedData.other_positions = String(dbData.other_positions);
-        if (dbData.market_value_updated) updatedData.market_value_updated = String(dbData.market_value_updated);
-        if (dbData.notes) updatedData.notes = String(dbData.notes);
         
         return updatedData;
       });
