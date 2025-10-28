@@ -445,176 +445,238 @@ def get_player_info(url: str) -> Dict:
 
 def map_position_to_role(position: str) -> str:
     """
-    Mappa la posizione Transfermarkt al ruolo generale
+    Mappa la posizione Transfermarkt al ruolo generale (SEMPRE IN INGLESE)
     
     Ruoli generali disponibili:
-    - Portiere
-    - Difensore
-    - Terzino
-    - Centrocampo
-    - Ala
-    - Attaccante
+    - Goalkeeper
+    - Defender
+    - Terzino (Full-back)
+    - Centrocampo (Midfielder)
+    - Ala (Winger)
+    - Forward
     """
     if not position:
         return 'Centrocampo'
     
     pos_lower = position.lower()
     
-    # Portieri
-    if any(x in pos_lower for x in ['portiere', 'goalkeeper', 'porta']):
-        return 'Portiere'
+    # Portieri -> Goalkeeper
+    if any(x in pos_lower for x in ['portiere', 'goalkeeper', 'porta', 'torwart', 'gardien', 'portero']):
+        return 'Goalkeeper'
     
     # Terzini (esterni inclusi) - PRIMA dei difensori centrali per evitare conflitti con "back"
-    if any(x in pos_lower for x in ['terzino', 'left-back', 'right-back', 'esterno', 'wing-back', 'wingback']):
+    if any(x in pos_lower for x in ['terzino', 'left-back', 'right-back', 'esterno', 'wing-back', 'wingback', 'außenverteidiger', 'latéral', 'lateral']):
         return 'Terzino'
     
-    # Difensori centrali - DOPO i terzini
-    if any(x in pos_lower for x in ['difensore', 'difesa', 'centre-back', 'center-back']):
-        return 'Difensore'
+    # Difensori centrali - DOPO i terzini -> Defender
+    if any(x in pos_lower for x in ['difensore', 'difesa', 'centre-back', 'center-back', 'defender', 'innenverteidiger', 'défenseur', 'defensa']):
+        return 'Defender'
     
     # Centrocampo - PRIMA di Ali e Attaccanti per catturare mezzala, trequartista, ecc.
-    if any(x in pos_lower for x in ['centrocampo', 'centrocampista', 'mediano', 'mezzala', 'trequartista', 'midfield']):
+    if any(x in pos_lower for x in ['centrocampo', 'centrocampista', 'mediano', 'mezzala', 'trequartista', 'midfield', 'mittelfeld', 'milieu', 'mediocampista']):
         return 'Centrocampo'
     
-    # Ali - PRIMA degli attaccanti per evitare conflitti
-    if any(x in pos_lower for x in ['ala', 'winger']):
+    # Ali - PRIMA degli attaccanti per evitare conflitti -> Ala
+    if any(x in pos_lower for x in ['ala', 'winger', 'flügel', 'ailier', 'extremo']):
         return 'Ala'
     
-    # Attaccanti (punte e seconde punte)
-    if any(x in pos_lower for x in ['attaccante', 'attacco', 'punta', 'striker', 'forward', 'seconda punta', 'second striker']):
-        return 'Attaccante'
+    # Attaccanti (punte e seconde punte) -> Forward
+    if any(x in pos_lower for x in ['attaccante', 'attacco', 'punta', 'striker', 'forward', 'seconda punta', 'second striker', 'stürmer', 'avant', 'delantero']):
+        return 'Forward'
     
     # Fallback: Centrocampo
     return 'Centrocampo'
 
 
 def map_foot(foot: str) -> str:
-    """Mappa il piede preferito al formato database"""
+    """Mappa il piede preferito al formato database (SEMPRE IN INGLESE)"""
+    if not foot:
+        return 'Right'
+    
+    foot_lower = foot.lower().strip()
+    
+    # Mapping multilingua -> Inglese
     foot_mapping = {
-        'right': 'Destro',
-        'left': 'Sinistro',
-        'both': 'Ambidestro',
-        'destro': 'Destro',
-        'sinistro': 'Sinistro',
-        'entrambi': 'Ambidestro'
+        # Inglese
+        'right': 'Right',
+        'left': 'Left',
+        'both': 'Both',
+        # Italiano
+        'destro': 'Right',
+        'sinistro': 'Left',
+        'entrambi': 'Both',
+        'ambidestro': 'Both',
+        # Tedesco
+        'rechts': 'Right',
+        'links': 'Left',
+        'beidfu��ig': 'Both',
+        # Francese
+        'droit': 'Right',
+        'gauche': 'Left',
+        'les deux': 'Both',
+        # Spagnolo
+        'derecho': 'Right',
+        'izquierdo': 'Left',
+        'ambos': 'Both'
     }
     
-    foot_lower = foot.lower()
-    return foot_mapping.get(foot_lower, foot.capitalize())
+    return foot_mapping.get(foot_lower, 'Right')
 
 
 def get_role_abbreviation(position: str) -> str:
     """
-    Mappa la posizione Transfermarkt all'abbreviazione usata nel campo tattico
+    Mappa la posizione Transfermarkt all'abbreviazione usata nel campo tattico (SEMPRE IN INGLESE)
     
     Args:
-        position: Posizione da Transfermarkt (es: "Terzino sinistro", "Difesa - Terzino sinistro")
+        position: Posizione da Transfermarkt (es: "Terzino sinistro", "Left-Back", "Linksverteidiger")
         
     Returns:
-        Abbreviazione (es: "TS", "DC", "ATT")
+        Abbreviazione inglese (es: "LB", "CB", "ST")
     """
     if not position:
-        return '?'
+        return 'MF'
     
-    # Pulisci il nome (rimuovi prefissi come "Difesa - ")
-    clean_pos = position.replace('Difesa - ', '').replace('Centrocampo - ', '').replace('Attacco - ', '').strip()
+    # Pulisci il nome (rimuovi prefissi multilingua)
+    clean_pos = position
+    prefixes = ['Difesa - ', 'Centrocampo - ', 'Attacco - ', 'Defense - ', 'Midfield - ', 'Attack - ', 
+                'Abwehr - ', 'Mittelfeld - ', 'Sturm - ', 'Défense - ', 'Milieu - ', 'Attaque - ']
+    for prefix in prefixes:
+        clean_pos = clean_pos.replace(prefix, '')
+    clean_pos = clean_pos.strip()
     
-    # Mappa completa delle abbreviazioni (allineata con PlayerDetailCardFM.js)
+    # Mappa completa delle abbreviazioni INGLESI (allineata con TacticalFieldSimple.js)
     abbr_map = {
-        # Portieri
-        'Portiere': 'POR',
-        'Porta': 'POR',
-        'GK': 'POR',
-        'Goalkeeper': 'POR',
+        # Portieri -> GK
+        'Portiere': 'GK',
+        'Porta': 'GK',
+        'GK': 'GK',
+        'Goalkeeper': 'GK',
+        'Torwart': 'GK',
+        'Gardien': 'GK',
+        'Portero': 'GK',
         
-        # Difensori centrali
-        'Difensore centrale': 'DC',
-        'Difensore centrale sinistro': 'DCS',
-        'Difensore centrale destro': 'DCD',
-        'CB': 'DC',
-        'CB-L': 'DCS',
-        'CB-R': 'DCD',
-        'Centre-Back': 'DC',
+        # Difensori centrali -> CB
+        'Difensore centrale': 'CB',
+        'Difensore centrale sinistro': 'LCB',
+        'Difensore centrale destro': 'RCB',
+        'CB': 'CB',
+        'CB-L': 'LCB',
+        'CB-R': 'RCB',
+        'Centre-Back': 'CB',
+        'Center-Back': 'CB',
+        'Innenverteidiger': 'CB',
+        'Défenseur central': 'CB',
+        'Defensa central': 'CB',
         
-        # Terzini
-        'Terzino sinistro': 'TS',
-        'Terzino destro': 'TD',
-        'LB': 'TS',
-        'RB': 'TD',
-        'Left-Back': 'TS',
-        'Right-Back': 'TD',
+        # Terzini -> LB/RB
+        'Terzino sinistro': 'LB',
+        'Terzino destro': 'RB',
+        'LB': 'LB',
+        'RB': 'RB',
+        'Left-Back': 'LB',
+        'Right-Back': 'RB',
+        'Linksverteidiger': 'LB',
+        'Rechtsverteidiger': 'RB',
+        'Latéral gauche': 'LB',
+        'Latéral droit': 'RB',
+        'Lateral izquierdo': 'LB',
+        'Lateral derecho': 'RB',
         
-        # Esterni (wingback)
-        'Esterno sinistro': 'ES',
-        'Esterno destro': 'ED',
-        'Esterno di sinistra': 'ES',
-        'Esterno di destra': 'ED',
-        'LWB': 'ES',
-        'RWB': 'ED',
-        'Left Wing-Back': 'ES',
-        'Right Wing-Back': 'ED',
+        # Esterni (wingback) -> LWB/RWB
+        'Esterno sinistro': 'LWB',
+        'Esterno destro': 'RWB',
+        'Esterno di sinistra': 'LWB',
+        'Esterno di destra': 'RWB',
+        'LWB': 'LWB',
+        'RWB': 'RWB',
+        'Left Wing-Back': 'LWB',
+        'Right Wing-Back': 'RWB',
+        'Linker Flügelverteidiger': 'LWB',
+        'Rechter Flügelverteidiger': 'RWB',
         
-        # Mediani
-        'Mediano': 'MED',
-        'Mediano sinistro': 'MS',
-        'Mediano destro': 'MD',
-        'CDM': 'MED',
-        'CDM-L': 'MS',
-        'CDM-R': 'MD',
-        'Defensive Midfield': 'MED',
+        # Mediani -> DM
+        'Mediano': 'DM',
+        'Mediano sinistro': 'LDM',
+        'Mediano destro': 'RDM',
+        'CDM': 'DM',
+        'CDM-L': 'LDM',
+        'CDM-R': 'RDM',
+        'Defensive Midfield': 'DM',
+        'Defensives Mittelfeld': 'DM',
+        'Milieu défensif': 'DM',
+        'Mediocampista defensivo': 'DM',
         
-        # Centrocampisti centrali
-        'Centrocampista': 'CC',
-        'Centrocampista centrale': 'CC',
-        'Centrocampista sinistro': 'CS',
-        'Centrocampista destro': 'CD',
-        'CM': 'CC',
-        'CM-L': 'CS',
-        'CM-R': 'CD',
-        'Central Midfield': 'CC',
+        # Centrocampisti centrali -> CM
+        'Centrocampista': 'CM',
+        'Centrocampista centrale': 'CM',
+        'Centrocampista sinistro': 'LCM',
+        'Centrocampista destro': 'RCM',
+        'CM': 'CM',
+        'CM-L': 'LCM',
+        'CM-R': 'RCM',
+        'Central Midfield': 'CM',
+        'Zentrales Mittelfeld': 'CM',
+        'Milieu central': 'CM',
+        'Mediocampista central': 'CM',
         
-        # Mezzali
-        'Mezzala sinistra': 'MZS',
-        'Mezzala destra': 'MZD',
-        'LCM': 'MZS',
-        'RCM': 'MZD',
+        # Mezzali -> LCM/RCM
+        'Mezzala sinistra': 'LCM',
+        'Mezzala destra': 'RCM',
+        'LCM': 'LCM',
+        'RCM': 'RCM',
         
-        # Trequartisti
-        'Trequartista': 'TRQ',
-        'Trequartista sinistro': 'TRS',
-        'Trequartista destro': 'TRD',
-        'CAM': 'TRQ',
-        'CAM-L': 'TRS',
-        'CAM-R': 'TRD',
-        'Attacking Midfield': 'TRQ',
+        # Trequartisti -> AM
+        'Trequartista': 'AM',
+        'Trequartista sinistro': 'LAM',
+        'Trequartista destro': 'RAM',
+        'CAM': 'AM',
+        'CAM-L': 'LAM',
+        'CAM-R': 'RAM',
+        'Attacking Midfield': 'AM',
+        'Offensives Mittelfeld': 'AM',
+        'Milieu offensif': 'AM',
+        'Mediocampista ofensivo': 'AM',
         
-        # Ali
-        'Ala sinistra': 'AS',
-        'Ala destra': 'AD',
-        'LW': 'AS',
-        'RW': 'AD',
-        'Left Winger': 'AS',
-        'Right Winger': 'AD',
+        # Ali -> LW/RW
+        'Ala sinistra': 'LW',
+        'Ala destra': 'RW',
+        'LW': 'LW',
+        'RW': 'RW',
+        'Left Winger': 'LW',
+        'Right Winger': 'RW',
+        'Linksaußen': 'LW',
+        'Rechtsaußen': 'RW',
+        'Ailier gauche': 'LW',
+        'Ailier droit': 'RW',
+        'Extremo izquierdo': 'LW',
+        'Extremo derecho': 'RW',
         
-        # Seconde punte
-        'Seconda punta': 'SP',
-        'Seconda punta sinistra': 'SPS',
-        'Seconda punta destra': 'SPD',
-        'SS': 'SP',
-        'SS-L': 'SPS',
-        'SS-R': 'SPD',
-        'Second Striker': 'SP',
+        # Seconde punte -> SS
+        'Seconda punta': 'SS',
+        'Seconda punta sinistra': 'LSS',
+        'Seconda punta destra': 'RSS',
+        'SS': 'SS',
+        'SS-L': 'LSS',
+        'SS-R': 'RSS',
+        'Second Striker': 'SS',
+        'Hängende Spitze': 'SS',
+        'Deuxième attaquant': 'SS',
+        'Segundo delantero': 'SS',
         
-        # Attaccanti
-        'Attaccante': 'ATT',
-        'Attaccante sinistro': 'ATS',
-        'Attaccante destro': 'ATD',
-        'Punta': 'ATT',
-        'ST': 'ATT',
-        'ST-L': 'ATS',
-        'ST-R': 'ATD',
-        'Centre-Forward': 'ATT',
-        'Striker': 'ATT'
+        # Attaccanti -> ST
+        'Attaccante': 'ST',
+        'Attaccante sinistro': 'LST',
+        'Attaccante destro': 'RST',
+        'Punta': 'ST',
+        'ST': 'ST',
+        'ST-L': 'LST',
+        'ST-R': 'RST',
+        'Centre-Forward': 'ST',
+        'Center-Forward': 'ST',
+        'Striker': 'ST',
+        'Mittelstürmer': 'ST',
+        'Avant-centre': 'ST',
+        'Delantero centro': 'ST'
     }
     
     # Cerca corrispondenza esatta
@@ -631,8 +693,8 @@ def get_role_abbreviation(position: str) -> str:
         if key.lower() in lower_pos or lower_pos in key.lower():
             return value
     
-    # Fallback: prime 3 lettere maiuscole
-    return clean_pos[:3].upper() if clean_pos else '?'
+    # Fallback: MF (Midfielder)
+    return 'MF'
 
 
 def extract_market_value_number(market_value: str) -> int:
@@ -687,9 +749,9 @@ def map_to_database_format(tm_data: Dict) -> Dict:
         'weight_kg': tm_data.get('weight_kg'),
         'shirt_number': tm_data.get('shirt_number'),
         'general_role': map_position_to_role(position),
-        'specific_position': position_abbr,  # Usa abbreviazione invece del nome completo
-        'preferred_foot': map_foot(tm_data.get('preferred_foot', '')),
-        'market_value': tm_data.get('market_value'),
+        'specific_position': position_abbr,  # Abbreviazione INGLESE
+        'preferred_foot': map_foot(tm_data.get('preferred_foot', '')),  # INGLESE
+        'market_value': f"{tm_data.get('market_value', 3):.2f} mln €" if tm_data.get('market_value') else '3.00 mln €',
         'market_value_updated': tm_data.get('market_value_updated', ''),
         'contract_expiry': tm_data.get('contract_expiry', ''),
         'transfermarkt_link': tm_data.get('url', ''),
