@@ -1,18 +1,18 @@
 /**
- * Sistema di Deduplica Giocatori
+ * Player Deduplication System
  * 
- * Crea ID univoci basati su:
- * - Nome completo (normalizzato)
- * - Nazionalità
- * - Data di nascita (anno)
+ * Creates unique IDs based on:
+ * - Full name (normalized)
+ * - Nationality
+ * - Birth date (year)
  */
 
 /**
- * Normalizza una stringa per il confronto
- * - Rimuove accenti
+ * Normalize a string for comparison
+ * - Remove accents
  * - Lowercase
- * - Rimuove spazi extra
- * - Rimuove caratteri speciali
+ * - Remove extra spaces
+ * - Remove special characters
  */
 export const normalizeString = (str) => {
   if (!str) return '';
@@ -27,11 +27,11 @@ export const normalizeString = (str) => {
 };
 
 /**
- * Genera ID univoco per un giocatore
- * Format: nome_nazionalita_anno
+ * Generate unique ID for a player
+ * Format: name_nationality_year
  * 
- * @param {Object} player - Oggetto giocatore
- * @returns {string} - ID univoco
+ * @param {Object} player - Player object
+ * @returns {string} - Unique ID
  */
 export const generatePlayerUniqueId = (player) => {
   const name = normalizeString(player.name || '');
@@ -39,17 +39,17 @@ export const generatePlayerUniqueId = (player) => {
   const birthYear = player.birth_year || player.birthYear || '';
   
   if (!name) {
-    throw new Error('Nome giocatore obbligatorio per generare ID univoco');
+    throw new Error('Player name required to generate unique ID');
   }
   
   return `${name}_${nationality}_${birthYear}`.toLowerCase();
 };
 
 /**
- * Estrae ID giocatore da URL Transfermarkt
+ * Extract player ID from Transfermarkt URL
  * 
- * @param {string} url - URL Transfermarkt
- * @returns {string|null} - ID Transfermarkt o null
+ * @param {string} url - Transfermarkt URL
+ * @returns {string|null} - Transfermarkt ID or null
  */
 export const extractTransfermarktId = (url) => {
   if (!url) return null;
@@ -60,7 +60,7 @@ export const extractTransfermarktId = (url) => {
 };
 
 /**
- * Verifica se due giocatori sono duplicati
+ * Check if two players are duplicates
  * 
  * @param {Object} player1 
  * @param {Object} player2 
@@ -77,11 +77,11 @@ export const areDuplicatePlayers = (player1, player2) => {
 };
 
 /**
- * Trova giocatori duplicati in un array
+ * Find duplicate players in an array
  * 
- * @param {Object} newPlayer - Nuovo giocatore da verificare
- * @param {Array} existingPlayers - Array di giocatori esistenti
- * @returns {Array} - Array di giocatori duplicati trovati
+ * @param {Object} newPlayer - New player to check
+ * @param {Array} existingPlayers - Array of existing players
+ * @returns {Array} - Array of duplicate players found
  */
 export const findDuplicatePlayers = (newPlayer, existingPlayers) => {
   if (!newPlayer || !Array.isArray(existingPlayers)) {
@@ -100,17 +100,17 @@ export const findDuplicatePlayers = (newPlayer, existingPlayers) => {
       }
     });
   } catch (error) {
-    console.error('Errore ricerca duplicati:', error);
+    console.error('Error searching duplicates:', error);
     return [];
   }
 };
 
 /**
- * Verifica se un link Transfermarkt è già stato usato
+ * Check if a Transfermarkt link has already been used
  * 
- * @param {string} url - URL Transfermarkt
- * @param {Array} existingPlayers - Array di giocatori esistenti
- * @returns {Object|null} - Giocatore esistente o null
+ * @param {string} url - Transfermarkt URL
+ * @param {Array} existingPlayers - Array of existing players
+ * @returns {Object|null} - Existing player or null
  */
 export const findPlayerByTransfermarktUrl = (url, existingPlayers) => {
   const tmId = extractTransfermarktId(url);
@@ -125,17 +125,17 @@ export const findPlayerByTransfermarktUrl = (url, existingPlayers) => {
 };
 
 /**
- * Crea messaggio di errore per duplicato
+ * Create error message for duplicate
  * 
- * @param {Object} existingPlayer - Giocatore esistente
- * @returns {string} - Messaggio di errore
+ * @param {Object} existingPlayer - Existing player
+ * @returns {string} - Error message
  */
 export const createDuplicateMessage = (existingPlayer) => {
-  const name = existingPlayer.name || 'Sconosciuto';
-  const team = existingPlayer.team || 'N/D';
+  const name = existingPlayer.name || 'Unknown';
+  const team = existingPlayer.team || 'N/A';
   const age = existingPlayer.birth_year 
-    ? `${new Date().getFullYear() - existingPlayer.birth_year} anni` 
-    : 'N/D';
+    ? `${new Date().getFullYear() - existingPlayer.birth_year} years` 
+    : 'N/A';
   
-  return `Giocatore già presente: ${name} (${team}, ${age})`;
+  return `Player already exists: ${name} (${team}, ${age})`;
 };

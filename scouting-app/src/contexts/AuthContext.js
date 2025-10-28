@@ -22,10 +22,10 @@ export const AuthProvider = ({ children }) => {
   const MAX_RETRIES = 3;
 
   useEffect(() => {
-    // Controlla se c'è una sessione attiva
+    // Check if there's an active session
     checkUser();
 
-    // Ascolta i cambiamenti di autenticazione
+    // Listen to authentication changes
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('Auth event:', event);
@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
           setLoading(false);
           setSessionChecked(true);
         } else if (event === 'TOKEN_REFRESHED' && session) {
-          // Token refreshed - non ricaricare il profilo se è già caricato
+          // Token refreshed - don't reload profile if already loaded
           console.log('Token refreshed successfully');
           if (!profile) {
             await loadUserProfile(session.user);
@@ -56,15 +56,15 @@ export const AuthProvider = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Timeout di sicurezza separato che osserva i cambiamenti di loading
+  // Separate safety timeout that watches loading changes
   useEffect(() => {
     if (!loading || sessionChecked) return;
 
     const timeoutId = setTimeout(() => {
-      console.warn('Timeout caricamento sessione dopo 15 secondi');
+      console.warn('Session loading timeout after 15 seconds');
       setLoading(false);
       setSessionChecked(true);
-      toast.error('Timeout caricamento. Ricarica la pagina.');
+      toast.error('Loading timeout. Reload the page.');
     }, 15000);
 
     return () => clearTimeout(timeoutId);
@@ -76,7 +76,7 @@ export const AuthProvider = ({ children }) => {
       const { data: { session }, error } = await supabase.auth.getSession();
       
       if (error) {
-        console.error('Errore sessione:', error);
+        console.error('Session error:', error);
         setUser(null);
         setProfile(null);
         setLoading(false);
@@ -87,7 +87,7 @@ export const AuthProvider = ({ children }) => {
       if (session) {
         await loadUserProfile(session.user);
       } else {
-        // Nessuna sessione attiva
+        // No active session
         setUser(null);
         setProfile(null);
         setLoading(false);
@@ -95,7 +95,7 @@ export const AuthProvider = ({ children }) => {
       
       setSessionChecked(true);
     } catch (error) {
-      console.error('Errore verifica utente:', error);
+      console.error('User verification error:', error);
       setUser(null);
       setProfile(null);
       setLoading(false);
