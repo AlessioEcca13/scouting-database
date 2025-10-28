@@ -120,11 +120,11 @@ def extract_and_map_to_database(url: str) -> dict:
     raw_data = scraper.get_player_info(url)
     
     if 'error' in raw_data:
-        print(f"❌ Errore: {raw_data['error']}")
+        print(f"❌ Error: {raw_data['error']}")
         return None
     
-    print(f"✅ Dati estratti per: {raw_data.get('name')}")
-    print(f"   Lingua originale: {raw_data.get('source_language', 'unknown').upper()}")
+    print(f"✅ Data extracted for: {raw_data.get('name')}")
+    print(f"   Source language: {raw_data.get('source_language', 'unknown').upper()}")
     
     # Mappa al formato database
     db_data = {
@@ -157,15 +157,15 @@ def extract_and_map_to_database(url: str) -> dict:
         'source_language': raw_data.get('source_language'),
     }
     
-    print(f"\n📊 DATI MAPPATI PER DATABASE:")
-    print(f"   Nome: {db_data['name']}")
-    print(f"   Ruolo generale: {db_data['general_role']}")
-    print(f"   Posizione specifica: {db_data['specific_position']}")
-    print(f"   Altre posizioni: {db_data['other_positions']}")
-    print(f"   Nazionalità: {db_data['nationality_primary']}")
-    print(f"   Piede: {db_data['preferred_foot']}")
-    print(f"   Squadra: {db_data['team']}")
-    print(f"   Valore: €{db_data['market_value']:,.0f}" if db_data['market_value'] else "   Valore: N/A")
+    print(f"\n📊 DATA MAPPED FOR DATABASE:")
+    print(f"   Name: {db_data['name']}")
+    print(f"   General role: {db_data['general_role']}")
+    print(f"   Specific position: {db_data['specific_position']}")
+    print(f"   Other positions: {db_data['other_positions']}")
+    print(f"   Nationality: {db_data['nationality_primary']}")
+    print(f"   Foot: {db_data['preferred_foot']}")
+    print(f"   Club: {db_data['team']}")
+    print(f"   Value: €{db_data['market_value']:,.0f}" if db_data['market_value'] else "   Value: N/A")
     
     return db_data
 

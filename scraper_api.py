@@ -65,7 +65,7 @@ def scrape_player():
         if not data or 'url' not in data:
             return jsonify({
                 'success': False,
-                'error': 'URL mancante nel body della richiesta'
+                'error': 'URL missing in request body'
             }), 400
         
         url = data['url']
@@ -84,18 +84,18 @@ def scrape_player():
         if not db_data:
             return jsonify({
                 'success': False,
-                'error': 'Impossibile estrarre dati dall\'URL fornito'
+                'error': 'Unable to extract data from provided URL'
             }), 400
         
-        print(f"\n✅ Dati estratti con successo!")
-        print(f"   Nome: {db_data.get('name')}")
-        print(f"   Posizione: {db_data.get('specific_position')}\n")
+        print(f"\n✅ Data extracted successfully!")
+        print(f"   Name: {db_data.get('name')}")
+        print(f"   Position: {db_data.get('specific_position')}\n")
         
         # Restituisci dati
         return jsonify({
             'success': True,
             'data': db_data,
-            'message': f"Dati estratti con successo per {db_data.get('name')}"
+            'message': f"Data successfully extracted for {db_data.get('name')}"
         }), 200
         
     except Exception as e:

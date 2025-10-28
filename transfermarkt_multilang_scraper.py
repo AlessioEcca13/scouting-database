@@ -174,7 +174,7 @@ class MultiLangTransfermarktScraper:
             
             return self.translator.translate(text)
         except Exception as e:
-            print(f"⚠️  Errore traduzione '{text}': {e}")
+            print(f"⚠️  Translation error '{text}': {e}")
             return text
     
     def translate_position(self, position: str, source_lang: str) -> str:
@@ -256,7 +256,7 @@ class MultiLangTransfermarktScraper:
             
             return None
         except Exception as e:
-            print(f"⚠️  Errore parsing valore '{value_str}': {e}")
+            print(f"⚠️  Value parsing error '{value_str}': {e}")
             return None
     
     def get_player_info(self, url: str) -> Dict:
@@ -273,7 +273,7 @@ class MultiLangTransfermarktScraper:
         try:
             # Rileva lingua dall'URL
             self.detected_language = self.detect_language_from_url(url)
-            print(f"🌍 Lingua rilevata: {self.detected_language.upper()}")
+            print(f"🌍 Detected language: {self.detected_language.upper()}")
             
             # Estrai ID giocatore
             player_id = self.extract_player_id(url)
