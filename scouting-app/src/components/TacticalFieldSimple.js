@@ -630,17 +630,17 @@ function TacticalFieldSimple() {
     <div className="p-6 max-w-[1920px] mx-auto">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-4xl font-bold text-gray-800 mb-2">⚽ Campo Tattico Professionale</h1>
-        <p className="text-gray-600 text-lg">Crea e gestisci le tue formazioni tattiche</p>
+        <h1 className="text-4xl font-bold text-gray-800 mb-2">⚽ Professional Tactical Board</h1>
+        <p className="text-gray-600 text-lg">Create and manage your tactical formations</p>
       </div>
 
-      {/* Layout a 2 colonne: Campo + Sidebar */}
+      {/* 2-column layout: Field + Sidebar */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_400px] gap-6">
         
-        {/* COLONNA SINISTRA: Campo + Ricerca */}
+        {/* LEFT COLUMN: Field + Search */}
         <div className="space-y-6">
           
-          {/* Barra Ricerca Compatta */}
+          {/* Compact Search Bar */}
           <div className="bg-white rounded-xl shadow-lg p-4">
             <div className="flex gap-3">
               <div className="flex-1">
@@ -664,11 +664,11 @@ function TacticalFieldSimple() {
             </div>
           </div>
 
-      {/* Risultati Ricerca - SPOSTATO PRIMA DEL CAMPO */}
+      {/* Search Results - MOVED BEFORE FIELD */}
       {searchTerm && (
         <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
           <h3 className="text-lg font-bold text-gray-800 mb-4">
-            🔍 Risultati Ricerca ({filteredPlayers.length})
+            🔍 Search Results ({filteredPlayers.length})
           </h3>
           
           {filteredPlayers.length > 0 ? (
@@ -864,10 +864,10 @@ function TacticalFieldSimple() {
         {/* COLONNA DESTRA: Sidebar Controlli */}
         <div className="space-y-6">
           
-          {/* Azioni Rapide */}
+          {/* Quick Actions */}
           <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl shadow-xl p-6 text-white">
             <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <span>⚡</span> Azioni Rapide
+              <span>⚡</span> Quick Actions
             </h3>
             <div className="space-y-3">
               <button
@@ -875,54 +875,54 @@ function TacticalFieldSimple() {
                 disabled={Object.keys(positionAssignments).length === 0}
                 className="w-full px-4 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
               >
-                💾 Salva Formazione
+                💾 Save Formation
               </button>
               <button
                 onClick={() => setShowLoadModal(true)}
                 disabled={savedFormations.length === 0}
                 className="w-full px-4 py-3 bg-white text-purple-600 rounded-lg font-semibold hover:bg-gray-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
               >
-                📂 Carica Formazione
+                📂 Load Formation
               </button>
               <button
                 onClick={() => setShowImportModal(true)}
                 className="w-full px-4 py-3 bg-white text-green-600 rounded-lg font-semibold hover:bg-gray-100 transition-all shadow-lg"
               >
-                📥 Importa da Liste
+                📥 Import from Lists
               </button>
               <button
                 onClick={clearField}
                 disabled={Object.keys(positionAssignments).length === 0}
                 className="w-full px-4 py-3 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
               >
-                🗑️ Svuota Campo
+                🗑️ Clear Field
               </button>
             </div>
           </div>
 
-          {/* Personalizzazione */}
+          {/* Customization */}
           <div className="bg-white rounded-xl shadow-lg p-6">
             <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <span>🎨</span> Personalizzazione
+              <span>🎨</span> Customization
             </h3>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Colore Campo</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Field Color</label>
                 <select
                   value={fieldColor}
                   onChange={(e) => setFieldColor(e.target.value)}
                   className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="green">🟢 Verde Classico</option>
-                  <option value="blue">🔵 Blu</option>
-                  <option value="red">🔴 Rosso</option>
-                  <option value="gray">⚫ Grigio</option>
+                  <option value="green">🟢 Classic Green</option>
+                  <option value="blue">🔵 Blue</option>
+                  <option value="red">🔴 Red</option>
+                  <option value="gray">⚫ Gray</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-3">Mostra Attributi</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-3">Show Attributes</label>
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
                     <input
@@ -931,7 +931,7 @@ function TacticalFieldSimple() {
                       onChange={() => toggleAttribute('team')}
                       className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                     />
-                    <span className="text-sm font-medium text-gray-700">🏟️ Squadra</span>
+                    <span className="text-sm font-medium text-gray-700">🏟️ Team</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
                     <input
@@ -940,7 +940,7 @@ function TacticalFieldSimple() {
                       onChange={() => toggleAttribute('age')}
                       className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                     />
-                    <span className="text-sm font-medium text-gray-700">🎂 Età</span>
+                    <span className="text-sm font-medium text-gray-700">🎂 Age</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
                     <input
@@ -949,7 +949,7 @@ function TacticalFieldSimple() {
                       onChange={() => toggleAttribute('role')}
                       className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                     />
-                    <span className="text-sm font-medium text-gray-700">⚽ Ruolo</span>
+                    <span className="text-sm font-medium text-gray-700">⚽ Role</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
                     <input
@@ -958,38 +958,38 @@ function TacticalFieldSimple() {
                       onChange={() => toggleAttribute('value')}
                       className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                     />
-                    <span className="text-sm font-medium text-gray-700">💰 Valore</span>
+                    <span className="text-sm font-medium text-gray-700">💰 Value</span>
                   </label>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Statistiche */}
+          {/* Statistics */}
           <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-xl shadow-lg p-6 border-2 border-green-200">
             <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <span>📊</span> Statistiche
+              <span>📊</span> Statistics
             </h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-gray-700 font-medium">Modulo:</span>
+                <span className="text-gray-700 font-medium">Formation:</span>
                 <span className="text-blue-600 font-bold text-lg">{formation}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-700 font-medium">Giocatori:</span>
+                <span className="text-gray-700 font-medium">Players:</span>
                 <span className="text-green-600 font-bold text-lg">{assignedIds.size}/11</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-700 font-medium">Formazioni salvate:</span>
+                <span className="text-gray-700 font-medium">Saved formations:</span>
                 <span className="text-purple-600 font-bold text-lg">{savedFormations.length}</span>
               </div>
             </div>
           </div>
 
-          {/* Legenda Colori Compatta */}
+          {/* Color Legend Compact */}
           <div className="bg-white rounded-xl shadow-lg p-6">
             <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <span>🎨</span> Legenda Colori
+              <span>🎨</span> Color Legend
             </h3>
             <div className="grid grid-cols-2 gap-2">
               {Object.entries(playerColorCategories).filter(([key]) => key !== 'default').map(([key, cat]) => (
@@ -1092,7 +1092,7 @@ function TacticalFieldSimple() {
               }}
               className="w-full px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-all"
             >
-              Annulla
+              Cancel
             </button>
           </div>
         </div>
@@ -1135,32 +1135,32 @@ function TacticalFieldSimple() {
                 }}
                 className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-all"
               >
-                Annulla
+                Cancel
               </button>
               <button
                 onClick={importPlayersFromLists}
                 disabled={selectedListsToImport.length === 0}
                 className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-all disabled:opacity-50"
               >
-                Importa
+                Import
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Modal Salva Formazione */}
+      {/* Save Formation Modal */}
       {showSaveModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">💾 Salva Formazione</h3>
-            <p className="text-sm text-gray-600 mb-4">Dai un nome alla tua formazione per salvarla</p>
+            <h3 className="text-xl font-bold text-gray-800 mb-4">💾 Save Formation</h3>
+            <p className="text-sm text-gray-600 mb-4">Give your formation a name to save it</p>
             
             <input
               type="text"
               value={formationName}
               onChange={(e) => setFormationName(e.target.value)}
-              placeholder="Nome formazione (es: 4-3-3 Offensivo)"
+              placeholder="Formation name (e.g.: 4-3-3 Offensive)"
               className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent mb-4"
               onKeyPress={(e) => e.key === 'Enter' && saveFormation()}
             />
@@ -1173,14 +1173,14 @@ function TacticalFieldSimple() {
                 }}
                 className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-all"
               >
-                Annulla
+                Cancel
               </button>
               <button
                 onClick={saveFormation}
                 disabled={!formationName.trim()}
                 className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-all disabled:opacity-50"
               >
-                Salva
+                Save
               </button>
             </div>
           </div>
@@ -1200,7 +1200,7 @@ function TacticalFieldSimple() {
                   <div className="flex-1">
                     <p className="font-bold text-gray-800">{formation.name}</p>
                     <p className="text-sm text-gray-600">
-                      {formation.formation_type} • {Object.keys(formation.position_assignments || {}).length} giocatori
+                      {formation.formation_type} • {Object.keys(formation.position_assignments || {}).length} players
                     </p>
                     <p className="text-xs text-gray-500">
                       {new Date(formation.created_at).toLocaleDateString('it-IT', { 
@@ -1216,7 +1216,7 @@ function TacticalFieldSimple() {
                     onClick={() => loadFormation(formation)}
                     className="px-4 py-2 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-all"
                   >
-                    Carica
+                    Load
                   </button>
                   <button
                     onClick={() => deleteFormation(formation.id, formation.name)}
@@ -1232,7 +1232,7 @@ function TacticalFieldSimple() {
               onClick={() => setShowLoadModal(false)}
               className="w-full px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-all"
             >
-              Chiudi
+              Close
             </button>
           </div>
         </div>
