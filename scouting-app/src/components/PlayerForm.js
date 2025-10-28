@@ -41,7 +41,8 @@ function PlayerForm({ onSave, onCancel }) {
     height: '',
     weight: '',
     shirt_number: '',
-    general_role: 'Centrocampo',
+    general_role: 'Centrocampo', // Valore di default (verrà sovrascritto dall'import)
+    specific_position: '', // Abbreviazione inglese (es: LB, CB, ST)
     preferred_foot: 'Right',
     current_value: '',
     potential_value: '',
@@ -93,7 +94,10 @@ function PlayerForm({ onSave, onCancel }) {
         throw new Error(result.error || 'Errore durante l\'importazione');
       }
 
-      const dbData = result.data;
+      // USA db_format invece di data - contiene i campi già mappati correttamente
+      const dbData = result.db_format || result.data;
+      
+      console.log('📦 Dati DB format ricevuti:', dbData);
       
       // Aggiorna solo i campi che hanno un valore valido dall'API
       // IMPORTANTE: Converti tutti i valori in stringhe per mantenere controlled inputs
@@ -110,15 +114,30 @@ function PlayerForm({ onSave, onCancel }) {
           updatedData.birth_year = String(dbData.birth_year);
         }
         if (dbData.team) updatedData.team = String(dbData.team);
-        if (dbData.nationality_primary) updatedData.nationality = String(dbData.nationality_primary);
+        if (dbData.nationality) updatedData.nationality = String(dbData.nationality);
         if (dbData.height_cm) updatedData.height = String(dbData.height_cm);
-        if (dbData.general_role) updatedData.general_role = String(dbData.general_role);
-        if (dbData.specific_position) updatedData.specific_position = String(dbData.specific_position);
-        if (dbData.preferred_foot) updatedData.preferred_foot = String(dbData.preferred_foot);
+        if (dbData.weight_kg) updatedData.weight = String(dbData.weight_kg);
+        if (dbData.shirt_number) updatedData.shirt_number = String(dbData.shirt_number);
+        
+        // CAMPI CRITICI - Sempre in inglese dallo scraper
+        if (dbData.general_role) {
+          updatedData.general_role = String(dbData.general_role);
+          console.log('✅ General role impostato:', dbData.general_role);
+        }
+        if (dbData.specific_position) {
+          updatedData.specific_position = String(dbData.specific_position);
+          console.log('✅ Specific position impostata:', dbData.specific_position);
+        }
+        if (dbData.preferred_foot) {
+          updatedData.preferred_foot = String(dbData.preferred_foot);
+          console.log('✅ Preferred foot impostato:', dbData.preferred_foot);
+        }
+        
         if (dbData.market_value) updatedData.market_value = String(dbData.market_value);
         if (dbData.contract_expiry) updatedData.contract_expiry = String(dbData.contract_expiry);
-        if (dbData.transfermarkt_url) updatedData.transfermarkt_link = String(dbData.transfermarkt_url);
+        if (dbData.transfermarkt_link) updatedData.transfermarkt_link = String(dbData.transfermarkt_link);
         if (dbData.profile_image) updatedData.profile_image = String(dbData.profile_image);
+        if (dbData.natural_position) updatedData.natural_position = String(dbData.natural_position);
         if (dbData.other_positions) updatedData.other_positions = String(dbData.other_positions);
         
         return updatedData;
