@@ -10,7 +10,7 @@ function Database({ players, onSelectPlayer, onDeletePlayer, onAddReport, loadin
   const [sortBy, setSortBy] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc');
   
-  // Stati per i filtri
+  // Filter states
   const [filters, setFilters] = useState({
     search: '',
     role: '',
@@ -22,11 +22,11 @@ function Database({ players, onSelectPlayer, onDeletePlayer, onAddReport, loadin
     priority: ''
   });
 
-  // Filtra e ordina giocatori
+  // Filter and sort players
   const filteredPlayers = useMemo(() => {
     let result = [...players];
 
-    // Applica filtri
+    // Apply filters
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
       result = result.filter(p => 
@@ -68,16 +68,16 @@ function Database({ players, onSelectPlayer, onDeletePlayer, onAddReport, loadin
       result = result.filter(p => p.priority === filters.priority);
     }
 
-    // Ordina
+    // Sort
     result.sort((a, b) => {
       let aVal = a[sortBy];
       let bVal = b[sortBy];
       
-      // Gestisci valori null/undefined
+      // Handle null/undefined values
       if (aVal === null || aVal === undefined) aVal = '';
       if (bVal === null || bVal === undefined) bVal = '';
       
-      // Converti in stringa per confronto
+      // Convert to string for comparison
       if (typeof aVal === 'string') {
         aVal = aVal.toLowerCase();
         bVal = bVal.toLowerCase();
@@ -93,7 +93,7 @@ function Database({ players, onSelectPlayer, onDeletePlayer, onAddReport, loadin
     return result;
   }, [players, filters, sortBy, sortOrder]);
 
-  // Reset filtri
+  // Reset filters
   const resetFilters = () => {
     setFilters({
       search: '',
@@ -107,10 +107,10 @@ function Database({ players, onSelectPlayer, onDeletePlayer, onAddReport, loadin
     });
   };
 
-  // Conta filtri attivi
+  // Count active filters
   const activeFiltersCount = Object.values(filters).filter(v => v !== '').length;
 
-  // Componente Lista Compatta
+  // Compact List Component
   function CompactList({ players }) {
     return (
       <div className="bg-white rounded-lg sm:rounded-xl shadow-lg p-3 sm:p-4 space-y-2">
@@ -154,7 +154,7 @@ function Database({ players, onSelectPlayer, onDeletePlayer, onAddReport, loadin
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <i className="fas fa-spinner fa-spin text-4xl text-purple-500 mb-4"></i>
-          <p className="text-gray-600">Caricamento giocatori...</p>
+          <p className="text-gray-600">Loading players...</p>
         </div>
       </div>
     );
@@ -162,12 +162,12 @@ function Database({ players, onSelectPlayer, onDeletePlayer, onAddReport, loadin
 
   return (
     <div className="space-y-4 sm:space-y-6 animate-fadeIn">
-      {/* Header e Controlli */}
+      {/* Header and Controls */}
       <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-lg">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
           <h2 className="text-xl sm:text-2xl font-bold text-gradient">{title}</h2>
           <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
-            {/* Toggle Filtri */}
+            {/* Toggle Filters */}
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`px-3 sm:px-4 py-2 rounded-lg transition-colors text-sm sm:text-base ${
@@ -175,21 +175,21 @@ function Database({ players, onSelectPlayer, onDeletePlayer, onAddReport, loadin
               } hover:opacity-80 flex-1 sm:flex-none`}
             >
               <i className="fas fa-filter mr-1 sm:mr-2"></i>
-              <span className="hidden sm:inline">Filtri</span>
-              <span className="sm:hidden">Filtri</span>
+              <span className="hidden sm:inline">Filters</span>
+              <span className="sm:hidden">Filters</span>
               {activeFiltersCount > 0 && ` (${activeFiltersCount})`}
             </button>
 
-            {/* Bottone Refresh */}
+            {/* Refresh Button */}
             <button
               onClick={onRefresh}
               className="px-3 sm:px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm sm:text-base flex-1 sm:flex-none"
             >
               <i className="fas fa-sync mr-1 sm:mr-2"></i>
-              <span className="hidden sm:inline">Aggiorna</span>
+              <span className="hidden sm:inline">Refresh</span>
             </button>
 
-            {/* Switch Vista - Nascosto su mobile piccolo */}
+            {/* View Switch - Hidden on small mobile */}
             <div className="hidden md:flex bg-gray-100 rounded-lg p-1">
               <button
                 onClick={() => setViewMode('cards')}
@@ -219,23 +219,23 @@ function Database({ players, onSelectPlayer, onDeletePlayer, onAddReport, loadin
           </div>
         </div>
 
-        {/* Pannello Filtri */}
+        {/* Filter Panel */}
         {showFilters && (
           <div className="border-t pt-4 mt-4 animate-slideDown">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              {/* Ricerca */}
+              {/* Search */}
               <div className="relative">
                 <i className="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                 <input
                   type="text"
-                  placeholder="Cerca nome, squadra..."
+                  placeholder="Search name, team..."
                   className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   value={filters.search}
                   onChange={(e) => setFilters({...filters, search: e.target.value})}
                 />
               </div>
 
-              {/* Ruolo */}
+              {/* Role */}
               <select
                 className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500"
                 value={filters.role}
@@ -250,60 +250,60 @@ function Database({ players, onSelectPlayer, onDeletePlayer, onAddReport, loadin
                 <option value="Forward">Forward</option>
               </select>
 
-              {/* Potenziale Minimo */}
+              {/* Minimum Potential */}
               <select
                 className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500"
                 value={filters.minPotential}
                 onChange={(e) => setFilters({...filters, minPotential: e.target.value})}
               >
-                <option value="">Potenziale...</option>
+                <option value="">Potential...</option>
                 <option value="2">≥ 2 ⭐</option>
                 <option value="3">≥ 3 ⭐</option>
                 <option value="4">≥ 4 ⭐</option>
                 <option value="5">5 ⭐</option>
               </select>
 
-              {/* Età Massima */}
+              {/* Maximum Age */}
               <select
                 className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500"
                 value={filters.maxAge}
                 onChange={(e) => setFilters({...filters, maxAge: e.target.value})}
               >
-                <option value="">Età max...</option>
-                <option value="21">≤ 21 anni</option>
-                <option value="23">≤ 23 anni</option>
-                <option value="25">≤ 25 anni</option>
-                <option value="30">≤ 30 anni</option>
+                <option value="">Max age...</option>
+                <option value="21">≤ 21 years</option>
+                <option value="23">≤ 23 years</option>
+                <option value="25">≤ 25 years</option>
+                <option value="30">≤ 30 years</option>
               </select>
 
-              {/* Piede */}
+              {/* Foot */}
               <select
                 className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500"
                 value={filters.foot}
                 onChange={(e) => setFilters({...filters, foot: e.target.value})}
               >
-                <option value="">Piede...</option>
+                <option value="">Foot...</option>
                 <option value="Right">Right</option>
                 <option value="Left">Left</option>
                 <option value="Both">Both</option>
               </select>
 
-              {/* Priorità */}
+              {/* Priority */}
               <select
                 className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500"
                 value={filters.priority}
                 onChange={(e) => setFilters({...filters, priority: e.target.value})}
               >
-                <option value="">Priorità...</option>
-                <option value="Alta">🔴 Alta</option>
-                <option value="Media">🟡 Media</option>
-                <option value="Bassa">🟢 Bassa</option>
+                <option value="">Priority...</option>
+                <option value="Alta">🔴 High</option>
+                <option value="Media">🟡 Medium</option>
+                <option value="Bassa">🟢 Low</option>
               </select>
 
-              {/* Squadra */}
+              {/* Team */}
               <input
                 type="text"
-                placeholder="Squadra..."
+                placeholder="Team..."
                 className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500"
                 value={filters.team}
                 onChange={(e) => setFilters({...filters, team: e.target.value})}
@@ -315,11 +315,11 @@ function Database({ players, onSelectPlayer, onDeletePlayer, onAddReport, loadin
                 className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
               >
                 <i className="fas fa-times mr-2"></i>
-                Reset Filtri
+                Reset
               </button>
             </div>
 
-            {/* Filtri Attivi */}
+            {/* Active Filters */}
             {activeFiltersCount > 0 && (
               <div className="mt-4 flex flex-wrap gap-2">
                 {Object.entries(filters).map(([key, value]) => 
@@ -343,20 +343,20 @@ function Database({ players, onSelectPlayer, onDeletePlayer, onAddReport, loadin
           </div>
         )}
 
-        {/* Risultati e Ordinamento */}
+        {/* Results and Sorting */}
         <div className="mt-4 flex justify-between items-center">
           <span className="text-gray-600">
-            Trovati <strong>{filteredPlayers.length}</strong> giocatori su {players.length}
+            Found <strong>{filteredPlayers.length}</strong> players out of {players.length}
           </span>
           <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-600">Ordina per:</span>
+            <span className="text-sm text-gray-600">Sort by:</span>
             <select
               className="px-3 py-1 border rounded-lg text-sm"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
             >
               <option value="name">Name</option>
-              <option value="birth_year">Anno nascita</option>
+              <option value="birth_year">Birth year</option>
               <option value="potential_value">Potential</option>
               <option value="team">Club</option>
               <option value="created_at">Date Added</option>
@@ -371,13 +371,13 @@ function Database({ players, onSelectPlayer, onDeletePlayer, onAddReport, loadin
         </div>
       </div>
 
-      {/* Vista Giocatori */}
+      {/* Players View */}
       <div>
         {filteredPlayers.length === 0 ? (
           <div className="bg-white rounded-xl p-12 text-center shadow-lg">
             <i className="fas fa-search text-6xl text-gray-300 mb-4"></i>
             <p className="text-xl text-gray-600">{emptyMessage}</p>
-            {players.length > 0 && <p className="text-gray-500 mt-2">Prova a modificare i filtri</p>}
+            {players.length > 0 && <p className="text-gray-500 mt-2">Try modifying the filters</p>}
           </div>
         ) : (
           <>

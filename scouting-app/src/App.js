@@ -1,4 +1,4 @@
-// src/App.js - App principale con Interfaccia Completa
+// src/App.js - Main App with Complete Interface
 import React, { useState, useEffect, useCallback } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { supabase } from './supabaseClient';
@@ -30,7 +30,7 @@ function AppContent() {
   const [playerForReport, setPlayerForReport] = useState(null);
   const [selectedListForFormation, setSelectedListForFormation] = useState(null);
 
-  // Carica giocatori dal database
+  // Load players from database
   const fetchPlayers = useCallback(async () => {
     try {
       setLoading(true);
@@ -42,7 +42,7 @@ function AppContent() {
       if (error) throw error;
       setPlayers(data || []);
     } catch (error) {
-      console.error('Errore caricamento:', error);
+      console.error('Loading error:', error);
     } finally {
       setLoading(false);
     }
@@ -63,9 +63,9 @@ function AppContent() {
     return () => subscription.unsubscribe();
   }, [fetchPlayers]);
 
-  // Elimina giocatore
+  // Delete player
   const deletePlayer = async (id) => {
-    if (!window.confirm('Sei sicuro di voler eliminare questo giocatore?')) return;
+    if (!window.confirm('Are you sure you want to delete this player?')) return;
     
     try {
       const { error } = await supabase
@@ -76,7 +76,7 @@ function AppContent() {
       if (error) throw error;
       fetchPlayers();
     } catch (error) {
-      console.error('Errore eliminazione:', error);
+      console.error('Deletion error:', error);
     }
   };
 
@@ -84,19 +84,19 @@ function AppContent() {
   const signalazioni = players.filter(p => p.is_scouted === false).length;
   const totalPlayers = players.length;
 
-  // Mostra schermata di caricamento durante auth
+  // Show loading screen during auth
   if (authLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-white mx-auto mb-4"></div>
-          <p className="text-white text-lg">Caricamento...</p>
+          <p className="text-white text-lg">Loading...</p>
         </div>
       </div>
     );
   }
 
-  // Se non autenticato, mostra login
+  // If not authenticated, show login
   if (!user || !profile) {
     return <Login onLoginSuccess={() => {}} />;
   }
@@ -141,8 +141,8 @@ function AppContent() {
             onAddReport={canAddReports ? (player) => setPlayerForReport(player) : null}
             loading={loading}
             onRefresh={fetchPlayers}
-            title="📌 Segnalazioni"
-            emptyMessage="Nessuna segnalazione. Aggiungi un giocatore senza compilare il report per creare una segnalazione."
+            title="📌 Bookmarks"
+            emptyMessage="No bookmarks. Add a player without filling the report to create a bookmark."
             isSignalazione={true}
           />
         )}
@@ -152,17 +152,17 @@ function AppContent() {
             onSave={async (playerData) => {
               try {
                 // ============================================
-                // CONTROLLO DUPLICATI FINALE (Server-side)
+                // FINAL DUPLICATE CHECK (Server-side)
                 // ============================================
                 
-                // 1. Carica tutti i giocatori esistenti
+                // 1. Load all existing players
                 const { data: allPlayers, error: fetchError } = await supabase
                   .from('players')
                   .select('*');
                 
                 if (fetchError) throw fetchError;
                 
-                // 2. Check link Transfermarkt
+                // 2. Check Transfermarkt link
                 if (playerData.transfermarkt_link) {
                   const existingByUrl = findPlayerByTransfermarktUrl(
                     playerData.transfermarkt_link, 
@@ -170,12 +170,12 @@ function AppContent() {
                   );
                   
                   if (existingByUrl) {
-                    alert(`❌ Link Transfermarkt già utilizzato!\n\n${createDuplicateMessage(existingByUrl)}\n\nVai al Database e compila un report per questo giocatore.`);
-                    return; // Blocca inserimento
+                    alert(`❌ Transfermarkt link already used!\n\n${createDuplicateMessage(existingByUrl)}\n\nGo to Database and fill a report for this player.`);
+                    return; // Block insertion
                   }
                 }
                 
-                // 3. Check ID univoco (nome + nazionalità + anno)
+                // 3. Check unique ID (name + nationality + year)
                 const newPlayer = {
                   name: playerData.name,
                   nationality: playerData.nationality,
@@ -186,26 +186,26 @@ function AppContent() {
                 
                 if (duplicates.length > 0) {
                   const duplicate = duplicates[0];
-                  alert(`❌ Giocatore già presente!\n\n${createDuplicateMessage(duplicate)}\n\nVai al Database e compila un report per questo giocatore.`);
-                  return; // Blocca inserimento
+                  alert(`❌ Player already exists!\n\n${createDuplicateMessage(duplicate)}\n\nGo to Database and fill a report for this player.`);
+                  return; // Block insertion
                 }
                 
                 // ============================================
-                // INSERIMENTO GIOCATORE (se nessun duplicato)
+                // PLAYER INSERTION (if no duplicate)
                 // ============================================
                 
-                // Separa i campi del giocatore dai campi del report
+                // Separate player fields from report fields
                 const reportFields = [
                   'scout_name', 'scout_role', 'check_type', 'match_name', 'match_date',
                   'athletic_data_rating', 'final_rating', 'current_value', 'potential_value',
                   'strong_points', 'weak_points', 'notes'
                 ];
                 
-                // Determina se è una segnalazione (senza report) o giocatore scouted (con report)
-                // Usa il flag _hasReport per capire se l'utente ha aperto la sezione report
+                // Determine if it's a bookmark (without report) or scouted player (with report)
+                // Use the _hasReport flag to understand if the user opened the report section
                 const hasOpenedReport = playerData._hasReport === true;
                 
-                // Dati del report - Solo se la sezione è stata aperta
+                // Report data - Only if the section was opened
                 const reportData = hasOpenedReport ? Object.entries(playerData).reduce((acc, [key, value]) => {
                   if (reportFields.includes(key) && value !== '' && value !== null && value !== undefined) {
                     acc[key] = value;
@@ -213,20 +213,20 @@ function AppContent() {
                   return acc;
                 }, {}) : {};
                 
-                // Un giocatore è "scouted" solo se ha aperto il report E compilato il nome scout
+                // A player is "scouted" only if they opened the report AND filled the scout name
                 const isScouted = hasOpenedReport && !!reportData.scout_name && reportData.scout_name.trim() !== '';
                 
                 console.log('🔍 hasOpenedReport:', hasOpenedReport);
                 console.log('🔍 reportData:', reportData);
                 
-                // Dati del giocatore (esclusi i campi del report e flag interni)
+                // Player data (excluding report fields and internal flags)
                 const playerFields = Object.entries(playerData).reduce((acc, [key, value]) => {
-                  // Escludi campi del report e flag interni (che iniziano con _)
+                  // Exclude report fields and internal flags (starting with _)
                   if (!reportFields.includes(key) && !key.startsWith('_')) {
-                    // Se non c'è report, non salvare le valutazioni
+                    // If there's no report, don't save ratings
                     if (!isScouted && (key === 'current_value' || key === 'potential_value')) {
-                      console.log(`⚠️ Saltato campo ${key} perché non c'è report`);
-                      return acc; // Salta questi campi
+                      console.log(`⚠️ Skipped field ${key} because there's no report`);
+                      return acc; // Skip these fields
                     }
                     acc[key] = value === '' ? null : value;
                   }
@@ -236,7 +236,7 @@ function AppContent() {
                 console.log('🔍 isScouted:', isScouted);
                 console.log('📝 playerFields:', playerFields);
                 
-                // Fix preferred_foot: normalizza il valore
+                // Fix preferred_foot: normalize the value
                 if (playerFields.preferred_foot) {
                   const foot = playerFields.preferred_foot.toLowerCase();
                   if (foot.includes('dest') || foot === 'right') {
@@ -246,12 +246,12 @@ function AppContent() {
                   } else if (foot.includes('entr') || foot.includes('both') || foot.includes('amb')) {
                     playerFields.preferred_foot = 'Entrambi';
                   } else {
-                    // Valore non riconosciuto, usa default
+                    // Unrecognized value, use default
                     playerFields.preferred_foot = 'Destro';
                   }
                 }
                 
-                // Inserisci il giocatore
+                // Insert the player
                 const { data: player, error: playerError } = await supabase
                   .from('players')
                   .insert([{
@@ -264,7 +264,7 @@ function AppContent() {
 
                 if (playerError) throw playerError;
                 
-                // Inserisci il primo report se ci sono dati dello scout
+                // Insert the first report if there's scout data
                 if (isScouted) {
                   const { error: reportError } = await supabase
                     .from('player_reports')
@@ -286,20 +286,20 @@ function AppContent() {
                     }]);
                   
                   if (reportError) {
-                    console.error('Errore inserimento report:', reportError);
-                    alert('⚠️ Giocatore aggiunto ma errore nel report: ' + reportError.message);
+                    console.error('Report insertion error:', reportError);
+                    alert('⚠️ Player added but report error: ' + reportError.message);
                   } else {
-                    alert('✅ Giocatore e primo report aggiunti con successo!\n\nIl giocatore è stato aggiunto al Database.');
+                    alert('✅ Player and first report added successfully!\n\nThe player has been added to the Database.');
                   }
                 } else {
-                  alert('✅ Segnalazione aggiunta con successo!\n\nIl giocatore è stato aggiunto alle Segnalazioni (senza report).');
+                  alert('✅ Bookmark added successfully!\n\nThe player has been added to Bookmarks (without report).');
                 }
                 
                 fetchPlayers();
                 setCurrentPage(isScouted ? 'database' : 'segnalazioni');
               } catch (error) {
-                console.error('Errore inserimento:', error);
-                alert(`Errore nell'aggiunta del giocatore: ${error.message}`);
+                console.error('Insertion error:', error);
+                alert(`Error adding player: ${error.message}`);
               }
             }}
             onCancel={() => setCurrentPage('database')}
@@ -318,21 +318,21 @@ function AppContent() {
           <TacticalFieldSimple />
         )}
         
-        {/* Messaggio permessi negati */}
+        {/* Access denied message */}
         {((currentPage === 'add' && !canAddPlayers) || 
           (currentPage === 'lists' && !canManageLists)) && (
           <div className="text-center py-12">
             <svg className="w-24 h-24 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Accesso Negato</h2>
-            <p className="text-gray-600">Non hai i permessi per accedere a questa sezione.</p>
-            <p className="text-sm text-gray-500 mt-2">Contatta l'amministratore per richiedere l'accesso.</p>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">Access Denied</h2>
+            <p className="text-gray-600">You don't have permission to access this section.</p>
+            <p className="text-sm text-gray-500 mt-2">Contact the administrator to request access.</p>
           </div>
         )}
       </div>
 
-      {/* Modale Scheda Giocatore */}
+      {/* Player Card Modal */}
       {selectedPlayer && (
         <PlayerDetailCardFM 
           player={selectedPlayer} 
@@ -344,19 +344,19 @@ function AppContent() {
         />
       )}
 
-      {/* Modale Compila Report */}
+      {/* Fill Report Modal */}
       {playerForReport && canAddReports && (
         <PlayerReports 
           player={playerForReport}
           scoutName={profile.scout_name || profile.full_name}
           onClose={() => {
             setPlayerForReport(null);
-            fetchPlayers(); // Ricarica i giocatori per aggiornare is_scouted
+            fetchPlayers(); // Reload players to update is_scouted
           }} 
         />
       )}
 
-      {/* Modale Visualizzazione Formazione */}
+      {/* Formation View Modal */}
       {selectedListForFormation && (
         <FormationField 
           list={selectedListForFormation}
@@ -367,7 +367,7 @@ function AppContent() {
   );
 }
 
-// Wrapper con AuthProvider
+// Wrapper with AuthProvider
 function App() {
   return (
     <AuthProvider>

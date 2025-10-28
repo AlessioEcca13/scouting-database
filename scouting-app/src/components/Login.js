@@ -13,14 +13,14 @@ function Login({ onLoginSuccess }) {
     e.preventDefault();
     
     if (!email || !password) {
-      toast.error('Inserisci email e password');
+      toast.error('Enter email and password');
       return;
     }
 
     setLoading(true);
 
     try {
-      // Login con Supabase Auth
+      // Login with Supabase Auth
       const { data, error } = await supabase.auth.signInWithPassword({
         email: email.trim(),
         password: password
@@ -28,7 +28,7 @@ function Login({ onLoginSuccess }) {
 
       if (error) throw error;
 
-      // Recupera il profilo utente
+      // Retrieve user profile
       const { data: profile, error: profileError } = await supabase
         .from('users_profiles')
         .select('*')
@@ -36,28 +36,28 @@ function Login({ onLoginSuccess }) {
         .single();
 
       if (profileError) {
-        console.error('Errore caricamento profilo:', profileError);
-        toast.error('Errore nel caricamento del profilo');
+        console.error('Profile loading error:', profileError);
+        toast.error('Error loading profile');
         return;
       }
 
       if (!profile.is_active) {
-        toast.error('Account disattivato. Contatta l\'amministratore.');
+        toast.error('Account disabled. Contact the administrator.');
         await supabase.auth.signOut();
         return;
       }
 
-      toast.success(`Benvenuto, ${profile.full_name}!`);
+      toast.success(`Welcome, ${profile.full_name}!`);
       onLoginSuccess(data.user, profile);
 
     } catch (error) {
-      console.error('Errore login:', error);
+      console.error('Login error:', error);
       if (error.message.includes('Invalid login credentials')) {
-        toast.error('Email o password errati');
+        toast.error('Invalid email or password');
       } else if (error.message.includes('Email not confirmed')) {
-        toast.error('Email non confermata. Controlla la tua casella di posta.');
+        toast.error('Email not confirmed. Check your inbox.');
       } else {
-        toast.error(`Errore: ${error.message}`);
+        toast.error(`Error: ${error.message}`);
       }
     } finally {
       setLoading(false);
@@ -67,7 +67,7 @@ function Login({ onLoginSuccess }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8">
-        {/* Logo e Header */}
+        {/* Logo and Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full mb-4">
             <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -75,10 +75,10 @@ function Login({ onLoginSuccess }) {
             </svg>
           </div>
           <h1 className="text-3xl font-bold text-gray-800 mb-2">La M.E.cca</h1>
-          <p className="text-gray-600">Sistema di Scouting Calcistico</p>
+          <p className="text-gray-600">Football Scouting System</p>
         </div>
 
-        {/* Form Login */}
+        {/* Login Form */}
         <form onSubmit={handleLogin} className="space-y-6">
           {/* Email */}
           <div>
@@ -152,22 +152,22 @@ function Login({ onLoginSuccess }) {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Accesso in corso...
+                Logging in...
               </>
             ) : (
               <>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                 </svg>
-                Accedi
+                Login
               </>
             )}
           </button>
         </form>
 
-        {/* Info Utenti Demo */}
+        {/* Demo Users Info */}
         <div className="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <h3 className="text-sm font-semibold text-gray-700 mb-2">👥 Utenti Demo:</h3>
+          <h3 className="text-sm font-semibold text-gray-700 mb-2">👥 Demo Users:</h3>
           <div className="space-y-2 text-xs text-gray-600">
             <div>
               <span className="font-semibold">Admin:</span> admin@lamecca.com
@@ -179,14 +179,14 @@ function Login({ onLoginSuccess }) {
               <span className="font-semibold">Alessio (Scout):</span> alessio@lamecca.com
             </div>
             <div className="text-[10px] text-gray-500 mt-2">
-              Password: Configura in Supabase Authentication
+              Password: Configure in Supabase Authentication
             </div>
           </div>
         </div>
 
         {/* Footer */}
         <div className="mt-6 text-center text-xs text-gray-500">
-          <p>Visione. Intuito. Dati.</p>
+          <p>Vision. Insight. Data.</p>
         </div>
       </div>
     </div>

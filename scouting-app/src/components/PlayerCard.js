@@ -34,7 +34,7 @@ function PlayerCard({ player, onSelect, onDelete, onAddReport, isSignalazione = 
       <div className="p-4 sm:p-6">
         <div className="flex justify-between items-start mb-3 sm:mb-4">
           <div className="flex items-start gap-2 sm:gap-3 flex-1">
-            {/* Immagine Giocatore */}
+            {/* Player Image */}
             {player.profile_image ? (
               <img 
                 src={player.profile_image} 
@@ -72,7 +72,7 @@ function PlayerCard({ player, onSelect, onDelete, onAddReport, isSignalazione = 
 
         <div className="space-y-1.5 sm:space-y-2 mb-3 sm:mb-4">
           <div className="flex justify-between text-xs sm:text-sm gap-2">
-            <span className="text-gray-600">Squadra:</span>
+            <span className="text-gray-600">Team:</span>
             <span className="font-medium truncate">{player.team || 'N/A'}</span>
           </div>
           <div className="flex justify-between text-xs sm:text-sm gap-2">
@@ -90,12 +90,12 @@ function PlayerCard({ player, onSelect, onDelete, onAddReport, isSignalazione = 
         </div>
 
         <div className="border-t pt-3 sm:pt-4">
-          {/* Valutazioni - Solo se il giocatore è stato valutato */}
+            {/* Ratings - Only if player has been evaluated */}
           {player.is_scouted && (player.current_value || player.potential_value) && (
             <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-2 sm:mb-3">
               {player.current_value && (
                 <div className="text-center">
-                  <p className="text-xs text-gray-500 mb-0.5 sm:mb-1">Attuale</p>
+                  <p className="text-xs text-gray-500 mb-0.5 sm:mb-1">Current</p>
                   <div className="text-yellow-500 text-sm sm:text-base">
                     {'★'.repeat(player.current_value)}{'☆'.repeat(5-player.current_value)}
                   </div>
@@ -112,7 +112,7 @@ function PlayerCard({ player, onSelect, onDelete, onAddReport, isSignalazione = 
             </div>
           )}
 
-          {/* Bottone Compila Report - Solo per Segnalazioni */}
+          {/* Fill Report Button - Only for Bookmarks */}
           {isSignalazione && onAddReport && (
             <button
               onClick={(e) => {
@@ -124,7 +124,7 @@ function PlayerCard({ player, onSelect, onDelete, onAddReport, isSignalazione = 
               <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
-              📝 COMPILA REPORT
+              📝 FILL REPORT
             </button>
           )}
 

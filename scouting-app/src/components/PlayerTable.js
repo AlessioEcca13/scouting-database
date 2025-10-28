@@ -10,14 +10,14 @@ function PlayerTable({ players, onSelect, onDelete, onAddReport }) {
         <table className="w-full">
           <thead className="bg-gradient-to-r from-purple-500 to-blue-500 text-white">
             <tr>
-              <th className="px-4 py-3 text-center text-sm font-semibold w-20">Foto</th>
+              <th className="px-4 py-3 text-center text-sm font-semibold w-20">Photo</th>
               <th className="px-4 py-3 text-left text-sm font-semibold">Name</th>
               <th className="px-4 py-3 text-left text-sm font-semibold">Age</th>
               <th className="px-4 py-3 text-left text-sm font-semibold">Club</th>
               <th className="px-4 py-3 text-left text-sm font-semibold">Position</th>
               <th className="px-4 py-3 text-left text-sm font-semibold">Nationality</th>
               <th className="px-4 py-3 text-left text-sm font-semibold">Potential</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold">Priorità</th>
+              <th className="px-4 py-3 text-left text-sm font-semibold">Priority</th>
               <th className="px-4 py-3 text-center text-sm font-semibold">Actions</th>
             </tr>
           </thead>
@@ -78,23 +78,23 @@ function PlayerTable({ players, onSelect, onDelete, onAddReport }) {
                 <td className="px-4 py-3">
                   {player.priority === 'Alta' && (
                     <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">
-                      🔴 Alta
+                      🔴 High
                     </span>
                   )}
                   {player.priority === 'Media' && (
                     <span className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium">
-                      🟡 Media
+                      🟡 Medium
                     </span>
                   )}
                   {player.priority === 'Bassa' && (
                     <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
-                      🟢 Bassa
+                      🟢 Low
                     </span>
                   )}
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center justify-center gap-2">
-                    {/* Bottone Compila Report */}
+                    {/* Fill Report Button */}
                     {onAddReport && (
                       <button
                         onClick={(e) => {
@@ -102,7 +102,7 @@ function PlayerTable({ players, onSelect, onDelete, onAddReport }) {
                           onAddReport(player);
                         }}
                         className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                        title="Compila Report"
+                        title="Fill Report"
                       >
                         <i className="fas fa-file-alt"></i>
                       </button>
@@ -112,7 +112,7 @@ function PlayerTable({ players, onSelect, onDelete, onAddReport }) {
                         e.stopPropagation();
                         onSelect(player);
                       }}
-                      title="Visualizza dettagli"
+                      title="View details"
                     >
                       <i className="fas fa-eye"></i>
                     </button>

@@ -13,11 +13,11 @@ function PlayerReports({ player, onClose }) {
   const [showDirectorFeedback, setShowDirectorFeedback] = useState(false);
   const [loading, setLoading] = useState(true);
   
-  // State per attributi categorizzati
+  // State for categorized attributes
   const [strengthAttributes, setStrengthAttributes] = useState([]);
   const [weaknessAttributes, setWeaknessAttributes] = useState([]);
   
-  // Form state - TUTTI I REPORT HANNO GLI STESSI CAMPI
+  // Form state - ALL REPORTS HAVE THE SAME FIELDS
   const [formData, setFormData] = useState({
     scout_name: '',
     check_type: 'Live',
@@ -32,7 +32,7 @@ function PlayerReports({ player, onClose }) {
     notes: ''
   });
 
-  // Carica report esistenti
+  // Load existing reports
   useEffect(() => {
     loadReports();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -51,16 +51,16 @@ function PlayerReports({ player, onClose }) {
 
       setReports(data || []);
       
-      // Se non ci sono report, apri automaticamente il form di creazione
+      // If there are no reports, automatically open the creation form
       if (!data || data.length === 0) {
         setShowNewReportForm(true);
       } else {
-        // Altrimenti non selezionare nessun report
+        // Otherwise don't select any report
         setSelectedReport(null);
       }
     } catch (error) {
       console.error('Errore caricamento report:', error);
-      alert('Errore nel caricamento dei report');
+      alert('Error loading reports');
     } finally {
       setLoading(false);
     }
@@ -75,27 +75,27 @@ function PlayerReports({ player, onClose }) {
     console.log('⚠️ weaknessAttributes:', weaknessAttributes);
 
     if (!formData.scout_name.trim()) {
-      toast.error('⚠️ Inserisci il nome dello scout');
+      toast.error('⚠️ Enter the scout name');
       return;
     }
 
     if (!formData.strengths || formData.strengths.trim() === '') {
-      toast.error('⚠️ Inserisci almeno un punto di forza');
+      toast.error('⚠️ Enter at least one strength');
       return;
     }
 
     if (!formData.weaknesses || formData.weaknesses.trim() === '') {
-      toast.error('⚠️ Inserisci almeno un punto debole');
+      toast.error('⚠️ Enter at least one weakness');
       return;
     }
 
     if (!formData.notes || formData.notes.trim() === '') {
-      toast.error('⚠️ Inserisci le note generali');
+      toast.error('⚠️ Enter general notes');
       return;
     }
 
     try {
-      // Prepara i dati da inserire (rimuovi campi non esistenti nel DB)
+      // Prepare data to insert (remove non-existent DB fields)
       const reportData = {
         player_id: player.id,
         scout_name: formData.scout_name,
@@ -125,7 +125,7 @@ function PlayerReports({ player, onClose }) {
 
       console.log('✅ Report salvato:', data);
       
-      // Se il giocatore ha almeno 1 report, deve essere spostato nel Database
+      // If the player has at least 1 report, must be moved to Database
       if (!player.is_scouted) {
         const { error: updateError } = await supabase
           .from('players')
@@ -133,22 +133,22 @@ function PlayerReports({ player, onClose }) {
           .eq('id', player.id);
         
         if (updateError) {
-          console.error('⚠️ Errore aggiornamento is_scouted:', updateError);
-          toast.error('⚠️ Errore aggiornamento stato giocatore');
+          console.error('⚠️ Error updating is_scouted:', updateError);
+          toast.error('⚠️ Error updating player status');
         } else {
-          console.log('✅ Giocatore spostato nel Database (ha almeno 1 report)');
-          toast.success('✅ Report aggiunto! Il giocatore è ora nel Database.');
+          console.log('✅ Player moved to Database (has at least 1 report)');
+          toast.success('✅ Report added! The player is now in the Database.');
         }
       } else {
-        toast.success('✅ Report aggiunto con successo!');
+        toast.success('✅ Report added successfully!');
       }
       
-      // Chiudi il modale e torna alla schermata precedente dopo 1 secondo
+      // Close modal and return to previous screen after 1 second
       setTimeout(() => {
         onClose();
       }, 1500);
       
-      // Reset form - STESSI CAMPI PER TUTTI I REPORT
+      // Reset form - SAME FIELDS FOR ALL REPORTS
       setFormData({
         scout_name: '',
         check_type: 'Live',
@@ -163,17 +163,17 @@ function PlayerReports({ player, onClose }) {
         notes: ''
       });
       
-      // Reset attributi
+      // Reset attributes
       setStrengthAttributes([]);
       setWeaknessAttributes([]);
     } catch (error) {
       console.error('❌ Errore inserimento report:', error);
-      toast.error(`❌ Errore: ${error.message || 'Impossibile salvare il report'}`);
+      toast.error(`❌ Error: ${error.message || 'Cannot save report'}`);
     }
   };
 
   const handleDelete = async (reportId) => {
-    if (!window.confirm('Sei sicuro di voler eliminare questo report?')) {
+    if (!window.confirm('Are you sure you want to delete this report?')) {
       return;
     }
 
@@ -185,11 +185,11 @@ function PlayerReports({ player, onClose }) {
 
       if (error) throw error;
 
-      alert('✅ Report eliminato');
+      alert('✅ Report deleted');
       loadReports();
     } catch (error) {
       console.error('Errore eliminazione report:', error);
-      alert('Errore nell\'eliminazione del report');
+      alert('Error deleting report');
     }
   };
 
@@ -197,7 +197,7 @@ function PlayerReports({ player, onClose }) {
   if (loading) {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
-        <div className="text-white text-xl">Caricamento report...</div>
+        <div className="text-white text-xl">Loading reports...</div>
       </div>
     );
   }

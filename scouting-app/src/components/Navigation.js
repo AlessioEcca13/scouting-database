@@ -7,7 +7,7 @@ function Navigation({ currentPage, setCurrentPage, playersCount, userProfile, on
   const mobileMenuRef = useRef(null);
   const userMenuRef = useRef(null);
   
-  // Chiudi menu quando si clicca fuori
+  // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
@@ -46,7 +46,7 @@ function Navigation({ currentPage, setCurrentPage, playersCount, userProfile, on
     <nav className="bg-white shadow-lg sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
         <div className="flex justify-between items-center h-14 sm:h-16">
-          {/* Logo e Titolo */}
+          {/* Logo and Title */}
           <div className="flex items-center space-x-2 sm:space-x-3">
             <img 
               src="/logo-lamecca.png" 
@@ -64,7 +64,7 @@ function Navigation({ currentPage, setCurrentPage, playersCount, userProfile, on
             </div>
           </div>
           
-          {/* Menu Desktop - Nascosto su mobile */}
+          {/* Desktop Menu - Hidden on mobile */}
           <div className="hidden lg:flex space-x-1 xl:space-x-2">
             {menuItems.map(item => (
               <button
@@ -81,9 +81,9 @@ function Navigation({ currentPage, setCurrentPage, playersCount, userProfile, on
             ))}
           </div>
 
-          {/* Info e Profilo */}
+          {/* Info and Profile */}
           <div className="flex items-center space-x-2 sm:space-x-3">
-            {/* Counter - Nascosto su mobile piccolo */}
+            {/* Counter - Hidden on small mobile */}
             <div className="hidden sm:flex text-xs sm:text-sm text-gray-500 items-center gap-2">
               <span className="flex items-center gap-1">
                 <i className="fas fa-users"></i>
@@ -91,7 +91,7 @@ function Navigation({ currentPage, setCurrentPage, playersCount, userProfile, on
               </span>
             </div>
             
-            {/* Hamburger Menu - Solo mobile */}
+            {/* Hamburger Menu - Mobile only */}
             <button
               onClick={() => setShowMobileMenu(!showMobileMenu)}
               className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
@@ -213,7 +213,7 @@ function Navigation({ currentPage, setCurrentPage, playersCount, userProfile, on
                 </button>
               ))}
               
-              {/* Info Mobile */}
+              {/* Mobile Info */}
               <div className="pt-3 mt-3 border-t border-gray-200">
                 <div className="px-4 py-2 text-sm text-gray-600 flex items-center justify-between">
                   <span className="flex items-center gap-2">

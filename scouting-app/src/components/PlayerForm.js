@@ -581,7 +581,7 @@ function PlayerForm({ onSave, onCancel }) {
             </label>
           </div>
 
-          {/* Sezione Report Scouting - Collassabile */}
+          {/* Scouting Report Section - Collapsible */}
           <div className="col-span-2 mt-4">
             <button
               type="button"
@@ -593,18 +593,18 @@ function PlayerForm({ onSave, onCancel }) {
                   <i className="fas fa-clipboard-check text-green-500 text-xl"></i>
                   <div className="text-left">
                     <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                      Report Scouting 
-                      <span className="text-sm font-normal text-gray-600">(Opzionale)</span>
+                      Scouting Report 
+                      <span className="text-sm font-normal text-gray-600">(Optional)</span>
                     </h3>
                     <p className="text-xs text-gray-600 mt-1">
-                      {showReportSection ? 'Clicca per nascondere' : 'Clicca per compilare il report'}
+                      {showReportSection ? 'Click to hide' : 'Click to fill the report'}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   {!showReportSection && (
                     <span className="text-xs bg-blue-500 text-white px-3 py-1 rounded-full">
-                      Segnalazione
+                      Bookmark
                     </span>
                   )}
                   {showReportSection && (
@@ -619,11 +619,11 @@ function PlayerForm({ onSave, onCancel }) {
 
             {showReportSection && (
               <div className="mt-4 bg-blue-50 border-2 border-blue-200 rounded-lg p-4 animate-fadeIn">
-                {/* Campi Report - Visibili solo quando la sezione è aperta */}
+                {/* Report Fields - Visible only when section is open */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-2">
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      📋 Nome Scout <span className="text-red-500">*</span>
+                      📋 Scout Name <span className="text-red-500">*</span>
                     </label>
                     <select
                       required
@@ -631,14 +631,14 @@ function PlayerForm({ onSave, onCancel }) {
                       onChange={(e) => setFormData({...formData, scout_name: e.target.value})}
                       className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                     >
-                      <option value="">Seleziona scout...</option>
+                      <option value="">Select scout...</option>
                       <option value="Alessio">Alessio</option>
                       <option value="Roberto">Roberto</option>
                     </select>
                   </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Tipo di Check <span className="text-red-500">*</span></label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Check Type <span className="text-red-500">*</span></label>
             <select
               required
               value={formData.check_type}
@@ -648,14 +648,14 @@ function PlayerForm({ onSave, onCancel }) {
               <option value="Live">🔴 Live</option>
               <option value="Video">🎥 Video</option>
               <option value="Video/Live">🔴🎥 Video/Live</option>
-              <option value="Dati">📊 Dati</option>
+              <option value="Dati">📊 Data</option>
             </select>
           </div>
 
-          {/* Valutazione Dati Atletici (visibile solo se check_type = 'Dati') */}
+          {/* Athletic Data Rating (visible only if check_type = 'Dati') */}
           {formData.check_type === 'Dati' ? (
             <div className="col-span-2">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">📊 Valutazione Dati Atletici <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">📊 Athletic Data Rating <span className="text-red-500">*</span></label>
               <div className="flex items-center gap-4">
                 <select
                   required
@@ -663,30 +663,30 @@ function PlayerForm({ onSave, onCancel }) {
                   onChange={(e) => setFormData({...formData, athletic_data_rating: e.target.value})}
                   className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-center text-2xl font-bold"
                 >
-                  <option value="🔴">🔴 Scarso</option>
-                  <option value="🟠">🟠 Insufficiente</option>
-                  <option value="🟡">🟡 Sufficiente</option>
-                  <option value="🟢">🟢 Buono</option>
+                  <option value="🔴">🔴 Poor</option>
+                  <option value="🟠">🟠 Insufficient</option>
+                  <option value="🟡">🟡 Sufficient</option>
+                  <option value="🟢">🟢 Good</option>
                   <option value="🏆">🏆 Top</option>
                 </select>
               </div>
             </div>
           ) : (
             <>
-              {/* Campi Partita (visibili solo se check_type != 'Dati') */}
+              {/* Match Fields (visible only if check_type != 'Dati') */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Partita</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Match</label>
                 <input
                   type="text"
                   value={formData.match_name}
                   onChange={(e) => setFormData({...formData, match_name: e.target.value})}
                   className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-                  placeholder="es: Juve-Milan (opzionale)"
+                  placeholder="e.g.: Juve-Milan (optional)"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Data</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Date</label>
                 <input
                   type="date"
                   value={formData.match_date}
@@ -697,57 +697,57 @@ function PlayerForm({ onSave, onCancel }) {
             </>
           )}
 
-          {/* Punti di Forza e Debolezza con Autocomplete */}
+          {/* Strengths and Weaknesses with Autocomplete */}
           <div className="col-span-2">
             <AttributeInput
-              label="💪 Punti di Forza"
+              label="💪 Strengths"
               selectedAttributes={strengthAttributes}
               onAttributesChange={(attrs) => {
                 setStrengthAttributes(attrs);
                 setFormData({...formData, strong_points: attrs.join(', ')});
               }}
               suggestions={getAllStrengths()}
-              placeholder="Scrivi o seleziona punti di forza..."
+              placeholder="Write or select strengths..."
               required={true}
             />
           </div>
 
           <div className="col-span-2">
             <AttributeInput
-              label="⚠️ Punti Deboli"
+              label="⚠️ Weaknesses"
               selectedAttributes={weaknessAttributes}
               onAttributesChange={(attrs) => {
                 setWeaknessAttributes(attrs);
                 setFormData({...formData, weak_points: attrs.join(', ')});
               }}
               suggestions={getAllWeaknesses()}
-              placeholder="Scrivi o seleziona punti deboli..."
+              placeholder="Write or select weaknesses..."
               required={true}
             />
           </div>
 
           <div className="col-span-2">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">📝 Note Generali <span className="text-red-500">*</span></label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">📝 General Notes <span className="text-red-500">*</span></label>
             <textarea
               required
               rows="4"
               value={formData.notes}
               onChange={(e) => setFormData({...formData, notes: e.target.value})}
               className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-              placeholder="Note aggiuntive sul giocatore..."
+              placeholder="Additional notes about the player..."
             />
           </div>
 
-          {/* Sezione Valutazioni - Dentro Report */}
+          {/* Ratings Section - Inside Report */}
           <div className="col-span-2 mt-4">
             <h3 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2 border-b border-purple-200 pb-2">
               <i className="fas fa-star text-purple-500"></i>
-              Valutazioni
+              Ratings
             </h3>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Valore Attuale (1-5)</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Current Value (1-5)</label>
             <div className="flex items-center gap-4">
               <input
                 type="range"
@@ -764,7 +764,7 @@ function PlayerForm({ onSave, onCancel }) {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Potenziale (1-5)</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Potential (1-5)</label>
             <div className="flex items-center gap-4">
               <input
                 type="range"
@@ -781,17 +781,17 @@ function PlayerForm({ onSave, onCancel }) {
           </div>
 
           <div className="col-span-2">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">⭐ Valutazione Finale <span className="text-red-500">*</span></label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">⭐ Final Rating <span className="text-red-500">*</span></label>
             <select
               required
               value={formData.final_rating}
               onChange={(e) => setFormData({...formData, final_rating: e.target.value})}
               className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-center text-2xl font-bold text-yellow-600"
             >
-              <option value="A">A - Eccellente</option>
-              <option value="B">B - Buono</option>
-              <option value="C">C - Sufficiente</option>
-              <option value="D">D - Insufficiente</option>
+              <option value="A">A - Excellent</option>
+              <option value="B">B - Good</option>
+              <option value="C">C - Sufficient</option>
+              <option value="D">D - Insufficient</option>
             </select>
           </div>
                 </div>
@@ -800,14 +800,14 @@ function PlayerForm({ onSave, onCancel }) {
           </div>
         </div>
 
-        {/* Azioni Form */}
+        {/* Form Actions */}
         <div className="flex justify-end gap-4 mt-8 pt-6 border-t-2 border-gray-200">
           <button
             type="button"
             onClick={onCancel}
             className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-semibold"
           >
-            ❌ Annulla
+            ❌ Cancel
           </button>
           <button
             type="submit"
@@ -817,7 +817,7 @@ function PlayerForm({ onSave, onCancel }) {
                 : 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white hover:from-yellow-600 hover:to-orange-600'
             }`}
           >
-            {showReportSection ? '➕ Aggiungi Giocatore' : '📌 Segnala Giocatore'}
+            {showReportSection ? '➕ Add Player' : '📌 Bookmark Player'}
           </button>
         </div>
       </form>

@@ -2,11 +2,11 @@
 import React from 'react';
 
 function Dashboard({ players, onSelectPlayer }) {
-  // Separa giocatori valutati e segnalazioni
+  // Separate evaluated players and bookmarks
   const scoutedPlayers = players.filter(p => p.is_scouted !== false);
   const signalazioni = players.filter(p => p.is_scouted === false);
   
-  // Calcola statistiche
+  // Calculate statistics
   const stats = {
     totalPlayers: scoutedPlayers.length,
     totalSignalazioni: signalazioni.length,
@@ -24,26 +24,26 @@ function Dashboard({ players, onSelectPlayer }) {
     }
   };
 
-  // Ultimi giocatori aggiunti (solo valutati)
+  // Recently added players (evaluated only)
   const recentPlayers = [...scoutedPlayers]
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
     .slice(0, 3);
 
-  // Giocatori con priorità alta
+  // High priority players
   const highPriorityPlayers = scoutedPlayers
     .filter(p => p.priority === 'Alta')
     .slice(0, 5);
   
-  // Ultime segnalazioni da valutare
+  // Recent bookmarks to evaluate
   const recentSignalazioni = [...signalazioni]
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
     .slice(0, 5);
 
   return (
     <div className="space-y-4 sm:space-y-6 animate-fadeIn px-2 sm:px-0">
-      {/* Header con Logo Prominente */}
+      {/* Header with Prominent Logo */}
       <div className="bg-gradient-to-r from-slate-800 via-slate-900 to-slate-800 rounded-xl sm:rounded-2xl p-6 sm:p-8 lg:p-12 shadow-2xl border border-slate-700 flex items-center justify-center">
-        {/* Logo Centrale Grande */}
+        {/* Large Central Logo */}
         <div className="relative">
           <img 
             src="/logo-lamecca-dark.png" 
@@ -51,7 +51,7 @@ function Dashboard({ players, onSelectPlayer }) {
             className="h-20 sm:h-32 lg:h-40 w-auto object-contain drop-shadow-2xl transition-transform hover:scale-105 duration-300"
             style={{ filter: 'drop-shadow(0 0 30px rgba(34, 197, 94, 0.5))' }}
             onError={(e) => {
-              console.error('Logo dark non trovato, usando fallback');
+              console.error('Dark logo not found, using fallback');
               e.target.style.display = 'none';
               e.target.nextSibling.style.display = 'flex';
             }}
@@ -71,34 +71,34 @@ function Dashboard({ players, onSelectPlayer }) {
         <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg sm:rounded-xl p-3 sm:p-4 text-white transform hover:scale-105 transition-transform shadow-lg">
           <i className="fas fa-users text-xl sm:text-2xl lg:text-3xl mb-1 sm:mb-2 opacity-80"></i>
           <div className="text-2xl sm:text-3xl font-bold">{stats.totalPlayers}</div>
-          <div className="text-xs sm:text-sm opacity-90">Giocatori Valutati</div>
+          <div className="text-xs sm:text-sm opacity-90">Evaluated Players</div>
         </div>
         
         <div className="bg-gradient-to-br from-yellow-500 to-orange-500 rounded-lg sm:rounded-xl p-3 sm:p-4 text-white transform hover:scale-105 transition-transform shadow-lg">
           <i className="fas fa-bell text-xl sm:text-2xl lg:text-3xl mb-1 sm:mb-2 opacity-80"></i>
           <div className="text-2xl sm:text-3xl font-bold">{stats.totalSignalazioni}</div>
-          <div className="text-xs sm:text-sm opacity-90">Segnalazioni</div>
+          <div className="text-xs sm:text-sm opacity-90">Bookmarks</div>
         </div>
         
         <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg sm:rounded-xl p-3 sm:p-4 text-white transform hover:scale-105 transition-transform shadow-lg">
           <i className="fas fa-star text-xl sm:text-2xl lg:text-3xl mb-1 sm:mb-2 opacity-80"></i>
           <div className="text-2xl sm:text-3xl font-bold">{stats.avgPotential}</div>
-          <div className="text-xs sm:text-sm opacity-90">Media Potenziale</div>
+          <div className="text-xs sm:text-sm opacity-90">Average Potential</div>
         </div>
         
         <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg sm:rounded-xl p-3 sm:p-4 text-white transform hover:scale-105 transition-transform shadow-lg">
           <i className="fas fa-gem text-xl sm:text-2xl lg:text-3xl mb-1 sm:mb-2 opacity-80"></i>
           <div className="text-2xl sm:text-3xl font-bold">{stats.highPotential}</div>
-          <div className="text-xs sm:text-sm opacity-90">Alto Potenziale</div>
+          <div className="text-xs sm:text-sm opacity-90">High Potential</div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        {/* Distribuzione Ruoli */}
+        {/* Role Distribution */}
         <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-lg">
           <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
             <i className="fas fa-chart-pie mr-2 text-purple-500"></i>
-            Distribuzione per Ruolo
+            Distribution by Role
           </h3>
           <div className="space-y-2 sm:space-y-3">
             {Object.entries(stats.positions).map(([role, count]) => (
@@ -117,11 +117,11 @@ function Dashboard({ players, onSelectPlayer }) {
           </div>
         </div>
 
-        {/* Giocatori Prioritari */}
+        {/* Priority Players */}
         <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-lg">
           <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
             <i className="fas fa-exclamation-circle mr-2 text-red-500"></i>
-            Giocatori Priorità Alta
+            High Priority Players
           </h3>
           {highPriorityPlayers.length > 0 ? (
             <div className="space-y-2">
@@ -140,28 +140,28 @@ function Dashboard({ players, onSelectPlayer }) {
                       {'★'.repeat(player.potential_value || 0)}
                     </span>
                     <span className="px-2 py-1 bg-red-500 text-white text-xs rounded-full">
-                      Urgente
+                      Urgent
                     </span>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-gray-500 text-center py-4">Nessun giocatore con priorità alta</p>
+            <p className="text-gray-500 text-center py-4">No high priority players</p>
           )}
         </div>
       </div>
 
-      {/* Segnalazioni da Valutare */}
+      {/* Bookmarks to Evaluate */}
       <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-lg border-2 border-yellow-300">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 sm:mb-4 gap-2">
           <h3 className="text-base sm:text-lg font-semibold">
             <i className="fas fa-bell mr-2 text-orange-500"></i>
-            📌 Segnalazioni da Valutare
+            📌 Bookmarks to Evaluate
           </h3>
           {stats.totalSignalazioni > 0 && (
             <span className="px-2 sm:px-3 py-1 bg-orange-500 text-white text-xs sm:text-sm font-bold rounded-full animate-pulse">
-              {stats.totalSignalazioni} in attesa
+              {stats.totalSignalazioni} pending
             </span>
           )}
         </div>
@@ -174,7 +174,7 @@ function Dashboard({ players, onSelectPlayer }) {
                 onClick={() => onSelectPlayer(player)}
               >
                 <div className="flex items-center gap-3 sm:gap-4 flex-1 w-full">
-                  {/* Immagine */}
+                  {/* Image */}
                   {player.profile_image ? (
                     <img 
                       src={player.profile_image} 
@@ -203,11 +203,11 @@ function Dashboard({ players, onSelectPlayer }) {
                   </div>
                 </div>
                 
-                {/* Badge e Data */}
+                {/* Badge and Date */}
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
                   {player.signaler_name && (
                     <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded whitespace-nowrap">
-                      Segnalato da: {player.signaler_name}
+                      Reported by: {player.signaler_name}
                     </span>
                   )}
                   <span className="text-xs text-gray-500">
@@ -221,16 +221,16 @@ function Dashboard({ players, onSelectPlayer }) {
         ) : (
           <div className="text-center py-8 text-gray-500">
             <i className="fas fa-check-circle text-4xl text-green-500 mb-2"></i>
-            <p>Nessuna segnalazione in attesa! Ottimo lavoro! 🎉</p>
+            <p>No pending bookmarks! Great job! 🎉</p>
           </div>
         )}
       </div>
 
-      {/* Ultimi Giocatori Aggiunti */}
+      {/* Recently Added Players */}
       <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-lg">
         <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
           <i className="fas fa-clock mr-2 text-blue-500"></i>
-          Ultimi Giocatori Valutati
+          Recently Evaluated Players
         </h3>
         {recentPlayers.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
@@ -259,7 +259,7 @@ function Dashboard({ players, onSelectPlayer }) {
             ))}
           </div>
         ) : (
-          <p className="text-gray-500 text-center py-8">Nessun giocatore nel database</p>
+          <p className="text-gray-500 text-center py-8">No players in database</p>
         )}
       </div>
     </div>
