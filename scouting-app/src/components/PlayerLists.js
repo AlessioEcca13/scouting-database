@@ -28,21 +28,21 @@ function PlayerLists({ onViewFormation }) {
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Errore caricamento liste:', error);
+        console.error('Error loading lists:', error);
         if (error.message.includes('relation "player_lists" does not exist')) {
-          toast.error('⚠️ Tabella player_lists non trovata! Devi eseguire la migrazione SQL.', {
+          toast.error('⚠️ Table player_lists not found! You need to run the SQL migration.', {
             duration: 5000
           });
         } else {
-          toast.error('Errore nel caricamento delle liste');
+          toast.error('Error loading lists');
         }
         setLists([]);
       } else {
         setLists(data || []);
       }
     } catch (error) {
-      console.error('Errore caricamento liste:', error);
-      toast.error('Errore nel caricamento delle liste');
+      console.error('Error loading lists:', error);
+      toast.error('Error loading lists');
       setLists([]);
     } finally {
       setLoading(false);
@@ -59,13 +59,13 @@ function PlayerLists({ onViewFormation }) {
       if (error) throw error;
       setPlayers(data || []);
     } catch (error) {
-      console.error('Errore caricamento giocatori:', error);
+      console.error('Error loading players:', error);
     }
   };
 
   const createList = async () => {
     if (!newListName.trim()) {
-      toast.error('Inserisci un nome per la lista');
+      toast.error('Enter a name for the list');
       return;
     }
 
@@ -84,9 +84,9 @@ function PlayerLists({ onViewFormation }) {
         console.error('Dettagli errore:', error.details);
         console.error('Hint errore:', error.hint);
         if (error.message.includes('relation "player_lists" does not exist')) {
-          toast.error('⚠️ Tabella player_lists non trovata! Esegui la migrazione SQL prima.');
+          toast.error('⚠️ Table player_lists not found! Run the SQL migration first.');
         } else {
-          toast.error(`Errore: ${error.message || 'Errore sconosciuto'}`);
+          toast.error(`Error: ${error.message || 'Unknown error'}`);
         }
         return;
       }
@@ -94,15 +94,15 @@ function PlayerLists({ onViewFormation }) {
       setLists([data[0], ...lists]);
       setNewListName('');
       setShowNewListModal(false);
-      toast.success('✅ Lista creata con successo!');
+      toast.success('✅ List created successfully!');
     } catch (error) {
-      console.error('Errore creazione lista:', error);
-      toast.error('Errore nella creazione della lista');
+      console.error('Error creating list:', error);
+      toast.error('Error creating list');
     }
   };
 
   const deleteList = async (listId) => {
-    if (!window.confirm('Sei sicuro di voler eliminare questa lista?')) return;
+    if (!window.confirm('Are you sure you want to delete this list?')) return;
 
     try {
       const { error } = await supabase
@@ -114,16 +114,16 @@ function PlayerLists({ onViewFormation }) {
       
       setLists(lists.filter(l => l.id !== listId));
       if (selectedList?.id === listId) setSelectedList(null);
-      toast.success('Lista eliminata');
+      toast.success('List deleted');
     } catch (error) {
-      console.error('Errore eliminazione lista:', error);
-      toast.error('Errore nell\'eliminazione della lista');
+      console.error('Error deleting list:', error);
+      toast.error('Error deleting list');
     }
   };
 
   const updateListName = async (listId, newName) => {
     if (!newName.trim()) {
-      toast.error('Inserisci un nome valido');
+      toast.error('Enter a valid name');
       return;
     }
 
@@ -141,10 +141,10 @@ function PlayerLists({ onViewFormation }) {
       if (selectedList?.id === listId) setSelectedList(updatedList);
       setEditingListId(null);
       setEditingListName('');
-      toast.success('Nome lista aggiornato!');
+      toast.success('List name updated!');
     } catch (error) {
-      console.error('Errore aggiornamento nome lista:', error);
-      toast.error('Errore nell\'aggiornamento del nome');
+      console.error('Error updating list name:', error);
+      toast.error('Error updating name');
     }
   };
 
@@ -165,10 +165,10 @@ function PlayerLists({ onViewFormation }) {
       const updatedList = data[0];
       setLists(lists.map(l => l.id === updatedList.id ? updatedList : l));
       setSelectedList(updatedList);
-      toast.success('Giocatore aggiunto alla lista!');
+      toast.success('Player added to list!');
     } catch (error) {
-      console.error('Errore aggiunta giocatore:', error);
-      toast.error('Errore nell\'aggiunta del giocatore');
+      console.error('Error adding player:', error);
+      toast.error('Error adding player');
     }
   };
 
@@ -189,10 +189,10 @@ function PlayerLists({ onViewFormation }) {
       const updatedList = data[0];
       setLists(lists.map(l => l.id === updatedList.id ? updatedList : l));
       setSelectedList(updatedList);
-      toast.success('Giocatore rimosso dalla lista');
+      toast.success('Player removed from list');
     } catch (error) {
-      console.error('Errore rimozione giocatore:', error);
-      toast.error('Errore nella rimozione del giocatore');
+      console.error('Error removing player:', error);
+      toast.error('Error removing player');
     }
   };
 

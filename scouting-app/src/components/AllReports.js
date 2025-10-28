@@ -18,7 +18,7 @@ function AllReports({ onPlayerClick }) {
     try {
       setLoading(true);
       
-      // Carica tutti i report con i dati del giocatore
+      // Load all reports with player data
       const { data, error } = await supabase
         .from('player_reports')
         .select(`
@@ -37,17 +37,17 @@ function AllReports({ onPlayerClick }) {
 
       if (error) throw error;
 
-      console.log('📊 Report caricati:', data);
+      console.log('📊 Reports loaded:', data);
       setReports(data || []);
     } catch (error) {
-      console.error('Errore caricamento report:', error);
-      toast.error('❌ Errore nel caricamento dei report');
+      console.error('Error loading reports:', error);
+      toast.error('❌ Error loading reports');
     } finally {
       setLoading(false);
     }
   };
 
-  // Filtra i report
+  // Filter reports
   const filteredReports = reports.filter(report => {
     if (filter !== 'all' && report.check_type !== filter) return false;
     if (scoutFilter !== 'all' && report.scout_name !== scoutFilter) return false;
@@ -55,13 +55,13 @@ function AllReports({ onPlayerClick }) {
     return true;
   });
 
-  // Ottieni lista scout unici
+  // Get unique scouts list
   const scouts = [...new Set(reports.map(r => r.scout_name))].filter(Boolean);
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-xl text-gray-600">Caricamento report...</div>
+        <div className="text-xl text-gray-600">Loading reports...</div>
       </div>
     );
   }
@@ -70,17 +70,17 @@ function AllReports({ onPlayerClick }) {
     <div className="space-y-6">
       {/* Header */}
       <div className="bg-white rounded-xl p-6 shadow-lg">
-        <h2 className="text-3xl font-bold text-gradient mb-2">📋 Tutti i Report</h2>
-        <p className="text-gray-600">Visualizza e gestisci tutti i report di scouting</p>
+        <h2 className="text-3xl font-bold text-gradient mb-2">📋 All Reports</h2>
+        <p className="text-gray-600">View and manage all scouting reports</p>
         <div className="mt-4 flex items-center gap-4 text-sm">
           <div className="flex items-center gap-2">
-            <span className="font-semibold">Totale:</span>
+            <span className="font-semibold">Total:</span>
             <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-bold">
               {reports.length}
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="font-semibold">Filtrati:</span>
+            <span className="font-semibold">Filtered:</span>
             <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full font-bold">
               {filteredReports.length}
             </span>
@@ -88,13 +88,13 @@ function AllReports({ onPlayerClick }) {
         </div>
       </div>
 
-      {/* Filtri */}
+      {/* Filters */}
       <div className="bg-white rounded-xl p-6 shadow-lg">
-        <h3 className="font-bold text-lg mb-4">🔍 Filtri</h3>
+        <h3 className="font-bold text-lg mb-4">🔍 Filters</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Filtro Tipo Check */}
+          {/* Check Type Filter */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Tipo Check</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Check Type</label>
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
@@ -104,11 +104,11 @@ function AllReports({ onPlayerClick }) {
               <option value="Live">🔴 Live</option>
               <option value="Video">🎥 Video</option>
               <option value="Video/Live">🔴🎥 Video/Live</option>
-              <option value="Dati">📊 Dati</option>
+              <option value="Dati">📊 Data</option>
             </select>
           </div>
 
-          {/* Filtro Scout */}
+          {/* Scout Filter */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">Scout</label>
             <select
@@ -123,7 +123,7 @@ function AllReports({ onPlayerClick }) {
             </select>
           </div>
 
-          {/* Filtro Valutazione */}
+          {/* Rating Filter */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">Rating</label>
             <select
@@ -131,25 +131,25 @@ function AllReports({ onPlayerClick }) {
               onChange={(e) => setRatingFilter(e.target.value)}
               className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <option value="all">Tutte</option>
-              <option value="A">A - Eccellente</option>
-              <option value="B">B - Buono</option>
-              <option value="C">C - Sufficiente</option>
-              <option value="D">D - Insufficiente</option>
+              <option value="all">All</option>
+              <option value="A">A - Excellent</option>
+              <option value="B">B - Good</option>
+              <option value="C">C - Sufficient</option>
+              <option value="D">D - Insufficient</option>
             </select>
           </div>
         </div>
       </div>
 
-      {/* Lista Report */}
+      {/* Reports List */}
       <div className="grid grid-cols-1 gap-4">
         {filteredReports.length === 0 ? (
           <div className="bg-white rounded-xl p-12 text-center shadow-lg">
             <svg className="w-20 h-20 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <h3 className="text-xl font-bold text-gray-600 mb-2">Nessun report trovato</h3>
-            <p className="text-gray-500">Prova a modificare i filtri</p>
+            <h3 className="text-xl font-bold text-gray-600 mb-2">No reports found</h3>
+            <p className="text-gray-500">Try modifying the filters</p>
           </div>
         ) : (
           filteredReports.map(report => (
@@ -159,7 +159,7 @@ function AllReports({ onPlayerClick }) {
               onClick={() => onPlayerClick && report.players && onPlayerClick(report.players)}
             >
               <div className="flex items-start gap-6">
-                {/* Foto Giocatore */}
+                {/* Player Photo */}
                 {report.players && (
                   <div className="flex-shrink-0">
                     {report.players.profile_image ? (
@@ -178,12 +178,12 @@ function AllReports({ onPlayerClick }) {
                   </div>
                 )}
 
-                {/* Info Report */}
+                {/* Report Info */}
                 <div className="flex-1">
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <h3 className="text-2xl font-bold text-gray-800">
-                        {report.players ? report.players.name : 'Giocatore sconosciuto'}
+                        {report.players ? report.players.name : 'Unknown player'}
                       </h3>
                       {report.players && (
                         <p className="text-gray-600">
@@ -209,11 +209,11 @@ function AllReports({ onPlayerClick }) {
                       <p className="font-semibold text-gray-800">{report.scout_name}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500">Tipo Check</p>
+                      <p className="text-xs text-gray-500">Check Type</p>
                       <p className="font-semibold text-gray-800">{report.check_type}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500">Data</p>
+                      <p className="text-xs text-gray-500">Date</p>
                       <p className="font-semibold text-gray-800">
                         {new Date(report.report_date).toLocaleDateString('it-IT')}
                       </p>
@@ -221,7 +221,7 @@ function AllReports({ onPlayerClick }) {
                     <div>
                       <p className="text-xs text-gray-500">Rating</p>
                       <p className="font-semibold text-gray-800">
-                        Attuale: {report.current_value}⭐ • Potenziale: {report.potential_value}⭐
+                        Current: {report.current_value}⭐ • Potential: {report.potential_value}⭐
                       </p>
                     </div>
                   </div>
