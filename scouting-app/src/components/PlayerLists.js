@@ -244,7 +244,7 @@ function PlayerLists({ onViewFormation }) {
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          Nuova Lista
+          New List
         </button>
       </div>
 
@@ -259,8 +259,8 @@ function PlayerLists({ onViewFormation }) {
                 <svg className="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                <p>Nessuna lista creata</p>
-                <p className="text-sm mt-2">Crea la tua prima lista!</p>
+                <p>No list created</p>
+                <p className="text-sm mt-2">Create your first list!</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -332,7 +332,7 @@ function PlayerLists({ onViewFormation }) {
                                   onViewFormation(list);
                                 }}
                                 className="p-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-all"
-                                title="Visualizza formazione"
+                                title="View formation"
                               >
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
@@ -365,7 +365,7 @@ function PlayerLists({ onViewFormation }) {
           </div>
         </div>
 
-        {/* Colonna Giocatori nella Lista */}
+        {/* Players in List Column */}
         <div className="lg:col-span-2">
           {selectedList ? (
             <div className="bg-white rounded-xl shadow-lg p-6">
@@ -433,23 +433,23 @@ function PlayerLists({ onViewFormation }) {
               <svg className="w-24 h-24 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
-              <p className="text-xl font-semibold">Seleziona una lista</p>
-              <p className="text-sm mt-2">Scegli una lista dalla colonna di sinistra</p>
+              <p className="text-xl font-semibold">Select a list</p>
+              <p className="text-sm mt-2">Choose a list from the left column</p>
             </div>
           )}
         </div>
       </div>
 
-      {/* Modal Nuova Lista */}
+      {/* New List Modal */}
       {showNewListModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Crea Nuova Lista</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Create New List</h2>
             <input
               type="text"
               value={newListName}
               onChange={(e) => setNewListName(e.target.value)}
-              placeholder="Nome della lista..."
+              placeholder="List name..."
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
               onKeyPress={(e) => e.key === 'Enter' && createList()}
             />
@@ -467,7 +467,7 @@ function PlayerLists({ onViewFormation }) {
                 onClick={createList}
                 className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all"
               >
-                Crea Lista
+                Create List
               </button>
             </div>
           </div>
@@ -484,13 +484,13 @@ function PlayerLists({ onViewFormation }) {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Cerca giocatore..."
+              placeholder="Search player..."
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
             />
 
             <div className="flex-1 overflow-y-auto space-y-2 mb-4">
               {filteredPlayers.length === 0 ? (
-                <p className="text-center text-gray-500 py-8">Nessun giocatore disponibile</p>
+                <p className="text-center text-gray-500 py-8">No player available</p>
               ) : (
                 filteredPlayers.map(player => (
                   <div

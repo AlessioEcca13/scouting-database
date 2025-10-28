@@ -223,29 +223,29 @@ function PlayerForm({ onSave, onCancel }) {
     <div className="space-y-6 animate-fadeIn">
       {/* Header */}
       <div className="bg-white rounded-xl p-6 shadow-lg">
-        <h2 className="text-2xl font-bold text-gradient mb-2">➕ Aggiungi Nuovo Giocatore</h2>
-        <p className="text-gray-600">Compila il form o importa i dati da Transfermarkt</p>
+        <h2 className="text-2xl font-bold text-gradient mb-2">➕ Add New Player</h2>
+        <p className="text-gray-600">Fill the form or import data from Transfermarkt</p>
       </div>
 
-      {/* Sezione Transfermarkt */}
+      {/* Transfermarkt Section */}
       <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 border-2 border-blue-200 shadow-lg">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
             <i className="fas fa-globe text-white text-xl"></i>
           </div>
           <div>
-            <h3 className="font-bold text-gray-800 text-lg">Importa da Transfermarkt</h3>
-            <p className="text-sm text-gray-600">Cerca e importa automaticamente i dati di un giocatore</p>
+            <h3 className="font-bold text-gray-800 text-lg">Import from Transfermarkt</h3>
+            <p className="text-sm text-gray-600">Search and automatically import player data</p>
           </div>
         </div>
         
-        {/* Input diretto per link Transfermarkt */}
+        {/* Direct input for Transfermarkt link */}
         <div className="flex gap-3">
           <input
             type="url"
             value={transfermarktUrl}
             onChange={(e) => setTransfermarktUrl(e.target.value)}
-            placeholder="🔗 Incolla il link Transfermarkt (es: https://www.transfermarkt.it/...)"
+            placeholder="🔗 Paste the Transfermarkt link (e.g.: https://www.transfermarkt.com/...)"
             disabled={isLoadingTransfermarkt}
             className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
           />
@@ -258,12 +258,12 @@ function PlayerForm({ onSave, onCancel }) {
             {isLoadingTransfermarkt ? (
               <>
                 <i className="fas fa-spinner fa-spin"></i>
-                Caricamento...
+                Loading...
               </>
             ) : (
               <>
                 <i className="fas fa-download"></i>
-                Importa
+                Import
               </>
             )}
           </button>
@@ -272,7 +272,7 @@ function PlayerForm({ onSave, onCancel }) {
         <div className="mt-4 p-3 bg-yellow-50 border-l-4 border-yellow-400 rounded">
           <p className="text-xs text-yellow-800">
             <i className="fas fa-lightbulb mr-2"></i>
-            <strong>💡 Suggerimento:</strong> I dati verranno compilati automaticamente nel form sottostante
+            <strong>💡 Tip:</strong> Data will be automatically filled in the form below
           </p>
         </div>
       </div>
@@ -281,17 +281,17 @@ function PlayerForm({ onSave, onCancel }) {
       <form onSubmit={handleSubmit} className="bg-white rounded-xl p-6 shadow-lg">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
-          {/* Sezione Informazioni Base */}
+          {/* Basic Information Section */}
           <div className="col-span-2">
             <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 border-b-2 border-purple-200 pb-2">
               <i className="fas fa-user text-purple-500"></i>
-              Informazioni Base
+              Basic Information
             </h3>
           </div>
 
           <div className="col-span-2">
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Nome Completo <span className="text-red-500">*</span>
+              Full Name <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -300,7 +300,7 @@ function PlayerForm({ onSave, onCancel }) {
               onChange={(e) => {
                 const newName = e.target.value;
                 setFormData({...formData, name: newName});
-                // Controlla duplicati dopo 500ms di inattività (nome + anno nascita)
+                // Check duplicates after 500ms of inactivity (name + birth year)
                 clearTimeout(window.duplicateCheckTimeout);
                 window.duplicateCheckTimeout = setTimeout(() => {
                   checkDuplicatePlayer(newName, formData.birth_year);
@@ -310,51 +310,51 @@ function PlayerForm({ onSave, onCancel }) {
               placeholder="Mario Rossi"
             />
             
-            {/* Avviso Duplicato */}
+            {/* Duplicate Warning */}
             {duplicatePlayer && (
               <div className="mt-3 p-4 bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-400 rounded-lg shadow-lg animate-pulse">
                 <div className="flex items-start gap-3">
                   <i className="fas fa-exclamation-triangle text-red-500 text-2xl mt-1"></i>
                   <div className="flex-1">
-                    <h4 className="font-bold text-red-800 mb-2 text-lg">⚠️ Giocatore Duplicato Rilevato!</h4>
+                    <h4 className="font-bold text-red-800 mb-2 text-lg">⚠️ Duplicate Player Detected!</h4>
                     <p className="text-sm text-red-700 mb-3">
-                      <strong>{duplicatePlayer.name}</strong> ({duplicatePlayer.birth_year}) è già presente nel database.
-                      {transfermarktUrl && ' Il link Transfermarkt è già stato utilizzato.'}
+                      <strong>{duplicatePlayer.name}</strong> ({duplicatePlayer.birth_year}) is already in the database.
+                      {transfermarktUrl && ' The Transfermarkt link has already been used.'}
                     </p>
                     <div className="bg-white rounded-lg p-3 mb-3 border border-red-200">
-                      <p className="text-xs font-semibold text-gray-700 mb-2">📋 Dettagli giocatore esistente:</p>
+                      <p className="text-xs font-semibold text-gray-700 mb-2">📋 Existing player details:</p>
                       <div className="grid grid-cols-2 gap-2 text-sm">
-                        <p><strong>Anno:</strong> {duplicatePlayer.birth_year || 'N/D'}</p>
-                        <p><strong>Nazionalità:</strong> {duplicatePlayer.nationality || 'N/D'}</p>
-                        <p><strong>Squadra:</strong> {duplicatePlayer.team || 'N/D'}</p>
-                        <p><strong>Ruolo:</strong> {duplicatePlayer.general_role || 'N/D'}</p>
+                        <p><strong>Year:</strong> {duplicatePlayer.birth_year || 'N/A'}</p>
+                        <p><strong>Nationality:</strong> {duplicatePlayer.nationality || 'N/A'}</p>
+                        <p><strong>Team:</strong> {duplicatePlayer.team || 'N/A'}</p>
+                        <p><strong>Role:</strong> {duplicatePlayer.general_role || 'N/A'}</p>
                       </div>
                     </div>
                     <div className="bg-blue-50 border-l-4 border-blue-500 p-3 mb-3 rounded">
                       <p className="text-sm text-blue-800">
                         <i className="fas fa-lightbulb mr-2"></i>
-                        <strong>💡 Suggerimento:</strong> Invece di aggiungere un duplicato, compila un <strong>report di scouting</strong> per questo giocatore!
+                        <strong>💡 Tip:</strong> Instead of adding a duplicate, fill out a <strong>scouting report</strong> for this player!
                       </p>
                     </div>
                     <div className="flex gap-2">
                       <button
                         type="button"
                         onClick={() => {
-                          // Vai alla pagina del giocatore per aggiungere un report
-                          toast.success('✅ Vai al Database e cerca il giocatore per aggiungere un report di scouting');
+                          // Go to player page to add a report
+                          toast.success('✅ Go to Database and search for the player to add a scouting report');
                           onCancel();
                         }}
                         className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:opacity-90 transition-all text-sm font-semibold flex items-center justify-center gap-2"
                       >
                         <i className="fas fa-clipboard-list"></i>
-                        📋 Compila Report Scouting
+                        📋 Fill Scouting Report
                       </button>
                       <button
                         type="button"
                         onClick={onCancel}
                         className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-all text-sm font-semibold"
                       >
-                        ← Torna Indietro
+                        ← Go Back
                       </button>
                     </div>
                   </div>
@@ -365,7 +365,7 @@ function PlayerForm({ onSave, onCancel }) {
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Anno di Nascita
+              Birth Year
             </label>
             <input
               type="number"
@@ -375,7 +375,7 @@ function PlayerForm({ onSave, onCancel }) {
               onChange={(e) => {
                 const newBirthYear = parseInt(e.target.value);
                 setFormData({...formData, birth_year: newBirthYear});
-                // Controlla duplicati quando cambia l'anno di nascita
+                // Check duplicates when birth year changes
                 clearTimeout(window.duplicateCheckTimeout);
                 window.duplicateCheckTimeout = setTimeout(() => {
                   checkDuplicatePlayer(formData.name, newBirthYear);
@@ -384,7 +384,7 @@ function PlayerForm({ onSave, onCancel }) {
               className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
             />
             <small className="text-gray-500 text-xs mt-1 block">
-              Età: {currentYear - formData.birth_year} anni
+              Age: {currentYear - formData.birth_year} years
             </small>
           </div>
 
@@ -408,7 +408,7 @@ function PlayerForm({ onSave, onCancel }) {
                 const newNationality = e.target.value;
                 setFormData({...formData, nationality: newNationality});
                 
-                // Controlla duplicati quando cambia nazionalità
+                // Check duplicates when nationality changes
                 if (formData.name && formData.birth_year) {
                   clearTimeout(window.duplicateCheckTimeout);
                   window.duplicateCheckTimeout = setTimeout(() => {
@@ -421,16 +421,16 @@ function PlayerForm({ onSave, onCancel }) {
             />
           </div>
 
-          {/* Sezione Caratteristiche Fisiche */}
+          {/* Physical Characteristics Section */}
           <div className="col-span-2 mt-4">
             <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 border-b-2 border-purple-200 pb-2">
               <i className="fas fa-ruler-vertical text-purple-500"></i>
-              Caratteristiche Fisiche
+              Physical Characteristics
             </h3>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Altezza (cm)</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Height (cm)</label>
             <input
               type="text"
               value={formData.height}
@@ -441,7 +441,7 @@ function PlayerForm({ onSave, onCancel }) {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Peso (kg)</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Weight (kg)</label>
             <input
               type="text"
               value={formData.weight}
@@ -451,64 +451,64 @@ function PlayerForm({ onSave, onCancel }) {
             />
           </div>
 
-          {/* Sezione Ruolo */}
+          {/* Role Section */}
           <div className="col-span-2 mt-4">
             <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 border-b-2 border-purple-200 pb-2">
               <i className="fas fa-futbol text-purple-500"></i>
-              Ruolo e Posizione
+              Role and Position
             </h3>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Ruolo Generale</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">General Role</label>
             <select
               value={formData.general_role}
               onChange={(e) => setFormData({...formData, general_role: e.target.value})}
               className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
             >
-              <option value="Goalkeeper">🥅 Portiere</option>
-              <option value="Defender">🛡️ Difensore</option>
-              <option value="Terzino">↔️ Terzino</option>
-              <option value="Centrocampo">⚽ Centrocampo</option>
-              <option value="Ala">🦅 Ala</option>
-              <option value="Forward">🎯 Attaccante</option>
+              <option value="Goalkeeper">🥅 Goalkeeper</option>
+              <option value="Defender">🛡️ Defender</option>
+              <option value="Terzino">↔️ Full-back</option>
+              <option value="Centrocampo">⚽ Midfielder</option>
+              <option value="Ala">🦅 Winger</option>
+              <option value="Forward">🎯 Forward</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Posizione Specifica</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Specific Position</label>
             <input
               type="text"
               value={formData.specific_position}
               onChange={(e) => setFormData({...formData, specific_position: e.target.value})}
               className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-              placeholder="Mediano, Ala destra..."
+              placeholder="Defensive midfielder, Right winger..."
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Piede Preferito</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Preferred Foot</label>
             <select
               value={formData.preferred_foot}
               onChange={(e) => setFormData({...formData, preferred_foot: e.target.value})}
               className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
             >
-              <option value="Right">👉 Destro</option>
-              <option value="Left">👈 Sinistro</option>
-              <option value="Both">👐 Ambidestro</option>
+              <option value="Right">👉 Right</option>
+              <option value="Left">👈 Left</option>
+              <option value="Both">👐 Both</option>
             </select>
           </div>
 
-          {/* Sezione Info Economiche */}
+          {/* Economic Info Section */}
           <div className="col-span-2 mt-4">
             <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 border-b-2 border-purple-200 pb-2">
               <i className="fas fa-euro-sign text-purple-500"></i>
-              Informazioni Economiche
+              Economic Information
             </h3>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Valore di Mercato</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Market Value</label>
             <input
               type="text"
               value={formData.market_value}
@@ -519,20 +519,20 @@ function PlayerForm({ onSave, onCancel }) {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Contratto fino al</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Contract Until</label>
             <input
               type="text"
               value={formData.contract_expiry}
               onChange={(e) => setFormData({...formData, contract_expiry: e.target.value})}
               className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-              placeholder="2026, Giugno 2025..."
+              placeholder="2026, June 2025..."
             />
           </div>
 
-          {/* Nome Segnalatore - Sempre visibile */}
+          {/* Reporter Name - Always visible */}
           <div className="col-span-2">
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              👤 Nome Segnalatore <span className="text-red-500">*</span>
+              👤 Reporter Name <span className="text-red-500">*</span>
             </label>
             <select
               required
@@ -542,27 +542,27 @@ function PlayerForm({ onSave, onCancel }) {
                 setFormData({
                   ...formData, 
                   signaler_name: selectedName,
-                  scout_name: selectedName // Preseleziona automaticamente come scout
+                  scout_name: selectedName // Automatically preselect as scout
                 });
               }}
               className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
             >
-              <option value="">Seleziona segnalatore...</option>
+              <option value="">Select reporter...</option>
               <option value="Alessio">Alessio</option>
               <option value="Roberto">Roberto</option>
             </select>
           </div>
 
-          {/* Raccomandazione e Priorità - Sempre visibili */}
+          {/* Recommendation and Priority - Always visible */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">🎯 Raccomandazione</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">🎯 Recommendation</label>
             <select
               value={formData.recommended_action}
               onChange={(e) => setFormData({...formData, recommended_action: e.target.value})}
               className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
             >
-              <option value="Monitorare">Monitorare</option>
-              <option value="Valutare">Valutare</option>
+              <option value="Monitorare">Monitor</option>
+              <option value="Valutare">Evaluate</option>
             </select>
           </div>
 
@@ -575,8 +575,8 @@ function PlayerForm({ onSave, onCancel }) {
                 className="w-5 h-5 text-red-600 border-gray-300 rounded focus:ring-red-500"
               />
               <div className="flex-1">
-                <span className="text-lg font-bold text-red-700">🚨 PRIORITÀ URGENTE</span>
-                <p className="text-sm text-red-600">Segna questo giocatore come priorità urgente nelle segnalazioni</p>
+                <span className="text-lg font-bold text-red-700">🚨 URGENT PRIORITY</span>
+                <p className="text-sm text-red-600">Mark this player as urgent priority in reports</p>
               </div>
             </label>
           </div>

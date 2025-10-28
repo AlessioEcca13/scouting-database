@@ -234,7 +234,7 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
       return POSITION_MAP[positionName];
     }
     
-    // Cerca corrispondenza parziale (case insensitive)
+    // Search for partial match (case insensitive)
     const lowerPos = cleanName.toLowerCase();
     for (const [key, coords] of Object.entries(POSITION_MAP)) {
       if (key.toLowerCase().includes(lowerPos) || lowerPos.includes(key.toLowerCase())) {
@@ -399,10 +399,10 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
       'ST-R': 'ATD'
     };
     
-    // Cerca corrispondenza esatta con nome pulito
+    // Search for exact match with clean name
     if (abbr[cleanPos]) return abbr[cleanPos];
     
-    // Cerca corrispondenza esatta con nome originale
+    // Search for exact match with original name
     if (abbr[position]) return abbr[position];
     
     // Cerca corrispondenza parziale
@@ -885,7 +885,7 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
               </div>
               <div className="bg-gray-900 rounded-lg p-4 min-h-[150px] max-h-[300px] overflow-y-auto">
                 <p className="text-sm text-gray-300 whitespace-pre-line leading-relaxed">
-                  {selectedReport.notes || 'Nessuna nota disponibile'}
+                  {selectedReport.notes || 'No notes available'}
                 </p>
               </div>
             </div>
@@ -904,8 +904,8 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
                     <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                     <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
                   </svg>
-                  <p className="text-lg text-blue-300 font-semibold">Giocatore da valutare</p>
-                  <p className="text-sm text-gray-400 mt-2">Nessun report disponibile</p>
+                  <p className="text-lg text-blue-300 font-semibold">Player to evaluate</p>
+                  <p className="text-sm text-gray-400 mt-2">No report available</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">

@@ -302,7 +302,7 @@ function TacticalFieldSimple() {
 
   const importPlayersFromLists = () => {
     if (selectedListsToImport.length === 0) {
-      toast.error('Seleziona almeno una lista');
+      toast.error('Select at least one list');
       return;
     }
 
@@ -381,7 +381,7 @@ function TacticalFieldSimple() {
       const playerRole = player.specific_position || player.general_role;
       const normalizedRole = normalizeRole(playerRole);
       
-      // Cerca una posizione che corrisponda al ruolo normalizzato
+      // Search for a position matching the normalized role
       const matchingPos = currentFormation.find(pos => {
         if (!normalizedRole) return false;
         
@@ -437,7 +437,7 @@ function TacticalFieldSimple() {
     if (importedCount > 0) {
       toast.success(`${importedCount} giocatori importati (duplicati esclusi)`);
     } else {
-      toast.info('Nessun nuovo giocatore da importare');
+      toast.info('No new players to import');
     }
   };
 
@@ -648,7 +648,7 @@ function TacticalFieldSimple() {
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="🔍 Cerca giocatore per nome, squadra o ruolo..."
+                  placeholder="🔍 Search player by name, team or role..."
                   className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
                 />
               </div>
@@ -697,8 +697,8 @@ function TacticalFieldSimple() {
             </div>
           ) : (
             <div className="text-center py-8">
-              <p className="text-gray-500 text-lg">❌ Nessun giocatore trovato per "{searchTerm}"</p>
-              <p className="text-gray-400 text-sm mt-2">Prova con un altro nome, squadra o ruolo</p>
+              <p className="text-gray-500 text-lg">❌ No player found for "{searchTerm}"</p>
+              <p className="text-gray-400 text-sm mt-2">Try another name, team or role</p>
             </div>
           )}
         </div>
@@ -1051,7 +1051,7 @@ function TacticalFieldSimple() {
               🎨 Colore per {selectedPlayerForColor.name}
             </h3>
             <p className="text-sm text-gray-600 mb-4">
-              Seleziona una categoria per evidenziare il giocatore
+              Select a category to highlight the player
             </p>
             
             <div className="space-y-2 mb-4">
@@ -1101,8 +1101,8 @@ function TacticalFieldSimple() {
       {showImportModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full p-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">📥 Importa da Liste</h3>
-            <p className="text-sm text-gray-600 mb-4">Seleziona una o più liste per importare i giocatori</p>
+            <h3 className="text-xl font-bold text-gray-800 mb-4">📥 Import from Lists</h3>
+            <p className="text-sm text-gray-600 mb-4">Select one or more lists to import players</p>
             
             <div className="space-y-2 mb-4 max-h-96 overflow-y-auto">
               {lists.map(list => (
@@ -1191,8 +1191,8 @@ function TacticalFieldSimple() {
       {showLoadModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full p-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">📂 Carica Formazione</h3>
-            <p className="text-sm text-gray-600 mb-4">Seleziona una formazione salvata</p>
+            <h3 className="text-xl font-bold text-gray-800 mb-4">📂 Load Formation</h3>
+            <p className="text-sm text-gray-600 mb-4">Select a saved formation</p>
             
             <div className="space-y-2 mb-4 max-h-96 overflow-y-auto">
               {savedFormations.map(formation => (
