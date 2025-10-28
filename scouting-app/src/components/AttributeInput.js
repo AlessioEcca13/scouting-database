@@ -7,7 +7,7 @@ function AttributeInput({
   selectedAttributes = [], 
   onAttributesChange, 
   suggestions = [],
-  placeholder = "Scrivi o seleziona...",
+  placeholder = "Write or select...",
   required = false
 }) {
   const [inputValue, setInputValue] = useState('');
@@ -16,7 +16,7 @@ function AttributeInput({
   const inputRef = useRef(null);
   const suggestionsRef = useRef(null);
 
-  // Filtra suggerimenti quando cambia l'input
+  // Filter suggestions when input changes
   useEffect(() => {
     if (inputValue.length >= 2) {
       const filtered = filterSuggestions(inputValue, suggestions);
@@ -28,7 +28,7 @@ function AttributeInput({
     }
   }, [inputValue, suggestions]);
 
-  // Chiudi suggerimenti quando si clicca fuori
+  // Close suggestions when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (

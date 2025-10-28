@@ -76,7 +76,7 @@ function FormationField({ list, onClose }) {
       if (error) throw error;
       setPlayers(data || []);
     } catch (error) {
-      console.error('Errore caricamento giocatori:', error);
+      console.error('Error loading players:', error);
     }
   };
 
@@ -84,9 +84,9 @@ function FormationField({ list, onClose }) {
   const getRoleCategory = (role) => {
     if (!role) return 'MF';
     const r = role.toUpperCase();
-    if (r.includes('PORT') || r === 'GK') return 'GK';
-    if (r.includes('DIF') || r.includes('TERZINO') || r.includes('CENTRALE') || r === 'DF') return 'DF';
-    if (r.includes('ATT') || r.includes('PUNTA') || r === 'FW' || r === 'ST') return 'FW';
+    if (r.includes('GOAL') || r.includes('PORT') || r === 'GK') return 'GK';
+    if (r.includes('DEF') || r.includes('DIF') || r.includes('BACK') || r.includes('TERZINO') || r.includes('CENTRALE') || r === 'DF') return 'DF';
+    if (r.includes('ATT') || r.includes('FOR') || r.includes('PUNTA') || r === 'FW' || r === 'ST') return 'FW';
     return 'MF';
   };
 

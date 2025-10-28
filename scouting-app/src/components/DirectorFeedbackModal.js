@@ -1,4 +1,4 @@
-// src/components/DirectorFeedbackModal.js - Modal per Feedback Direttore
+// src/components/DirectorFeedbackModal.js - Director Feedback Modal
 import React, { useState } from 'react';
 import { supabase } from '../supabaseClient';
 
@@ -13,7 +13,7 @@ function DirectorFeedbackModal({ report, onClose, onSaved }) {
     e.preventDefault();
 
     if (!formData.director_name.trim() || !formData.director_feedback.trim()) {
-      alert('Compila tutti i campi');
+      alert('Fill all fields');
       return;
     }
 
@@ -30,12 +30,12 @@ function DirectorFeedbackModal({ report, onClose, onSaved }) {
 
       if (error) throw error;
 
-      alert('✅ Feedback direttore aggiunto!');
+      alert('✅ Director feedback added!');
       onSaved();
       onClose();
     } catch (error) {
-      console.error('Errore salvataggio feedback:', error);
-      alert('Errore nel salvataggio del feedback');
+      console.error('Error saving feedback:', error);
+      alert('Error saving feedback');
     } finally {
       setSaving(false);
     }
@@ -48,8 +48,8 @@ function DirectorFeedbackModal({ report, onClose, onSaved }) {
         {/* Header */}
         <div className="bg-purple-800 px-6 py-4 flex justify-between items-center rounded-t-lg">
           <div>
-            <h2 className="text-2xl font-bold">👔 Feedback Direttore</h2>
-            <p className="text-sm text-gray-300">Report di {report.scout_name}</p>
+            <h2 className="text-2xl font-bold">👔 Director Feedback</h2>
+            <p className="text-sm text-gray-300">Report by {report.scout_name}</p>
           </div>
           <button
             onClick={onClose}
@@ -64,9 +64,9 @@ function DirectorFeedbackModal({ report, onClose, onSaved }) {
         {/* Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           
-          {/* Info Report */}
+          {/* Report Info */}
           <div className="bg-gray-800 rounded-lg p-4 mb-4">
-            <h3 className="font-semibold mb-2">📋 Report Originale</h3>
+            <h3 className="font-semibold mb-2">📋 Original Report</h3>
             <div className="grid grid-cols-3 gap-4 text-sm">
               <div>
                 <p className="text-gray-400">Scout</p>
@@ -77,20 +77,20 @@ function DirectorFeedbackModal({ report, onClose, onSaved }) {
                 <p className="font-semibold text-yellow-400 text-lg">{report.final_rating || 'N/A'}</p>
               </div>
               <div>
-                <p className="text-gray-400">Raccomandazione</p>
+                <p className="text-gray-400">Recommendation</p>
                 <p className="font-semibold">{report.recommendation || 'N/A'}</p>
               </div>
             </div>
           </div>
 
-          {/* Nome Direttore */}
+          {/* Director Name */}
           <div>
-            <label className="block text-sm font-semibold mb-2">Nome Direttore *</label>
+            <label className="block text-sm font-semibold mb-2">Director Name *</label>
             <input
               type="text"
               value={formData.director_name}
               onChange={(e) => setFormData({...formData, director_name: e.target.value})}
-              placeholder="es: Giuseppe Verdi"
+              placeholder="e.g.: John Smith"
               className="w-full bg-gray-800 px-4 py-3 rounded border border-gray-700 focus:border-purple-500 focus:outline-none"
               required
             />

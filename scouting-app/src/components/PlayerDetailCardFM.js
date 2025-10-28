@@ -57,16 +57,16 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
       : player.potential_value || 0;
 
     return {
-      currentValue: Math.round(avgCurrent * 2) / 2, // Arrotonda a 0.5
-      potentialValue: Math.round(avgPotential * 2) / 2 // Arrotonda a 0.5
+      currentValue: Math.round(avgCurrent * 2) / 2, // Round to 0.5
+      potentialValue: Math.round(avgPotential * 2) / 2 // Round to 0.5
     };
   };
 
-  // Aggrega punti di forza da tutti i report CON NOMI SCOUT
+  // Aggregate strengths from all reports WITH SCOUT NAMES
   const aggregateStrengths = () => {
     if (reports.length === 0) return player.strong_points || '';
     
-    // Combina tutti gli attributi con il nome dello scout
+    // Combine all attributes with scout name
     const allStrengths = reports
       .filter(r => r.strengths)
       .flatMap(r => {
@@ -75,14 +75,14 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
       })
       .join(', ');
     
-    return allStrengths || player.strong_points || 'Nessun punto di forza registrato';
+    return allStrengths || player.strong_points || 'No strengths recorded';
   };
 
-  // Aggrega punti deboli da tutti i report CON NOMI SCOUT
+  // Aggregate weaknesses from all reports WITH SCOUT NAMES
   const aggregateWeaknesses = () => {
     if (reports.length === 0) return player.weak_points || '';
     
-    // Combina tutti gli attributi con il nome dello scout
+    // Combine all attributes with scout name
     const allWeaknesses = reports
       .filter(r => r.weaknesses)
       .flatMap(r => {
@@ -91,23 +91,23 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
       })
       .join(', ');
     
-    return allWeaknesses || player.weak_points || 'Nessun punto debole registrato';
+    return allWeaknesses || player.weak_points || 'No weaknesses recorded';
   };
 
-  // Ottieni report dello scout selezionato
+  // Get selected scout's report
   const getSelectedScoutReport = () => {
     if (selectedScout === 'all' || reports.length === 0) {
       return {
-        notes: player.notes || 'Nessuna nota disponibile. Seleziona uno scout per vedere le sue note.',
+        notes: player.notes || 'No notes available. Select a scout to see their notes.',
         final_rating: null,
         athletic_data_rating: null,
-        scout_name: 'Tutti gli scout'
+        scout_name: 'All scouts'
       };
     }
 
     const report = reports.find(r => r.scout_name === selectedScout);
     return report || {
-      notes: 'Nessuna nota disponibile',
+      notes: 'No notes available',
       final_rating: null,
       athletic_data_rating: null,
       scout_name: selectedScout
@@ -117,48 +117,48 @@ const PlayerDetailCardFM = ({ player, onClose, onAddReport }) => {
   const averageRatings = calculateAverageRatings();
   const selectedReport = getSelectedScoutReport();
 
-  // Early return se player non esiste (dopo tutti gli hooks)
+  // Early return if player doesn't exist (after all hooks)
   if (!player) return null;
 
-  // Mappa coordinate con Y INVERTITO per visualizzazione corretta
-  // Nel CSS: Y basso = alto visivo (AVVERSARI), Y alto = basso visivo (NOSTRA PORTA)
+  // Map coordinates with INVERTED Y for correct display
+  // In CSS: Low Y = high visual (OPPONENTS), High Y = low visual (OUR GOAL)
   const POSITION_MAP = {
-    // Portieri (nostra porta - basso visivo = Y alto)
+    // Goalkeepers (our goal - low visual = high Y)
     'GK': { x: 50, y: 95 },
     'P': { x: 50, y: 95 },
     'POR': { x: 50, y: 95 },
     'Goalkeeper': { x: 50, y: 95 },
     
-    // Difensori (linea difensiva - basso visivo)
+    // Defenders (defensive line - low visual)
     'LB': { x: 15, y: 75 },
-    'TS': { x: 15, y: 75 },  // Terzino Sinistro
+    'TS': { x: 15, y: 75 },  // Left Back
     'LCB': { x: 38, y: 75 },
-    'DCS': { x: 38, y: 75 }, // Difensore Centrale Sinistro
+    'DCS': { x: 38, y: 75 }, // Left Center Back
     'CB': { x: 50, y: 75 },
-    'DC': { x: 50, y: 75 },  // Difensore Centrale
+    'DC': { x: 50, y: 75 },  // Center Back
     'RCB': { x: 62, y: 75 },
-    'DCD': { x: 62, y: 75 }, // Difensore Centrale Destro
+    'DCD': { x: 62, y: 75 }, // Right Center Back
     'RB': { x: 85, y: 75 },
-    'TD': { x: 85, y: 75 },  // Terzino Destro
+    'TD': { x: 85, y: 75 },  // Right Back
     'Terzino sinistro': { x: 15, y: 75 },
     'Difensore centrale sinistro': { x: 38, y: 75 },
     'Difensore centrale': { x: 50, y: 75 },
     'Difensore centrale destro': { x: 62, y: 75 },
     'Terzino destro': { x: 85, y: 75 },
     
-    // Esterni a 5
+    // Wing backs (5-back)
     'LWB': { x: 15, y: 55 },
-    'ES': { x: 15, y: 55 },  // Esterno Sinistro
+    'ES': { x: 15, y: 55 },  // Left Wing Back
     'RWB': { x: 85, y: 55 },
-    'ED': { x: 85, y: 55 },  // Esterno Destro
+    'ED': { x: 85, y: 55 },  // Right Wing Back
     'Esterno sinistro': { x: 15, y: 55 },
     'Esterno destro': { x: 85, y: 55 },
     'Esterno di sinistra': { x: 15, y: 55 },
     'Esterno di destra': { x: 85, y: 55 },
     
-    // Mediani
+    // Defensive Midfielders
     'CDM': { x: 50, y: 62 },
-    'MED': { x: 50, y: 62 }, // Mediano
+    'MED': { x: 50, y: 62 }, // Defensive Midfielder
     'LDM': { x: 38, y: 60 },
     'RDM': { x: 62, y: 60 },
     'Mediano': { x: 50, y: 62 },

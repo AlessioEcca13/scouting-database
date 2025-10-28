@@ -1,51 +1,51 @@
-// src/components/TacticalFieldSimple.js - Campo tattico completo
+// src/components/TacticalFieldSimple.js - Complete tactical field
 import React, { useState, useEffect } from 'react';
 import { translateRole, translatePosition, translateFoot } from '../utils/translate';
 import { supabase } from '../supabaseClient';
 import { toast } from 'react-hot-toast';
 
-// Mappa abbreviazioni italiane -> inglesi
+// Map Italian abbreviations -> English
 const roleMapping = {
-  // Portieri
+  // Goalkeepers
   'P': 'GK',
   'POR': 'GK',
   
-  // Difensori
-  'TS': 'LB',  // Terzino Sinistro
-  'TD': 'RB',  // Terzino Destro
-  'DCS': 'LCB', // Difensore Centrale Sinistro
-  'DCD': 'RCB', // Difensore Centrale Destro
-  'DC': 'CB',   // Difensore Centrale
-  'ES': 'LWB',  // Esterno Sinistro
-  'ED': 'RWB',  // Esterno Destro
+  // Defenders
+  'TS': 'LB',  // Left Back
+  'TD': 'RB',  // Right Back
+  'DCS': 'LCB', // Left Center Back
+  'DCD': 'RCB', // Right Center Back
+  'DC': 'CB',   // Center Back
+  'ES': 'LWB',  // Left Wing Back
+  'ED': 'RWB',  // Right Wing Back
   
-  // Centrocampisti
-  'MS': 'LCM',  // Mezzala Sinistra
-  'MD': 'RCM',  // Mezzala Destra
-  'CC': 'CM',   // Centrocampista Centrale
-  'MED': 'CDM', // Mediano
-  'REG': 'CM',  // Regista
-  'TRQ': 'CAM', // Trequartista
+  // Midfielders
+  'MS': 'LCM',  // Left Center Mid
+  'MD': 'RCM',  // Right Center Mid
+  'CC': 'CM',   // Center Mid
+  'MED': 'CDM', // Defensive Mid
+  'REG': 'CM',  // Playmaker
+  'TRQ': 'CAM', // Attacking Mid
   
-  // Attaccanti
-  'AS': 'LW',   // Ala Sinistra
-  'AD': 'RW',   // Ala Destra
-  'EST': 'LM',  // Esterno (generico)
-  'PC': 'ST',   // Punta Centrale
-  'AT': 'ST',   // Attaccante
-  'SS': 'SS',   // Seconda Punta
+  // Forwards
+  'AS': 'LW',   // Left Winger
+  'AD': 'RW',   // Right Winger
+  'EST': 'LM',  // Wide Mid (generic)
+  'PC': 'ST',   // Center Forward
+  'AT': 'ST',   // Striker
+  'SS': 'SS',   // Second Striker
 };
 
-// Funzione per convertire ruolo italiano in inglese
+// Function to convert Italian role to English
 const normalizeRole = (role) => {
   if (!role) return null;
   
-  // Se è già un'abbreviazione inglese, restituiscila
+  // If it's already an English abbreviation, return it
   if (role.length <= 3 && role === role.toUpperCase()) {
     return roleMapping[role] || role;
   }
   
-  // Altrimenti cerca per nome completo
+  // Otherwise search by full name
   const roleLower = role.toLowerCase();
   
   if (roleLower.includes('portiere')) return 'GK';
