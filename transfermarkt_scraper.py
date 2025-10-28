@@ -153,16 +153,28 @@ class TransfermarktScraper:
                     text = self.clean_text(span.get_text()).lower()
                     
                     # Se questo span contiene una label, il prossimo contiene il valore
-                    if any(keyword in text for keyword in ['data di nascita', 'date of birth', 'nato il', 'geboren', 'luogo', 'place', 
-                                                             'altezza', 'height', 'nazionalità', 'citizenship',
-                                                             'posizione', 'position', 'piede', 'foot']):
+                    # Supporto multilingua: IT, EN, DE, ES, FR
+                    if any(keyword in text for keyword in [
+                        # Data di nascita
+                        'data di nascita', 'date of birth', 'nato il', 'geboren', 'f. nacim', 'edad', 'né le',
+                        # Luogo
+                        'luogo', 'place', 'lugar', 'lieu',
+                        # Altezza
+                        'altezza', 'height', 'altura', 'taille', 'größe',
+                        # Nazionalità
+                        'nazionalità', 'citizenship', 'nacionalidad', 'nationalité', 'staatsbürgerschaft',
+                        # Posizione
+                        'posizione', 'position', 'posición',
+                        # Piede
+                        'piede', 'foot', 'pie', 'pied', 'fuß'
+                    ]):
                         # Il valore è nel prossimo span
                         if i + 1 < len(all_spans):
                             value_span = all_spans[i + 1]
                             value = self.clean_text(value_span.get_text())
                             
-                            # Data di nascita
-                            if 'data di nascita' in text or 'date of birth' in text or 'nato il' in text or 'geboren' in text:
+                            # Data di nascita (multilingua)
+                            if any(kw in text for kw in ['data di nascita', 'date of birth', 'nato il', 'geboren', 'f. nacim', 'edad', 'né le']):
                                 player_data['date_of_birth_text'] = value
                                 # Estrai età se presente
                                 age_match = re.search(r'\((\d+)\)', value)
@@ -179,27 +191,27 @@ class TransfermarktScraper:
                                     player_data['birth_year'] = int(year_match.group(1))
                                     print(f"   📅 Anno estratto direttamente: {player_data['birth_year']}")
                             
-                            # Luogo di nascita
-                            elif 'luogo' in text or 'place' in text:
+                            # Luogo di nascita (multilingua)
+                            elif any(kw in text for kw in ['luogo', 'place', 'lugar', 'lieu']):
                                 player_data['birth_place'] = value
                             
-                            # Altezza
-                            elif 'altezza' in text or 'height' in text:
+                            # Altezza (multilingua)
+                            elif any(kw in text for kw in ['altezza', 'height', 'altura', 'taille', 'größe']):
                                 player_data['height_raw'] = value
                                 height_match = re.search(r'(\d+),(\d+)', value)
                                 if height_match:
                                     height_m = float(f"{height_match.group(1)}.{height_match.group(2)}")
                                     player_data['height_cm'] = int(height_m * 100)
                             
-                            # Peso
-                            elif 'peso' in text or 'weight' in text:
+                            # Peso (multilingua)
+                            elif any(kw in text for kw in ['peso', 'weight', 'poids', 'gewicht']):
                                 player_data['weight_raw'] = value
                                 weight_match = re.search(r'(\d+)', value)
                                 if weight_match:
                                     player_data['weight_kg'] = int(weight_match.group(1))
                             
-                            # Nazionalità
-                            elif 'nazionalità' in text or 'citizenship' in text:
+                            # Nazionalità (multilingua)
+                            elif any(kw in text for kw in ['nazionalità', 'citizenship', 'nacionalidad', 'nationalité', 'staatsbürgerschaft']):
                                 flags = value_span.find_all('img', class_='flaggenrahmen')
                                 if flags:
                                     nationalities = []
@@ -211,21 +223,26 @@ class TransfermarktScraper:
                                         player_data['nationality'] = nationalities
                                         player_data['nationality_primary'] = nationalities[0]
                             
-                            # Posizione
-                            elif 'posizione' in text or 'position' in text:
+                            # Posizione (multilingua)
+                            elif any(kw in text for kw in ['posizione', 'position', 'posición']):
                                 player_data['position'] = value
                             
-                            # Piede
-                            elif 'piede' in text or 'foot' in text:
+                            # Piede (multilingua)
+                            elif any(kw in text for kw in ['piede', 'foot', 'pie', 'pied', 'fuß']):
                                 player_data['preferred_foot'] = value
             
-            # Fallback per posizione se non trovata sopra
+            # Fallback per posizione se non trovata sopra (multilingua)
             if 'position' not in player_data:
                 position_tags = soup.find_all('dd')
                 for tag in position_tags:
                     text = self.clean_text(tag.get_text())
+                    # Italiano, Inglese, Spagnolo, Francese, Tedesco
                     if any(pos in text for pos in ['Goalkeeper', 'Defender', 'Midfield', 'Forward', 
-                                                    'Winger', 'Striker', 'Centre', 'Back', 'Difesa', 'Centrocampo', 'Attacco']):
+                                                    'Winger', 'Striker', 'Centre', 'Back', 
+                                                    'Difesa', 'Centrocampo', 'Attacco',
+                                                    'Defensa', 'Mediocampo', 'Delantero', 'Lateral',
+                                                    'Défense', 'Milieu', 'Attaquant',
+                                                    'Abwehr', 'Mittelfeld', 'Sturm']):
                         player_data['position'] = text
                         break
             
@@ -346,13 +363,14 @@ class TransfermarktScraper:
             # ========================================
             # CONTRATTO - Cerca nella info-table
             # ========================================
-            # Cerca nella struttura info-table
+            # Cerca nella struttura info-table (multilingua)
             info_table = soup.find('div', class_='info-table')
             if info_table:
                 all_spans = info_table.find_all('span', class_='info-table__content')
                 for i, span in enumerate(all_spans):
                     text = self.clean_text(span.get_text()).lower()
-                    if 'scadenza' in text or 'contratto' in text or 'contract' in text or 'expires' in text:
+                    # IT, EN, ES, FR, DE
+                    if any(kw in text for kw in ['scadenza', 'contratto', 'contract', 'expires', 'contrato hasta', 'fin de contrat', 'vertrag bis']):
                         if i + 1 < len(all_spans):
                             value_span = all_spans[i + 1]
                             contract_text = self.clean_text(value_span.get_text())
