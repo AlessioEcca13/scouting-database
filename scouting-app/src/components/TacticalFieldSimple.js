@@ -538,8 +538,24 @@ function TacticalFieldSimple() {
         const matchingPosition = currentFormation.find(pos => pos.role_abbr === normalizedRole);
         
         if (matchingPosition) {
-          const posKey = `${matchingPosition.x}_${matchingPosition.y}`;
-          assignPlayerToPosition(tempPlayer.id, posKey);
+          // IMPORTANTE: La chiave deve includere role_abbr, x e y
+          const posKey = `${matchingPosition.role_abbr}_${matchingPosition.x}_${matchingPosition.y}`;
+          
+          // Assegna direttamente usando setPositionAssignments invece di assignPlayerToPosition
+          setPositionAssignments(prev => {
+            // Rimuovi il giocatore da qualsiasi posizione precedente
+            const newAssignments = {};
+            Object.keys(prev).forEach(key => {
+              newAssignments[key] = (prev[key] || []).filter(id => id !== tempPlayer.id);
+            });
+            
+            // Aggiungi il giocatore alla nuova posizione
+            const current = newAssignments[posKey] || [];
+            newAssignments[posKey] = [...current, tempPlayer.id];
+            
+            return newAssignments;
+          });
+          
           toast.success(`✅ ${tempPlayer.name} added to ${normalizedRole}!`);
         } else {
           toast.success(`✅ ${tempPlayer.name} imported! Drag to position.`);
@@ -580,7 +596,8 @@ function TacticalFieldSimple() {
       const matchingPosition = currentFormation.find(pos => pos.role_abbr === normalizedRole);
       
       if (matchingPosition) {
-        const posKey = `${matchingPosition.x}_${matchingPosition.y}`;
+        // IMPORTANTE: La chiave deve includere role_abbr, x e y
+        const posKey = `${matchingPosition.role_abbr}_${matchingPosition.x}_${matchingPosition.y}`;
         assignPlayerToPosition(player.id, posKey);
         toast.success(`✅ ${player.name} added to ${normalizedRole}!`);
       } else {
