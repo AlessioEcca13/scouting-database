@@ -250,6 +250,13 @@ function TacticalFieldSimple() {
   const [showImportModal, setShowImportModal] = useState(false);
   const [selectedListsToImport, setSelectedListsToImport] = useState([]);
   
+  // Stati per nuovo modal di importazione avanzato
+  const [showAdvancedImportModal, setShowAdvancedImportModal] = useState(false);
+  const [importTab, setImportTab] = useState('lists'); // 'lists', 'database', 'transfermarkt'
+  const [transfermarktUrl, setTransfermarktUrl] = useState('');
+  const [isLoadingTransfermarkt, setIsLoadingTransfermarkt] = useState(false);
+  const [databaseSearchTerm, setDatabaseSearchTerm] = useState('');
+  
   // Stati per salvataggio/caricamento formazioni
   const [savedFormations, setSavedFormations] = useState([]);
   const [showSaveModal, setShowSaveModal] = useState(false);
@@ -468,6 +475,119 @@ function TacticalFieldSimple() {
     if (window.confirm('Vuoi davvero svuotare il campo?')) {
       setPositionAssignments({});
       toast.success('Campo svuotato!');
+    }
+  };
+
+  // ========================================
+  // IMPORTAZIONE DA TRANSFERMARKT
+  // ========================================
+  
+  const handleImportFromTransfermarkt = async () => {
+    if (!transfermarktUrl.trim()) {
+      toast.error('Insert a Transfermarkt URL');
+      return;
+    }
+
+    try {
+      setIsLoadingTransfermarkt(true);
+      
+      const response = await fetch('http://localhost:5001/api/scrape', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: transfermarktUrl })
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Error during import');
+      }
+
+      const dbData = result.db_format || result.data;
+      
+      // Crea un oggetto giocatore temporaneo
+      const tempPlayer = {
+        id: `temp_${Date.now()}`, // ID temporaneo
+        name: dbData.name?.replace(/^#\d+\s+/, ''),
+        birth_year: dbData.birth_year,
+        team: dbData.team,
+        nationality: dbData.nationality,
+        height_cm: dbData.height_cm,
+        weight_kg: dbData.weight_kg,
+        shirt_number: dbData.shirt_number,
+        general_role: dbData.general_role,
+        specific_position: dbData.specific_position,
+        preferred_foot: dbData.preferred_foot,
+        market_value: dbData.market_value,
+        contract_expiry: dbData.contract_expiry,
+        transfermarkt_link: dbData.transfermarkt_link,
+        profile_image: dbData.profile_image,
+        natural_position: dbData.natural_position,
+        other_positions: dbData.other_positions
+      };
+
+      // Aggiungi il giocatore alla lista allPlayers
+      setAllPlayers(prev => [...prev, tempPlayer]);
+
+      // Prova ad assegnarlo automaticamente alla posizione corretta
+      const playerRole = tempPlayer.specific_position || tempPlayer.general_role;
+      const normalizedRole = normalizeRole(playerRole);
+      
+      if (normalizedRole) {
+        const currentFormation = formations[formation];
+        const matchingPosition = currentFormation.find(pos => pos.role_abbr === normalizedRole);
+        
+        if (matchingPosition) {
+          const posKey = `${matchingPosition.x}_${matchingPosition.y}`;
+          assignPlayerToPosition(tempPlayer.id, posKey);
+          toast.success(`✅ ${tempPlayer.name} added to ${normalizedRole}!`);
+        } else {
+          toast.success(`✅ ${tempPlayer.name} imported! Drag to position.`);
+        }
+      } else {
+        toast.success(`✅ ${tempPlayer.name} imported! Drag to position.`);
+      }
+
+      setTransfermarktUrl('');
+      setShowAdvancedImportModal(false);
+
+    } catch (error) {
+      console.error('Error importing from Transfermarkt:', error);
+      toast.error(`❌ ${error.message}`);
+    } finally {
+      setIsLoadingTransfermarkt(false);
+    }
+  };
+
+  // Funzione per aggiungere giocatore dal database
+  const addPlayerFromDatabase = (player) => {
+    // Verifica se il giocatore è già sul campo
+    const isAlreadyOnField = Object.values(positionAssignments).some(
+      playerIds => playerIds && playerIds.includes(player.id)
+    );
+    
+    if (isAlreadyOnField) {
+      toast.info(`${player.name} is already on the field`);
+      return;
+    }
+
+    // Prova ad assegnarlo automaticamente alla posizione corretta
+    const playerRole = player.specific_position || player.general_role;
+    const normalizedRole = normalizeRole(playerRole);
+    
+    if (normalizedRole) {
+      const currentFormation = formations[formation];
+      const matchingPosition = currentFormation.find(pos => pos.role_abbr === normalizedRole);
+      
+      if (matchingPosition) {
+        const posKey = `${matchingPosition.x}_${matchingPosition.y}`;
+        assignPlayerToPosition(player.id, posKey);
+        toast.success(`✅ ${player.name} added to ${normalizedRole}!`);
+      } else {
+        toast.success(`✅ ${player.name} added! Drag to position.`);
+      }
+    } else {
+      toast.success(`✅ ${player.name} added! Drag to position.`);
     }
   };
 
@@ -885,10 +1005,13 @@ function TacticalFieldSimple() {
                 📂 Load Formation
               </button>
               <button
-                onClick={() => setShowImportModal(true)}
+                onClick={() => {
+                  setShowAdvancedImportModal(true);
+                  setImportTab('lists');
+                }}
                 className="w-full px-4 py-3 bg-white text-green-600 rounded-lg font-semibold hover:bg-gray-100 transition-all shadow-lg"
               >
-                📥 Import from Lists
+                ➕ Add Players
               </button>
               <button
                 onClick={clearField}
@@ -1094,6 +1217,200 @@ function TacticalFieldSimple() {
             >
               Cancel
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Advanced Import Modal - 3 Tabs: Lists, Database, Transfermarkt */}
+      {showAdvancedImportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full p-6 max-h-[90vh] overflow-y-auto">
+            <h3 className="text-2xl font-bold text-gray-800 mb-4">➕ Add Players to Field</h3>
+            
+            {/* Tabs */}
+            <div className="flex gap-2 mb-6 border-b">
+              <button
+                onClick={() => setImportTab('lists')}
+                className={`px-6 py-3 font-semibold transition-all ${
+                  importTab === 'lists'
+                    ? 'text-blue-600 border-b-2 border-blue-600'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                📋 From Lists
+              </button>
+              <button
+                onClick={() => setImportTab('database')}
+                className={`px-6 py-3 font-semibold transition-all ${
+                  importTab === 'database'
+                    ? 'text-blue-600 border-b-2 border-blue-600'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                🗄️ From Database
+              </button>
+              <button
+                onClick={() => setImportTab('transfermarkt')}
+                className={`px-6 py-3 font-semibold transition-all ${
+                  importTab === 'transfermarkt'
+                    ? 'text-blue-600 border-b-2 border-blue-600'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                🌐 From Transfermarkt
+              </button>
+            </div>
+
+            {/* Tab Content: Lists */}
+            {importTab === 'lists' && (
+              <div>
+                <p className="text-sm text-gray-600 mb-4">Select one or more lists to import players</p>
+                <div className="space-y-2 mb-4 max-h-96 overflow-y-auto">
+                  {lists.map(list => (
+                    <label key={list.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={selectedListsToImport.includes(list.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedListsToImport([...selectedListsToImport, list.id]);
+                          } else {
+                            setSelectedListsToImport(selectedListsToImport.filter(id => id !== list.id));
+                          }
+                        }}
+                        className="w-4 h-4"
+                      />
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-800">{list.name}</p>
+                        <p className="text-xs text-gray-600">{list.player_ids?.length || 0} players</p>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      setShowAdvancedImportModal(false);
+                      setSelectedListsToImport([]);
+                    }}
+                    className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => {
+                      importPlayersFromLists();
+                      setShowAdvancedImportModal(false);
+                    }}
+                    disabled={selectedListsToImport.length === 0}
+                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-all disabled:opacity-50"
+                  >
+                    Import Selected
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Tab Content: Database */}
+            {importTab === 'database' && (
+              <div>
+                <p className="text-sm text-gray-600 mb-4">Search and add players from your database</p>
+                
+                {/* Search Bar */}
+                <input
+                  type="text"
+                  value={databaseSearchTerm}
+                  onChange={(e) => setDatabaseSearchTerm(e.target.value)}
+                  placeholder="🔍 Search by name, team, or role..."
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4"
+                />
+
+                {/* Players List */}
+                <div className="space-y-2 max-h-96 overflow-y-auto mb-4">
+                  {allPlayers
+                    .filter(p => {
+                      if (!databaseSearchTerm) return true;
+                      const search = databaseSearchTerm.toLowerCase();
+                      return (
+                        p.name?.toLowerCase().includes(search) ||
+                        p.team?.toLowerCase().includes(search) ||
+                        p.general_role?.toLowerCase().includes(search) ||
+                        p.specific_position?.toLowerCase().includes(search)
+                      );
+                    })
+                    .slice(0, 50)
+                    .map(player => (
+                      <div
+                        key={player.id}
+                        className="flex items-center gap-3 p-3 border rounded-lg hover:bg-gray-50"
+                      >
+                        <div className="flex-1">
+                          <p className="font-semibold text-gray-800">{player.name}</p>
+                          <p className="text-xs text-gray-600">
+                            {player.team} • {player.specific_position || player.general_role} • {player.birth_year}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => addPlayerFromDatabase(player)}
+                          className="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-all"
+                        >
+                          ➕ Add
+                        </button>
+                      </div>
+                    ))}
+                </div>
+
+                <button
+                  onClick={() => setShowAdvancedImportModal(false)}
+                  className="w-full px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-all"
+                >
+                  Close
+                </button>
+              </div>
+            )}
+
+            {/* Tab Content: Transfermarkt */}
+            {importTab === 'transfermarkt' && (
+              <div>
+                <p className="text-sm text-gray-600 mb-4">Import a player directly from Transfermarkt</p>
+                
+                <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
+                  <p className="text-sm text-blue-800">
+                    <strong>How to use:</strong> Copy the Transfermarkt URL of a player and paste it below. 
+                    The player will be automatically imported and added to the field.
+                  </p>
+                </div>
+
+                <input
+                  type="text"
+                  value={transfermarktUrl}
+                  onChange={(e) => setTransfermarktUrl(e.target.value)}
+                  placeholder="https://www.transfermarkt.com/player-name/profil/spieler/123456"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4"
+                  disabled={isLoadingTransfermarkt}
+                />
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      setShowAdvancedImportModal(false);
+                      setTransfermarktUrl('');
+                    }}
+                    className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-all"
+                    disabled={isLoadingTransfermarkt}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleImportFromTransfermarkt}
+                    disabled={!transfermarktUrl.trim() || isLoadingTransfermarkt}
+                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-all disabled:opacity-50"
+                  >
+                    {isLoadingTransfermarkt ? '⏳ Importing...' : '🌐 Import Player'}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
